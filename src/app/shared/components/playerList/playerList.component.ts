@@ -21,4 +21,16 @@ export class PlayerListComponent implements OnInit {
     this.playerService.addPlayer(new Player());
   }
 
+  selectPlayer(id) {
+    this.playerService.setPlayerPlaying(id);
+  }
+
+  increaseScore(id) {
+    this.playerService.updateScore(1, id);
+  }
+
+  decreaseScore(id) {
+    this.playerService.updateScore(-1, id);
+  }
+
 }

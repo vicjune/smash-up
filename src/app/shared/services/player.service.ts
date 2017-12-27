@@ -8,7 +8,12 @@ import { MAX_PLAYERS } from './../constants';
 export class PlayerService {
   private playersSubject: BehaviorSubject<Player[]> = new BehaviorSubject<Player[]>([]);
 
-  constructor() { }
+  constructor() {
+    const localPlayers = window.localStorage.getItem('players');
+    if (localPlayers) {
+      this.playersSubject.next(JSON.parse(localPlayers));
+    }
+  }
 
   bindPlayers(): Observable<Player[]> {
     return this.playersSubject.asObservable();
@@ -34,6 +39,7 @@ export class PlayerService {
         player.playing = false;
       }
     }
+    this.updatePlayers(players);
   }
 
   addPlayer(player: Player): void {
@@ -45,8 +51,11 @@ export class PlayerService {
           break;
         }
       }
+      if (players.length === 0) {
+        player.playing = true;
+      }
       players.push(player);
-      this.playersSubject.next(players);
+      this.updatePlayers(players);
     }
   }
 
@@ -54,8 +63,30 @@ export class PlayerService {
     const players = this.playersSubject.getValue();
     const playerIndex = players.map(player => player.id).indexOf(id);
     if (playerIndex !== -1) {
+      const playing = players[playerIndex].playing;
       players.splice(playerIndex, 1);
+      if (players[0]) {
+        players[0].playing = playing;
+      }
     }
+    this.updatePlayers(players);
+  }
+
+  updateScore(modifier: number, id: string): void {
+    const players = this.playersSubject.getValue();
+    const playerIndex = players.map(player => player.id).indexOf(id);
+    if (playerIndex !== -1 && players[playerIndex].score + modifier >= 0) {
+      players[playerIndex].score = players[playerIndex].score + modifier;
+    }
+    this.updatePlayers(players);
+  }
+
+  resetGame(): void {
+    this.updatePlayers([]);
+  }
+
+  private updatePlayers(players: Player[]): void {
+    window.localStorage.setItem('players', JSON.stringify(players));
     this.playersSubject.next(players);
   }
 }

@@ -98,6 +98,10 @@ button {
   background: transparent;
   cursor: pointer;
   user-select: none;
+
+  &:focus {
+    outline:0;
+  }
 }
 
 * {

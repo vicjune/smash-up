@@ -1,8 +1,14 @@
 <div class="playerList">
-  <div class="playerList__player playerList__element" *ngFor="let player of (playerService.bindPlayers() | async)" [ngClass]="'color-' + (player.color + 1)">
-    <div class="playerList__player__name">{{player.name}}</div>
-    <div class="playerList__player__score" [ngClass]="{'underscore': player.score === 6 || player.score === 9}">{{player.score}}</div>
-    <div class="playerList__player__score upsideDown" [ngClass]="{'underscore': player.score === 6 || player.score === 9}">{{player.score}}</div>
+  <div *ngFor="let player of (playerService.bindPlayers() | async)" [class]="'playerList__player playerList__element color-' + (player.color + 1)" [ngClass]="{'playing': player.playing}">
+    <button class="playerList__player__button" (click)="selectPlayer(player.id)">
+      <div class="playerList__player__name">{{player.name}}</div>
+      <div class="playerList__player__score" [ngClass]="{'underscore': player.score === 6 || player.score === 9}">{{player.score}}</div>
+      <div class="playerList__player__score upsideDown" [ngClass]="{'underscore': player.score === 6 || player.score === 9}">{{player.score}}</div>
+    </button>
+    <div class="playerList__player__valueButtons">
+      <button class="playerList__player__valueButton" (click)="increaseScore(player.id)"><i class="icon-plus"></i></button>
+      <button class="playerList__player__valueButton" (click)="decreaseScore(player.id)"><i class="icon-minus"></i></button>
+    </div>
   </div>
   <button class="playerList__button playerList__element" (click)="addPlayer()" *ngIf="(playerService.bindPlayers() | async).length < MAX_PLAYERS">
     <i class="icon-plus"></i>

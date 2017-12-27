@@ -1,0 +1,14 @@
+<div class="menu" [ngClass]="{'active': menuOpen}">
+  <button class="menu__button" (click)="menuOpen = !menuOpen"><i class="icon-menu"></i></button>
+
+  <div class="menu__wrapper">
+    <button class="menu__wrapper__button menu__wrapper__resetGame" (click)="resetGame()">
+      <i class="icon-reload"></i>
+      <span>Reset game</span>
+    </button>
+    <button class="menu__wrapper__button menu__wrapper__deletePlayer" *ngFor="let player of (playerService.bindPlayers() | async)" (click)="deletePlayer(player.id)">
+      <i class="icon-bin2"></i>
+      <span>{{player.name}}</span>
+    </button>
+  </div>
+</div>

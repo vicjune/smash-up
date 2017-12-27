@@ -9,6 +9,6 @@ export class Player extends BaseModel {
   constructor() {
     super();
     this.name = 'Jean';
-    this.score = Math.floor(Math.random() * 15) + 1;
+    this.score = 0;
   }
 }
