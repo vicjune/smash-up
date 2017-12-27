@@ -2,17 +2,17 @@
   <button class="menu__button" (click)="menuOpen = !menuOpen"><i class="icon-menu"></i></button>
 
   <div class="menu__wrapper">
-    <button class="menu__wrapper__button menu__wrapper__resetGame" (click)="resetGame()">
+    <button class="menu__wrapper__button menu__wrapper__resetGame" (click)="resetClicked()">
       <i class="icon-reload"></i>
       <span>Reset game</span>
     </button>
-    <button class="menu__wrapper__button menu__wrapper__deletePlayer" *ngFor="let player of (playerService.bindPlayers() | async)" (click)="deletePlayer(player.id)">
+    <button class="menu__wrapper__button menu__wrapper__deletePlayer" *ngFor="let player of (playerService.bindPlayers() | async)" (click)="deletePlayerClicked(player)">
       <i class="icon-bin2"></i>
       <span>{{player.name}}</span>
     </button>
   </div>
 </div>
 
-<app-popin [(modal)]="deletePopin" [title]="'Do you want to remove ' + removedPlayer.name + ' from the game ?'" [buttons]="[{text: 'Cancel', secondary: true}, {text: 'Delete', danger: true}]"></app-popin>
+<app-popin [(modal)]="deletePopin" [title]="removedPlayer ? ('Do you want to remove ' + removedPlayer.name + ' from the game ?') : ''" [buttons]="[{text: 'Cancel', secondary: true}, {text: 'Remove', danger: true}]" (buttonPressed)="callbackDelete($event)"></app-popin>
 
-<app-popin [(modal)]="resetPopin" title="Do you want to reset the game ?" [buttons]="[{text: 'Cancel', secondary: true}, {text: 'Reset', danger: true}]"></app-popin>
+<app-popin [(modal)]="resetPopin" title="Do you want to reset the game ?" [buttons]="[{text: 'Cancel', secondary: true}, {text: 'Reset', danger: true}]" (buttonPressed)="callbackReset($event)"></app-popin>

@@ -11,6 +11,7 @@ import { MAX_PLAYERS } from '../../constants';
 export class PlayerListComponent implements OnInit {
   MAX_PLAYERS: number = MAX_PLAYERS;
   addPopin = false;
+  newPlayerName = '';
 
   constructor(
     public playerService: PlayerService
@@ -18,8 +19,15 @@ export class PlayerListComponent implements OnInit {
 
   ngOnInit() {}
 
-  addPlayer() {
-    this.playerService.addPlayer(new Player());
+  addPlayerClicked() {
+    this.newPlayerName = '';
+    this.addPopin = true;
+  }
+
+  addPlayer(index: number) {
+    if (index === 1) {
+      this.playerService.addPlayer(new Player(this.newPlayerName));
+    }
   }
 
   selectPlayer(id) {

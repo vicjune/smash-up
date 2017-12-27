@@ -1,3 +1,10 @@
-<p>
-  popin works!
-</p>
+<div class="popin" [ngClass]="{'popin--active': modal}">
+  <button class="popin__closeButton" (click)="onCloseClick()"><i class="icon-cross"></i></button>
+  <div class="popin__title">{{title}}</div>
+  <ng-content></ng-content>
+  <div class="popin__buttons">
+    <button class="popin__button" *ngFor="let button of buttons; let i = index" [ngClass]="{'secondary': button.secondary, 'danger': button.danger}" [disabled]="button.disabled" (click)="onButtonClick(i)">{{button.text}}</button>
+  </div>
+</div>
+
+<div class="backdrop" [ngClass]="{'backdrop--active': modal}" (click)="onCloseClick()"></div>

@@ -10,9 +10,11 @@
       <button class="playerList__player__valueButton" (click)="decreaseScore(player.id)"><i class="icon-minus"></i></button>
     </div>
   </div>
-  <button class="playerList__button playerList__element" (click)="addPlayer()" *ngIf="(playerService.bindPlayers() | async).length < MAX_PLAYERS">
+  <button class="playerList__button playerList__element" (click)="addPlayerClicked()" *ngIf="(playerService.bindPlayers() | async).length < MAX_PLAYERS">
     <i class="icon-plus"></i>
   </button>
 </div>
 
-<app-popin [(modal)]="addPopin" title="New player" [buttons]="[{text: 'Cancel', secondary: true}, {text: 'Add'}]"></app-popin>
+<app-popin [(modal)]="addPopin" title="New player" [buttons]="[{text: 'Cancel', secondary: true}, {text: 'Add', disabled: newPlayerName.length === 0}]" (buttonPressed)="addPlayer($event)">
+  <input class="addPopin__input" type="text" placeholder="Player name" [(ngModel)]="newPlayerName">
+</app-popin>

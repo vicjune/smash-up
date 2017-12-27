@@ -7,7 +7,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 })
 export class PopinComponent implements OnInit {
   @Input() title: string;
-  @Input() buttons: {text: string, noClose?: boolean, secondary?: boolean, danger?: boolean}[];
+  @Input() buttons: {text: string, noClose?: boolean, secondary?: boolean, danger?: boolean, disabled?: boolean}[];
   @Output() close: EventEmitter<void> = new EventEmitter<void>();
   @Output() buttonPressed: EventEmitter<number> = new EventEmitter<number>();
 

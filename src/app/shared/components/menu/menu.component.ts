@@ -21,13 +21,10 @@ export class MenuComponent implements OnInit {
   ngOnInit() {
   }
 
-  resetGame() {
-    this.playerService.resetGame();
-  }
-
   deletePlayerClicked(player: Player) {
     this.removedPlayer = player;
     this.deletePopin = true;
+    this.menuOpen = false;
   }
 
   callbackDelete(index: number) {
@@ -38,6 +35,7 @@ export class MenuComponent implements OnInit {
 
   resetClicked() {
     this.resetPopin = true;
+    this.menuOpen = false;
   }
 
   callbackReset(index: number) {

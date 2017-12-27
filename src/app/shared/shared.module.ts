@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 import { PlayerListComponent } from './components/playerList/playerList.component';
 import { MenuComponent } from './components/menu/menu.component';
@@ -8,7 +9,8 @@ import { PopinComponent } from './components/popin/popin.component';
 
 @NgModule({
   imports: [
-    CommonModule
+    CommonModule,
+    FormsModule,
   ],
   declarations: [
     PlayerListComponent,

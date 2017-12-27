@@ -6,9 +6,9 @@ export class Player extends BaseModel {
   name: string;
   score: number;
 
-  constructor() {
+  constructor(name: string) {
     super();
-    this.name = 'Jean';
+    this.name = name;
     this.score = 0;
   }
 }
