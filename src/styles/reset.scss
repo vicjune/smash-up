@@ -102,6 +102,11 @@ button {
   &:focus {
     outline:0;
   }
+
+  &[disabled] {
+    cursor: default;
+    pointer-events: none;
+  }
 }
 
 * {

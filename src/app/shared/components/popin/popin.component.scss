@@ -61,10 +61,8 @@
     }
 
     &[disabled] {
-      pointer-events: none;
       border-color: rgb(175, 175, 175);
       background-color: rgb(175, 175, 175);
-      cursor: default;
     }
 
     &:active {
@@ -90,11 +88,21 @@
     &.danger {
       background-color: $danger;
       border-color: $danger;
+
+      &:active {
+        background-color: darken($danger, 20);
+        border-color: darken($danger, 20);
+      }
     }
 
     &.secondary.danger {
       background-color: transparent;
       color: $danger;
+
+      &:active {
+        background-color: transparent;
+        color: darken($danger, 20);
+      }
     }
   }
 }
