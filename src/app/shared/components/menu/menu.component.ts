@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { PlayerService } from '../../services/player.service';
+import { Player } from '../../models/player';
 
 @Component({
   selector: 'app-menu',
@@ -9,6 +10,9 @@ import { PlayerService } from '../../services/player.service';
 })
 export class MenuComponent implements OnInit {
   menuOpen = false;
+  deletePopin = false;
+  resetPopin = false;
+  removedPlayer: Player;
 
   constructor(
     public playerService: PlayerService
@@ -21,8 +25,24 @@ export class MenuComponent implements OnInit {
     this.playerService.resetGame();
   }
 
-  deletePlayer(id: string) {
-    this.playerService.removePlayer(id);
+  deletePlayerClicked(player: Player) {
+    this.removedPlayer = player;
+    this.deletePopin = true;
   }
 
+  callbackDelete(index: number) {
+    if (index === 1) {
+      this.playerService.removePlayer(this.removedPlayer.id);
+    }
+  }
+
+  resetClicked() {
+    this.resetPopin = true;
+  }
+
+  callbackReset(index: number) {
+    if (index === 1) {
+      this.playerService.resetGame();
+    }
+  }
 }

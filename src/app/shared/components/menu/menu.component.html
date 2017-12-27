@@ -12,3 +12,7 @@
     </button>
   </div>
 </div>
+
+<app-popin [(modal)]="deletePopin" [title]="'Do you want to remove ' + removedPlayer.name + ' from the game ?'" [buttons]="[{text: 'Cancel', secondary: true}, {text: 'Delete', danger: true}]"></app-popin>
+
+<app-popin [(modal)]="resetPopin" title="Do you want to reset the game ?" [buttons]="[{text: 'Cancel', secondary: true}, {text: 'Reset', danger: true}]"></app-popin>

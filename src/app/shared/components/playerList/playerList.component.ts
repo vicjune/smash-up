@@ -10,6 +10,7 @@ import { MAX_PLAYERS } from '../../constants';
 })
 export class PlayerListComponent implements OnInit {
   MAX_PLAYERS: number = MAX_PLAYERS;
+  addPopin = false;
 
   constructor(
     public playerService: PlayerService
