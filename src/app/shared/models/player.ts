@@ -8,7 +8,7 @@ export class Player extends BaseModel {
 
   constructor() {
     super();
-    this.name = 'Test';
+    this.name = 'Jean';
     this.score = Math.floor(Math.random() * 15) + 1;
   }
 }

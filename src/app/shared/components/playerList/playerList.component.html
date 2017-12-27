@@ -1,9 +1,10 @@
 <div class="playerList">
   <div class="playerList__player playerList__element" *ngFor="let player of (playerService.bindPlayers() | async)" [ngClass]="'color-' + (player.color + 1)">
-    <div>
-      <span>{{player.name}}</span>
-      <span>{{player.score}}</span>
-    </div>
+    <div class="playerList__player__name">{{player.name}}</div>
+    <div class="playerList__player__score" [ngClass]="{'underscore': player.score === 6 || player.score === 9}">{{player.score}}</div>
+    <div class="playerList__player__score upsideDown" [ngClass]="{'underscore': player.score === 6 || player.score === 9}">{{player.score}}</div>
   </div>
-  <button class="playerList__button playerList__element" (click)="addPlayer()"><i class="icon-plus"></i></button>
+  <button class="playerList__button playerList__element" (click)="addPlayer()" *ngIf="(playerService.bindPlayers() | async).length < MAX_PLAYERS">
+    <i class="icon-plus"></i>
+  </button>
 </div>

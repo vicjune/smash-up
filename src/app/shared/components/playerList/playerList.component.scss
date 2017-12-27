@@ -1,6 +1,7 @@
 @import "styles";
 
 .playerList {
+  margin-top: 50px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -9,26 +10,34 @@
   left: 0;
   bottom: 0;
   width: 250px;
+  padding: 20px 0;
 
   &__element {
-    height: 100px;
+    height: 120px;
+    flex-basis: 120px;
+    flex-shrink: 1;
+    flex-grow: 0;
     width: 200px;
-    margin: 30px 0;
+    margin-bottom: 20px;
     border-radius: 10px;
+
+    &:last-child {
+      margin-bottom: auto;
+    }
   }
 
   &__player {
     border: 5px solid white;
     background-color: white;
+    position: relative;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 
     @each $color in $playerColors {
       $i: index($playerColors, $color);
 
       &.color-#{$i} {
-        color: $color;
         border-color: $color;
-        background-color: rgba(0, 0, 0, 0.8);
-        position: relative;
+        background-color: rgba(0, 0, 0, 0.582);
 
         &:before {
           content: '';
@@ -39,6 +48,55 @@
           left: 0;
           bottom: 0;
           right: 0;
+          opacity: 0.2;
+        }
+
+        .playerList__player__score {
+          color: $color;
+
+          &.underscore:after {
+            background-color: $color;
+          }
+        }
+      }
+    }
+
+    &__name {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 20px;
+      height: 25px;
+      white-space: nowrap;
+      overflow: hidden;
+      color: rgba(255, 255, 255, 0.534);
+      max-width: 100px;
+      text-align: center;
+    }
+
+    &__score {
+      position: absolute;
+      top: 10px;
+      left: 14px;
+      font-size: 40px;
+
+      &.upsideDown {
+        left: auto;
+        top: auto;
+        bottom: 10px;
+        right: 14px;
+        transform: rotate(180deg);
+      }
+
+      &.underscore {
+        &:after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 2px;
         }
       }
     }
