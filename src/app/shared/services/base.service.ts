@@ -19,7 +19,7 @@ export class BaseService extends EntityService {
       this.entitiesSubject.next(JSON.parse(localEntities));
     }
 
-    this.playerService.bindPlayers().subscribe(players => {
+    this.playerService.bind().subscribe(players => {
       this.updateScores(players);
     });
   }

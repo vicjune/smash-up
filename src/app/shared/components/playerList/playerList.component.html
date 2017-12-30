@@ -1,5 +1,5 @@
 <div class="playerList">
-  <div *ngFor="let player of (playerService.bindPlayers() | async)" [class]="'playerList__player playerList__element color-' + (player.color + 1)" [ngClass]="{'playing': player.playing}">
+  <div *ngFor="let player of (playerService.bind() | async)" [class]="'playerList__player playerList__element color-' + (player.color + 1)" [ngClass]="{'playing': player.playing}">
     <button class="playerList__player__button" (click)="selectPlayer(player.id)">
       <div class="playerList__player__name">{{player.name}}</div>
       <div class="playerList__player__score" [ngClass]="{'underscore': player.score === 6 || player.score === 9}">{{player.score}}</div>
@@ -10,8 +10,9 @@
       <button class="playerList__player__valueButton" (click)="decreaseScore(player.id)" [disabled]="player.score === 0"><i class="icon-minus"></i></button>
     </div>
   </div>
-  <button class="playerList__button playerList__element" (click)="addPlayerClicked()" *ngIf="(playerService.bindPlayers() | async).length < MAX_PLAYERS">
+  <button class="playerList__button playerList__element" (click)="addPlayerClicked()" *ngIf="(playerService.bind() | async).length < MAX_PLAYERS">
     <i class="icon-plus"></i>
+    <span class="playerList__button__label">Add player</span>
   </button>
 </div>
 

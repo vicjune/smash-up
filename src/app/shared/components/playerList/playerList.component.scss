@@ -171,6 +171,12 @@
     font-size: 30px;
     line-height: 18px;
     opacity: 0.5;
+
+    &__label {
+      font-size: 20px;
+      display: block;
+      margin-top: 15px;
+    }
   }
 }
 

@@ -3,28 +3,26 @@ import { Observable, BehaviorSubject } from 'rxjs/Rx';
 
 import { Player } from '../models/player';
 import { MAX_PLAYERS } from './../constants';
+import { EntityService } from '@shared/services/entity.service';
 
 @Injectable()
-export class PlayerService {
+export class PlayerService extends EntityService {
   protected entity = 'players';
-  private playersSubject: BehaviorSubject<Player[]> = new BehaviorSubject<Player[]>([]);
 
   constructor() {
+    super();
     const localPlayers = window.localStorage.getItem(this.entity);
     if (localPlayers) {
-      this.playersSubject.next(JSON.parse(localPlayers));
+      this.entitiesSubject.next(JSON.parse(localPlayers));
     }
   }
 
-  bindPlayers(): Observable<Player[]> {
-    return this.playersSubject.asObservable();
-  }
-
   bindPlayerPlaying(): Observable<Player> {
-    return this.bindPlayers().map(players => {
+    return this.bind().map(players => {
       for (const player of players) {
-        if (player.playing) {
-          return player;
+        const play = player as Player;
+        if (play.playing) {
+          return play;
         }
       }
       return null;
@@ -32,7 +30,7 @@ export class PlayerService {
   }
 
   setPlayerPlaying(id: string): void {
-    const players = this.playersSubject.getValue();
+    const players = this.entitiesSubject.getValue() as Player[];
     for (const player of players) {
       if (player.id === id) {
         player.playing = true;
@@ -40,11 +38,11 @@ export class PlayerService {
         player.playing = false;
       }
     }
-    this.updatePlayers(players);
+    this.update(players);
   }
 
-  addPlayer(player: Player): void {
-    const players = this.playersSubject.getValue();
+  add(player: Player): void {
+    const players = this.entitiesSubject.getValue() as Player[];
     if (players.length < MAX_PLAYERS) {
       for (let index = 0; index < MAX_PLAYERS; index++) {
         if (players.map(playerFromList => playerFromList.color).indexOf(index) === -1) {
@@ -55,39 +53,28 @@ export class PlayerService {
       if (players.length === 0) {
         player.playing = true;
       }
-      players.push(player);
-      this.updatePlayers(players);
+      super.add(player);
     }
   }
 
-  removePlayer(id: string): void {
-    const players = this.playersSubject.getValue();
-    const playerIndex = players.map(player => player.id).indexOf(id);
-    if (playerIndex !== -1) {
-      const playing = players[playerIndex].playing;
-      players.splice(playerIndex, 1);
-      if (players[0]) {
+  delete(id: string): void {
+    const players = this.entitiesSubject.getValue() as Player[];
+    if (this.get(id).entity) {
+      const playing = (this.get(id).entity as Player).playing;
+      super.delete(id);
+      if (players[0] && !players[0].playing) {
         players[0].playing = playing;
       }
     }
-    this.updatePlayers(players);
+    this.update(players);
   }
 
   updateScore(modifier: number, id: string): void {
-    const players = this.playersSubject.getValue();
+    const players = this.entitiesSubject.getValue() as Player[];
     const playerIndex = players.map(player => player.id).indexOf(id);
     if (playerIndex !== -1 && players[playerIndex].score + modifier >= 0) {
       players[playerIndex].score = players[playerIndex].score + modifier;
     }
-    this.updatePlayers(players);
-  }
-
-  resetGame(): void {
-    this.updatePlayers([]);
-  }
-
-  private updatePlayers(players: Player[]): void {
-    window.localStorage.setItem(this.entity, JSON.stringify(players));
-    this.playersSubject.next(players);
+    this.update(players);
   }
 }

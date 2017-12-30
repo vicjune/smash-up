@@ -32,7 +32,7 @@ export class PlayerListComponent implements OnInit {
   addPlayer(index: number) {
     this.addPopin = false;
     if (index === 1) {
-      this.playerService.addPlayer(new Player(this.newPlayerName));
+      this.playerService.add(new Player(this.newPlayerName));
     }
   }
 

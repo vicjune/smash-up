@@ -31,7 +31,7 @@ export class MenuComponent implements OnInit {
 
   callbackDelete(index: number) {
     if (index === 1) {
-      this.playerService.removePlayer(this.removedPlayer.id);
+      this.playerService.delete(this.removedPlayer.id);
     }
   }
 
