@@ -2,9 +2,13 @@
   <button class="menu__button" (click)="menuOpen = !menuOpen"><i class="icon-menu"></i></button>
 
   <div class="menu__wrapper">
+    <div class="menu__wrapper__i18n">
+      <button class="menu__wrapper__i18n__button" [ngClass]="{'activeLang': language === 'en'}" (click)="setLanguage('en')">EN</button>
+      <button class="menu__wrapper__i18n__button" [ngClass]="{'activeLang': language === 'fr'}" (click)="setLanguage('fr')">FR</button>
+    </div>
     <button class="menu__wrapper__button menu__wrapper__resetGame" (click)="resetClicked()">
       <i class="icon-reload"></i>
-      <span>Reset game</span>
+      <span>{{'RESET_GAME' | translate}}</span>
     </button>
     <button class="menu__wrapper__button menu__wrapper__deletePlayer" *ngFor="let player of (playerService.bind() | async)" (click)="deletePlayerClicked(player)">
       <i class="icon-bin2"></i>

@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs/Rx';
 
 import { PlayerService } from '../../services/player.service';
 import { Player } from '../../models/player';
@@ -14,13 +16,18 @@ export class MenuComponent implements OnInit {
   deletePopin = false;
   resetPopin = false;
   removedPlayer: Player;
+  language: string;
 
   constructor(
     public playerService: PlayerService,
-    public baseService: BaseService
+    public baseService: BaseService,
+    public translate: TranslateService
   ) { }
 
   ngOnInit() {
+    this.translate.onLangChange.subscribe(event => {
+      this.language = event.lang;
+    });
   }
 
   deletePlayerClicked(player: Player) {
@@ -45,5 +52,10 @@ export class MenuComponent implements OnInit {
       this.playerService.resetGame();
       this.baseService.resetGame();
     }
+  }
+
+  setLanguage(lang: string) {
+    this.translate.use(lang);
+    window.localStorage.setItem('i18n', lang);
   }
 }

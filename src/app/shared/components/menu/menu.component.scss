@@ -31,9 +31,25 @@
     background-color: hsla(0, 0, 0, 0.8);
     padding: 40px 0;
 
+    &__i18n {
+      display: flex;
+      justify-content: flex-end;
+      padding: 0 20px;
+      margin-bottom: 20px;
+
+      &__button {
+        opacity: 0.5;
+        color: white;
+
+        &.activeLang {
+          opacity: 1;
+        }
+      }
+    }
+
     &__button {
       display: block;
-      border-bottom: 1px solid white;
+      border-top: 1px solid white;
       height: 50px;
       width: 100%;
       color: white;
@@ -44,13 +60,18 @@
       align-items: center;
       justify-content: space-between;
 
-      &:first-child {
-        border-top: 1px solid white;
+      &:last-child {
+        border-bottom: 1px solid white;
       }
 
       &:active {
         background-color: rgba(255, 255, 255, 0.349);
       }
+    }
+
+    &__resetGame {
+      border-bottom: 1px solid white;
+      margin-bottom: 80px;
     }
   }
 }
