@@ -1,0 +1,7 @@
+<app-base *ngFor="let base of (baseService.bind() | async)" [ngModel]="base" (ngModelChange)="editBase($event)"></app-base>
+
+<button (click)="addBaseClicked()">ADD</button>
+
+<app-popin [(modal)]="addPopin" title="New base" [buttons]="[{text: 'Cancel', secondary: true}, {text: 'Add'}]" (buttonPressed)="addBase($event)">
+  <app-base [(ngModel)]="newBase" [editMode]="true"></app-base>
+</app-popin>

@@ -1,3 +1,9 @@
-<p>
-  base works!
-</p>
+<div *ngIf="base">
+  <div>
+    {{base.resistance}}
+  </div>
+  <div>
+    {{base.rewards[0]}}{{base.rewards[1]}}{{base.rewards[2]}}
+  </div>
+  {{base.scores}}
+</div>

@@ -1,4 +1,4 @@
-export class BaseModel {
+export class Entity {
   id: string;
 
   constructor() {

@@ -6,6 +6,7 @@ import { PlayerListComponent } from './components/playerList/playerList.componen
 import { MenuComponent } from './components/menu/menu.component';
 import { PlayerService } from './services/player.service';
 import { PopinComponent } from './components/popin/popin.component';
+import { BaseService } from '@shared/services/base.service';
 
 @NgModule({
   imports: [
@@ -23,7 +24,8 @@ import { PopinComponent } from './components/popin/popin.component';
     PopinComponent,
   ],
   providers: [
-    PlayerService
+    PlayerService,
+    BaseService,
   ]
 })
 export class SharedModule { }

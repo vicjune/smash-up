@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { PlayerService } from '../../services/player.service';
 import { Player } from '../../models/player';
+import { BaseService } from '@shared/services/base.service';
 
 @Component({
   selector: 'app-menu',
@@ -15,7 +16,8 @@ export class MenuComponent implements OnInit {
   removedPlayer: Player;
 
   constructor(
-    public playerService: PlayerService
+    public playerService: PlayerService,
+    public baseService: BaseService
   ) { }
 
   ngOnInit() {
@@ -41,6 +43,7 @@ export class MenuComponent implements OnInit {
   callbackReset(index: number) {
     if (index === 1) {
       this.playerService.resetGame();
+      this.baseService.resetGame();
     }
   }
 }

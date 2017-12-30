@@ -6,10 +6,11 @@ import { MAX_PLAYERS } from './../constants';
 
 @Injectable()
 export class PlayerService {
+  protected entity = 'players';
   private playersSubject: BehaviorSubject<Player[]> = new BehaviorSubject<Player[]>([]);
 
   constructor() {
-    const localPlayers = window.localStorage.getItem('players');
+    const localPlayers = window.localStorage.getItem(this.entity);
     if (localPlayers) {
       this.playersSubject.next(JSON.parse(localPlayers));
     }
@@ -86,7 +87,7 @@ export class PlayerService {
   }
 
   private updatePlayers(players: Player[]): void {
-    window.localStorage.setItem('players', JSON.stringify(players));
+    window.localStorage.setItem(this.entity, JSON.stringify(players));
     this.playersSubject.next(players);
   }
 }

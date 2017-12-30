@@ -1,6 +1,6 @@
-import { BaseModel } from './base-model';
+import { Entity } from './entity';
 
-export class Player extends BaseModel {
+export class Player extends Entity {
   color: number;
   playing: boolean;
   name: string;
