@@ -15,6 +15,7 @@ export class BaseListComponent implements OnInit {
   deletePopin = false;
   conquerPopin = false;
   newBase: Base;
+  conqueringBase: Base;
   MAX_BASES: number = MAX_PLAYERS + 1;
 
   constructor(
@@ -35,6 +36,7 @@ export class BaseListComponent implements OnInit {
   }
 
   conquerClicked(base: Base) {
+    this.conqueringBase = base;
     if (base.resistance > 0) {
       this.conquerPopin = true;
     } else {
@@ -57,6 +59,6 @@ export class BaseListComponent implements OnInit {
   }
 
   conquerBase(base) {
-
+    this.baseService.conquer(base);
   }
 }

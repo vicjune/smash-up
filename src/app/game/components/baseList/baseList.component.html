@@ -14,5 +14,5 @@
 <app-popin [(modal)]="deletePopin" [title]="'DELETE_BASE_PROMPT' | translate" [buttons]="[{text: 'CANCEL' | translate, secondary: true}, {text: 'DELETE' | translate, danger: true}]" (buttonPressed)="deleteBase($event)">
 </app-popin>
 
-<app-popin [(modal)]="conquerPopin" [title]="base ? ('CONQUER_BASE_PROMPT' | translate: {baseResistance: base.resistance}) : ''" [buttons]="[{text: 'CANCEL' | translate, secondary: true}, {text: 'CONQUER' | translate, danger: true}]" (buttonPressed)="conquerBase($event)">
+<app-popin [(modal)]="conquerPopin" [title]="base ? ('CONQUER_BASE_PROMPT' | translate: {baseResistance: conqueringBase.resistance}) : ''" [buttons]="[{text: 'CANCEL' | translate, secondary: true}, {text: 'CONQUER' | translate, danger: true}]" (buttonPressed)="conquerBase($event)">
 </app-popin>

@@ -31,24 +31,60 @@ export class BaseService extends EntityService {
     }
   }
 
+  conquer(base: Base): void {
+    const sortedScores = base.scores.map(score => {
+      return {
+        playerId: score.playerId,
+        totalScore: score.score + score.scoreModifier
+      };
+    }).sort((scoreA, scoreB) => {
+      return scoreA.totalScore - scoreB.totalScore;
+    }).map((score, index, array) => {
+      let reward = 0;
+      if (index === 0) {
+        reward = base.rewards[index];
+      } else if (index < 3) {
+        if (score.totalScore === array[index - 1].totalScore) {
+          reward = base.rewards[index - 1];
+
+          if (index === 2 && score.totalScore === array[index - 2].totalScore) {
+            reward = base.rewards[index - 2];
+          }
+        } else {
+          reward = base.rewards[index];
+        }
+      }
+
+      return {
+        id: score.playerId,
+        score: score.totalScore,
+        reward: reward
+      };
+    });
+
+    sortedScores.forEach(score => {
+      this.playerService.updateScore(score.reward, score.id);
+    });
+  }
+
   private updateScores(players): void {
     const bases = this.entitiesSubject.getValue() as Base[];
     const playerIds = players.map(player => player.id);
 
     for (const base of bases) {
       const basePlayerIds = base.scores.map(score => score.playerId);
-      const playerMissingIds = this.arrayDiff(playerIds, basePlayerIds);
+      // const playerMissingIds = this.arrayDiff(playerIds, basePlayerIds);
       const playerSurplusIds = this.arrayDiff(basePlayerIds, playerIds);
 
-      if (playerMissingIds.length > 0) {
-        for (const playerMissingId of playerMissingIds) {
-          base.scores.push({
-            playerId: playerMissingId,
-            score: 0,
-            scoreModifier: 0
-          });
-        }
-      }
+      // if (playerMissingIds.length > 0) {
+      //   for (const playerMissingId of playerMissingIds) {
+      //     base.scores.push({
+      //       playerId: playerMissingId,
+      //       score: 0,
+      //       scoreModifier: 0
+      //     });
+      //   }
+      // }
 
       if (playerSurplusIds.length > 0) {
         for (const playerSurplusId of playerSurplusIds) {
