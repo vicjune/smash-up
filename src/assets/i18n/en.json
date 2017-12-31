@@ -1,4 +1,12 @@
 {
   "ADD_PLAYER": "Add player",
-  "RESET_GAME": "Reset game"
+  "RESET_GAME": "Reset game",
+  "NEW_PLAYER": "New player",
+  "CANCEL": "Cancel",
+  "ADD": "Add",
+  "PLAYER_NAME": "Player name",
+  "REMOVE_PROMPT": "Do you want to remove {{playerName}} from the game ?",
+  "REMOVE": "Remove",
+  "RESET_PROMPT": "Do you want to reset the game ?",
+  "RESET": "Reset"
 }

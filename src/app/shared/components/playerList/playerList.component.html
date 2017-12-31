@@ -16,6 +16,6 @@
   </button>
 </div>
 
-<app-popin [(modal)]="addPopin" title="New player" [buttons]="[{text: 'Cancel', secondary: true}, {text: 'Add', disabled: newPlayerName.length === 0}]" (buttonPressed)="addPlayer($event)">
-  <input class="addPopin__input" type="text" placeholder="Player name" [(ngModel)]="newPlayerName" #input (keydown.enter)="addPlayer(1)">
+<app-popin [(modal)]="addPopin" [title]="'NEW_PLAYER' | translate" [buttons]="[{text: 'CANCEL' | translate, secondary: true}, {text: 'ADD' | translate, disabled: newPlayerName.length === 0}]" (buttonPressed)="addPlayer($event)">
+  <input class="addPopin__input" type="text" [placeholder]="'PLAYER_NAME' | translate" [(ngModel)]="newPlayerName" #input (keydown.enter)="addPlayer(1)">
 </app-popin>

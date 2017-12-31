@@ -17,6 +17,6 @@
   </div>
 </div>
 
-<app-popin [(modal)]="deletePopin" [title]="removedPlayer ? ('Do you want to remove ' + removedPlayer.name + ' from the game ?') : ''" [buttons]="[{text: 'Cancel', secondary: true}, {text: 'Remove', danger: true}]" (buttonPressed)="callbackDelete($event)"></app-popin>
+<app-popin [(modal)]="deletePopin" [title]="removedPlayer ? ('REMOVE_PROMPT'| translate: {playerName: removedPlayer.name}) : ''" [buttons]="[{text: 'CANCEL' | translate, secondary: true}, {text: 'REMOVE' | translate, danger: true}]" (buttonPressed)="callbackDelete($event)"></app-popin>
 
-<app-popin [(modal)]="resetPopin" title="Do you want to reset the game ?" [buttons]="[{text: 'Cancel', secondary: true}, {text: 'Reset', danger: true}]" (buttonPressed)="callbackReset($event)"></app-popin>
+<app-popin [(modal)]="resetPopin" [title]="'RESET_PROMPT' | translate" [buttons]="[{text: 'CANCEL' | translate, secondary: true}, {text: 'RESET' | translate, danger: true}]" (buttonPressed)="callbackReset($event)"></app-popin>

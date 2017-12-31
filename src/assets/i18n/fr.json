@@ -1,4 +1,12 @@
 {
   "ADD_PLAYER": "Ajouter un joueur",
-  "RESET_GAME": "Nouveau jeu"
+  "RESET_GAME": "Nouveau jeu",
+  "NEW_PLAYER": "Nouveau joueur",
+  "CANCEL": "Annuler",
+  "ADD": "Ajouter",
+  "PLAYER_NAME": "Nom du joueur",
+  "REMOVE_PROMPT": "Voulez-vous retirer {{playerName}} du jeu ?",
+  "REMOVE": "Retirer",
+  "RESET_PROMPT": "Voulez-vous réinitialiser le jeu ?",
+  "RESET": "Réinitialiser"
 }
