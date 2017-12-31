@@ -36,7 +36,7 @@ export class EntityService {
     this.update(entities);
   }
 
-  resetGame(): void {
+  reset(): void {
     this.update([]);
   }
 

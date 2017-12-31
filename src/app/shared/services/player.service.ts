@@ -71,10 +71,22 @@ export class PlayerService extends EntityService {
 
   updateScore(modifier: number, id: string): void {
     const players = this.entitiesSubject.getValue() as Player[];
-    const playerIndex = players.map(player => player.id).indexOf(id);
-    if (playerIndex !== -1 && players[playerIndex].score + modifier >= 0) {
-      players[playerIndex].score = players[playerIndex].score + modifier;
+    const player = this.get(id).entity as Player;
+    if (player) {
+      if (player.score + modifier >= 0) {
+        players[this.get(id).index].score = player.score + modifier;
+      } else {
+        players[this.get(id).index].score = 0;
+      }
     }
     this.update(players);
+  }
+
+  reset(): void {
+    const players = this.entitiesSubject.getValue() as Player[];
+    this.update(players.map(player => {
+      player.score = 0;
+      return player;
+    }));
   }
 }

@@ -49,8 +49,8 @@ export class MenuComponent implements OnInit {
 
   callbackReset(index: number) {
     if (index === 1) {
-      this.playerService.resetGame();
-      this.baseService.resetGame();
+      this.playerService.reset();
+      this.baseService.reset();
     }
   }
 
