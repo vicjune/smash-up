@@ -63,7 +63,7 @@ export class BaseService extends EntityService {
     });
 
     sortedScores.forEach(score => {
-      this.playerService.updateScore(score.reward, score.id);
+      this.playerService.updateScore(score.reward, score.id, true);
     });
   }
 

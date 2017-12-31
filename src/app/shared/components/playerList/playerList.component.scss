@@ -61,7 +61,9 @@
 
         .playerList__player__score {
           color: $color;
+        }
 
+        .playerList__player__score__score {
           &.underscore:after {
             background-color: $color;
           }
@@ -114,23 +116,42 @@
         transform: rotate(180deg);
       }
 
-      &.underscore {
-        &:after {
-          content: '';
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          height: 2px;
-          transition: background-color 0.5s;
+      .playing & {
+        color: white !important;
+      }
+
+      &__score {
+        position: relative;
+
+        .playing & {
+          &:after {
+            background-color: white !important;
+          }
+        }
+
+        &.underscore {
+          &:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            transition: background-color 0.5s;
+          }
         }
       }
 
-      .playing & {
-        color: white !important;
+      &__modifier {
+        display: inline-block;
+        opacity: 0;
+        animation-duration: 0.4s;
+        animation-fill-mode: forwards;
+        animation-name: disappearToLeft;
 
-        &:after {
-          background-color: white !important;
+        &.displayed {
+          opacity: 0.6;
+          animation-name: appearFromRight;
         }
       }
     }
@@ -177,5 +198,29 @@
       display: block;
       margin-top: 15px;
     }
+  }
+}
+
+@keyframes appearFromRight {
+  0% {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+
+  100% {
+    opacity: 0.6;
+    transform: translateX(0);
+  }
+}
+
+@keyframes disappearToLeft {
+  0% {
+    opacity: 0.6;
+    transform: translateX(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(-20px);
   }
 }

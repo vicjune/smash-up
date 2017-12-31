@@ -2,8 +2,18 @@
   <div *ngFor="let player of (playerService.bind() | async)" [class]="'playerList__player playerList__element color-' + (player.color + 1)" [ngClass]="{'playing': player.playing}">
     <button class="playerList__player__button" (click)="selectPlayer(player.id)">
       <div class="playerList__player__name">{{player.name}}</div>
-      <div class="playerList__player__score" [ngClass]="{'underscore': player.score === 6 || player.score === 9}">{{player.score}}</div>
-      <div class="playerList__player__score upsideDown" [ngClass]="{'underscore': player.score === 6 || player.score === 9}">{{player.score}}</div>
+      <div class="playerList__player__score">
+        <span class="playerList__player__score__score" [ngClass]="{'underscore': player.score === 6 || player.score === 9}">{{player.score}}</span>
+        <span class="playerList__player__score__modifier" *ngIf="player.scoreModifier !== 0" [ngClass]="{'displayed': player.scoreModifierDisplay}">
+          <span *ngIf="player.scoreModifier > 0">+</span>{{player.scoreModifier}}
+        </span>
+      </div>
+      <div class="playerList__player__score upsideDown">
+        <span class="playerList__player__score__score" [ngClass]="{'underscore': player.score === 6 || player.score === 9}">{{player.score}}</span>
+        <span class="playerList__player__score__modifier" *ngIf="player.scoreModifier !== 0" [ngClass]="{'displayed': player.scoreModifierDisplay}">
+          <span *ngIf="player.scoreModifier > 0">+</span>{{player.scoreModifier}}
+        </span>
+      </div>
     </button>
     <div class="playerList__player__valueButtons">
       <button class="playerList__player__valueButton" (click)="increaseScore(player.id)"><i class="icon-plus"></i></button>
