@@ -14,6 +14,10 @@
       <i class="icon-bin2"></i>
       <span>{{player.name}}</span>
     </button>
+    <button class="menu__wrapper__button menu__wrapper__addPlayer" (click)="addPlayerClicked()" *ngIf="(playerService.bind() | async).length < MAX_PLAYERS">
+      <i class="icon-plus"></i>
+      <span>{{'ADD_PLAYER' | translate}}</span>
+    </button>
   </div>
 </div>
 

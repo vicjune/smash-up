@@ -1,5 +1,7 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+
 import { PlayerService } from '../../services/player.service';
+import { BaseService } from '@shared/services/base.service';
 import { Player } from '../../models/player';
 import { MAX_PLAYERS } from '../../constants';
 
@@ -10,30 +12,18 @@ import { MAX_PLAYERS } from '../../constants';
 })
 export class PlayerListComponent implements OnInit {
   MAX_PLAYERS: number = MAX_PLAYERS;
-  addPopin = false;
-  newPlayerName = '';
 
-  @ViewChild('input') addInput: ElementRef;
+  @Output('addPlayer') addPlayer = new EventEmitter<void>();
 
   constructor(
     public playerService: PlayerService,
+    public baseService: BaseService,
   ) { }
 
   ngOnInit() {}
 
   addPlayerClicked() {
-    this.newPlayerName = '';
-    this.addPopin = true;
-    setTimeout(() => {
-      this.addInput.nativeElement.focus();
-    });
-  }
-
-  addPlayer(index: number) {
-    this.addPopin = false;
-    if (index === 1) {
-      this.playerService.add(new Player(this.newPlayerName));
-    }
+    this.addPlayer.emit();
   }
 
   selectPlayer(id) {

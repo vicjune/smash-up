@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+
+import { Player } from '@shared/models/player';
+import { PlayerService } from '@shared/services/player.service';
 
 @Component({
   selector: 'app-game',
@@ -6,10 +9,30 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./game.component.scss']
 })
 export class GameComponent implements OnInit {
+  addPopin = false;
+  newPlayerName = '';
 
-  constructor() { }
+  @ViewChild('input') addInput: ElementRef;
+
+  constructor(
+    public playerService: PlayerService
+  ) { }
 
   ngOnInit() {
   }
 
+  addPlayerClicked() {
+    this.newPlayerName = '';
+    this.addPopin = true;
+    setTimeout(() => {
+      this.addInput.nativeElement.focus();
+    });
+  }
+
+  addPlayer(index: number) {
+    this.addPopin = false;
+    if (index === 1) {
+      this.playerService.add(new Player(this.newPlayerName));
+    }
+  }
 }

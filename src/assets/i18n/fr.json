@@ -8,5 +8,12 @@
   "REMOVE_PROMPT": "Voulez-vous retirer {{playerName}} du jeu ?",
   "REMOVE": "Retirer",
   "RESET_PROMPT": "Voulez-vous réinitialiser le jeu ?",
-  "RESET": "Réinitialiser"
+  "RESET": "Réinitialiser",
+  "NEW_BASE": "Nouvelle base",
+  "REMOVE_BASE_PROMPT": "Voulez-vous retirer cette base (sans la conquérir) ?",
+  "CONQUER_BASE_PROMPT": "Cette base possède encore {{baseResistance}} points. Voulez-vous forcer la conquète ?",
+  "CONQUER": "Conquérir",
+  "CONQUEST": "Conquète",
+  "FORCE_CONQUEST": "Forcer la conquète",
+  "ADD_BASE": "Ajouter une base"
 }

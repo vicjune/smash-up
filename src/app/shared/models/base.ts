@@ -3,6 +3,7 @@ import { Entity } from './entity';
 export class Base extends Entity {
   color: number;
   resistance: number;
+  maxResistance: number;
   scores: {playerId: string, score: number, scoreModifier: number}[];
   rewards: number[];
 
@@ -10,7 +11,8 @@ export class Base extends Entity {
     super();
     this.scores = [];
     this.color = color;
-    this.resistance = resistance;
+    this.maxResistance = resistance;
+    this.resistance = this.maxResistance;
     this.rewards = rewards;
   }
 }

@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs/Rx';
 
 import { PlayerService } from '../../services/player.service';
 import { Player } from '../../models/player';
 import { BaseService } from '@shared/services/base.service';
+import { MAX_PLAYERS } from '@shared/constants';
 
 @Component({
   selector: 'app-menu',
@@ -17,6 +18,9 @@ export class MenuComponent implements OnInit {
   resetPopin = false;
   removedPlayer: Player;
   language: string;
+  MAX_PLAYERS: number = MAX_PLAYERS;
+
+  @Output('addPlayer') addPlayer = new EventEmitter<void>();
 
   constructor(
     public playerService: PlayerService,
@@ -28,6 +32,11 @@ export class MenuComponent implements OnInit {
     this.translate.onLangChange.subscribe(event => {
       this.language = event.lang;
     });
+  }
+
+  addPlayerClicked() {
+    this.addPlayer.emit();
+    this.menuOpen = false;
   }
 
   deletePlayerClicked(player: Player) {

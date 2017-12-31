@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 
 import { BaseService } from '@shared/services/base.service';
+import { PlayerService } from '@shared/services/player.service';
 import { Base } from '@shared/models/base';
+import { MAX_PLAYERS } from '@shared/constants';
 
 @Component({
   selector: 'app-base-list',
@@ -10,18 +12,34 @@ import { Base } from '@shared/models/base';
 })
 export class BaseListComponent implements OnInit {
   addPopin = false;
+  deletePopin = false;
+  conquerPopin = false;
   newBase: Base;
+  MAX_BASES: number = MAX_PLAYERS + 1;
 
   constructor(
-    public baseService: BaseService
+    public baseService: BaseService,
+    public playerService: PlayerService,
   ) { }
 
   ngOnInit() {
   }
 
-  addBaseClicked() {
+  addClicked() {
     this.newBase = new Base(0, 0, [0, 0, 0]);
     this.addPopin = true;
+  }
+
+  deleteClicked(base: Base) {
+    this.deletePopin = true;
+  }
+
+  conquerClicked(base: Base) {
+    if (base.resistance > 0) {
+      this.conquerPopin = true;
+    } else {
+      this.conquerBase(base);
+    }
   }
 
   addBase(index) {
@@ -32,5 +50,13 @@ export class BaseListComponent implements OnInit {
 
   editBase(base) {
     this.baseService.edit(base);
+  }
+
+  deleteBase(base) {
+    this.baseService.delete(base.id);
+  }
+
+  conquerBase(base) {
+
   }
 }
