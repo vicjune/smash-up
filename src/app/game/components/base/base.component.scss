@@ -4,6 +4,7 @@
   position: absolute;
   top: 30px;
   left: 40px;
+  user-select: none;
 
   &.editMode {
     position: static;
@@ -61,12 +62,20 @@
     }
 
     &__rewards {
+      padding: 0 20px;
+      width: 100%;
+      display: flex;
+
       &__reward {
         display: inline-block;
+        position: relative;
         font-size: 100px;
         @include color($baseColors, color);
-        margin-right: 40px;
         padding-bottom: 8px;
+        flex-basis: 55px;
+        flex-grow: 1;
+        flex-shrink: 0;
+        text-align: center;
 
         &:nth-child(2) {
           @include color($baseColors, color, 20);
@@ -75,6 +84,28 @@
         &:last-child:last-child {
           margin-right: 0;
           color: white;
+        }
+
+        &__button {
+          color: inherit;
+          font-size: 30px;
+          position: absolute;
+          top: -40px;
+          left: 50%;
+          transform: translateX(-50%);
+
+          &.minus {
+            top: auto;
+            bottom: -40px;
+          }
+
+          &[disabled] {
+            opacity: 0.3;
+          }
+
+          &:active {
+            opacity: 0.5;
+          }
         }
       }
     }

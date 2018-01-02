@@ -7,12 +7,12 @@ export class Base extends Entity {
   scores: {playerId: string, score: number, scoreModifier: number}[];
   rewards: number[];
 
-  constructor(resistance: number, rewards: number[], color: number) {
+  constructor(color: number) {
     super();
     this.scores = [];
     this.color = color;
-    this.maxResistance = resistance;
+    this.maxResistance = 20;
     this.resistance = this.maxResistance;
-    this.rewards = rewards;
+    this.rewards = [0, 0, 0];
   }
 }

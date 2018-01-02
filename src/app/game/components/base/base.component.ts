@@ -2,6 +2,7 @@ import { Component, OnInit, Input, forwardRef } from '@angular/core';
 import {FormControl, ControlValueAccessor, NG_VALUE_ACCESSOR, NG_VALIDATORS} from '@angular/forms';
 
 import { Base } from '@shared/models/base';
+import { BASE_REWARD_LIMITS } from '@shared/constants';
 
 @Component({
   selector: 'app-base',
@@ -14,6 +15,8 @@ import { Base } from '@shared/models/base';
 })
 export class BaseComponent implements OnInit, ControlValueAccessor {
   @Input() editMode = false;
+
+  BASE_REWARD_LIMITS = BASE_REWARD_LIMITS;
 
   private _base: Base;
   get base() {
@@ -29,6 +32,18 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
   constructor() { }
 
   ngOnInit() {
+  }
+
+  increaseReward(index) {
+    if (this.base.rewards[index] < BASE_REWARD_LIMITS[1]) {
+      this.base.rewards[index] ++;
+    }
+  }
+
+  decreaseReward(index) {
+    if (this.base.rewards[index] > BASE_REWARD_LIMITS[0]) {
+      this.base.rewards[index] --;
+    }
   }
 
   writeValue(value) {

@@ -27,7 +27,7 @@ export class BaseListComponent implements OnInit {
   }
 
   addClicked() {
-    this.newBase = new Base(0, [0, 0, 0], this.baseService.getNewColor());
+    this.newBase = new Base(this.baseService.getNewColor());
     this.addPopin = true;
   }
 

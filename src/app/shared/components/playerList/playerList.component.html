@@ -16,8 +16,8 @@
       </div>
     </button>
     <div class="playerList__player__valueButtons">
-      <button class="playerList__player__valueButton" (click)="increaseScore(player.id)"><i class="icon-plus"></i></button>
-      <button class="playerList__player__valueButton" (click)="decreaseScore(player.id)" [disabled]="player.score === 0"><i class="icon-minus"></i></button>
+      <button class="playerList__player__valueButton" (click)="increaseScore(player.id)"><i class="icon-plus-square"></i></button>
+      <button class="playerList__player__valueButton" (click)="decreaseScore(player.id)" [disabled]="player.score === 0"><i class="icon-minus-square"></i></button>
     </div>
   </div>
   <button class="playerList__button playerList__element" (click)="addPlayerClicked()" *ngIf="(playerService.bind() | async).length < MAX_PLAYERS && ((baseService.bind() | async).length === 0 || (playerService.bind() | async).length < 2)">

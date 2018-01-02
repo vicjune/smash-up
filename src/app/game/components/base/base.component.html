@@ -1,15 +1,23 @@
 <div *ngIf="base" [class]="'base color-' + base.color" [ngClass]="{'editMode': editMode, 'conquered': base.resistance <= 0}">
   <div class="base__card">
-    <div class="base__card__resistance">
-      <span class="base__card__resistance__current">{{base.resistance}}</span>
-      <span class="base__card__resistance__max" [ngClass]="{'displayed': base.resistance < base.maxResistance}">/{{base.maxResistance}}</span>
-    </div>
-    <div class="base__card__resistance upsideDown">
-      <span class="base__card__resistance__current">{{base.resistance}}</span>
-      <span class="base__card__resistance__max" [ngClass]="{'displayed': base.resistance < base.maxResistance}">/{{base.maxResistance}}</span>
-    </div>
+    <ng-container *ngIf="!editMode">
+      <div class="base__card__resistance">
+        <span class="base__card__resistance__current">{{base.resistance}}</span>
+        <span class="base__card__resistance__max" [ngClass]="{'displayed': base.resistance < base.maxResistance}">/{{base.maxResistance}}</span>
+      </div>
+      <div class="base__card__resistance upsideDown">
+        <span class="base__card__resistance__current">{{base.resistance}}</span>
+        <span class="base__card__resistance__max" [ngClass]="{'displayed': base.resistance < base.maxResistance}">/{{base.maxResistance}}</span>
+      </div>
+    </ng-container>
     <div class="base__card__rewards">
-      <span class="base__card__rewards__reward" *ngFor="let reward of base.rewards">{{reward}}</span>
+      <span class="base__card__rewards__reward" *ngFor="let reward of base.rewards; let i = index">
+        {{reward}}
+        <ng-container *ngIf="editMode">
+          <button class="base__card__rewards__reward__button plus" [disabled]="reward >= BASE_REWARD_LIMITS[1]" (click)="increaseReward(i)"><i class="icon-plus-square"></i></button>
+          <button class="base__card__rewards__reward__button minus" [disabled]="reward <= BASE_REWARD_LIMITS[0]" (click)="decreaseReward(i)"><i class="icon-minus-square"></i></button>
+        </ng-container>
+      </span>
     </div>
   </div>
 </div>

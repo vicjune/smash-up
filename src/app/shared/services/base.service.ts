@@ -20,8 +20,12 @@ export class BaseService extends EntityService {
     }
 
     this.playerService.bind().subscribe(players => {
-      this.updateScores(players);
+      this.removeDeletedPlayers(players);
     });
+  }
+
+  bind(): Observable<Base[]> {
+    return super.bind().map(entities => entities.map(entity => entity as Base));
   }
 
   add(base: Base): void {
@@ -29,6 +33,10 @@ export class BaseService extends EntityService {
     if (bases.length < MAX_PLAYERS + 1) {
       super.add(base);
     }
+  }
+
+  edit(base: Base) {
+    super.edit(base);
   }
 
   conquer(base: Base): void {
@@ -67,7 +75,7 @@ export class BaseService extends EntityService {
     });
   }
 
-  private updateScores(players): void {
+  private removeDeletedPlayers(players): void {
     const bases = this.entitiesSubject.getValue() as Base[];
     const playerIds = players.map(player => player.id);
 

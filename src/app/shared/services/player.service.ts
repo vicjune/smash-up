@@ -17,6 +17,10 @@ export class PlayerService extends EntityService {
     }
   }
 
+  bind(): Observable<Player[]> {
+    return super.bind().map(entities => entities.map(entity => entity as Player));
+  }
+
   bindPlayerPlaying(): Observable<Player> {
     return this.bind().map(players => {
       for (const player of players) {
