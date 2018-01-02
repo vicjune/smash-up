@@ -1,13 +1,19 @@
-<div *ngIf="base" [class]="'base color-' + base.color" [ngClass]="{'editMode': editMode, 'conquered': base.resistance <= 0}">
-  <div class="base__card">
+<div *ngIf="base" [class]="'base color-' + base.color" [ngClass]="{'detailsMode': detailsMode, 'editMode': editMode, 'conquered': base.resistance <= 0}" [ngStyle]="{'transform': getTransform(), 'left': base.position.x + '%', 'top': base.position.y + '%'}">
+  <div class="base__resistanceEdit" *ngIf="editMode">
+    <span class="base__resistanceEdit__label">{{'BASE_RESISTANCE' | translate}}</span>
+    <button class="base__resistanceEdit__button minus" [disabled]="base.maxResistance <= 0" (click)="decreaseResistance()"><i class="icon-minus-square"></i></button>
+    <span class="base__resistanceEdit__value">{{base.maxResistance}}</span>
+    <button class="base__resistanceEdit__button plus" [disabled]="base.maxResistance >= BASE_MAX_RESISTANCE" (click)="increaseResistance()"><i class="icon-plus-square"></i></button>
+  </div>
+  <div class="base__card" (click)="seeMoreDetails()">
     <ng-container *ngIf="!editMode">
       <div class="base__card__resistance">
         <span class="base__card__resistance__current">{{base.resistance}}</span>
-        <span class="base__card__resistance__max" [ngClass]="{'displayed': base.resistance < base.maxResistance}">/{{base.maxResistance}}</span>
+        <span class="base__card__resistance__max" [ngClass]="{'displayed': base.resistance !== base.maxResistance}">/{{base.maxResistance}}</span>
       </div>
       <div class="base__card__resistance upsideDown">
         <span class="base__card__resistance__current">{{base.resistance}}</span>
-        <span class="base__card__resistance__max" [ngClass]="{'displayed': base.resistance < base.maxResistance}">/{{base.maxResistance}}</span>
+        <span class="base__card__resistance__max" [ngClass]="{'displayed': base.resistance !== base.maxResistance}">/{{base.maxResistance}}</span>
       </div>
     </ng-container>
     <div class="base__card__rewards">
@@ -20,4 +26,9 @@
       </span>
     </div>
   </div>
+  <div class="base__colorEdit" *ngIf="editMode">
+    <button [class]="'base__colorEdit__color color-' + color" *ngFor="let color of (bindAvailableColors() | async)" (click)="chooseColor(color)"></button>
+  </div>
 </div>
+
+<div class="base__backdrop" [ngClass]="{'visible': detailsMode}" (click)="exitMoreDetails()"></div>

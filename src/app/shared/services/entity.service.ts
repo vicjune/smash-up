@@ -41,12 +41,23 @@ export class EntityService {
   }
 
   getNewColor(): number {
-    const existingItems = this.entitiesSubject.getValue() as any;
+    const existingItems = this.entitiesSubject.getValue();
     for (let index = 1; index < 99; index++) {
       if (existingItems.map(item => item.color).indexOf(index) === -1) {
         return index;
       }
     }
+  }
+
+  bindAvailableColors(length: number): Observable<number[]> {
+    return this.bind().map(entities => {
+      const takenColors = entities.map(entity => entity.color);
+      const allColors = [];
+      for (let index = 1; index < length + 1; index++) {
+        allColors[index] = index;
+      }
+      return this.arrayDiff(allColors, takenColors);
+    });
   }
 
   protected get(id: string): {entity: Entity, index: number} {

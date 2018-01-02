@@ -1,5 +1,6 @@
 export class Entity {
   id: string;
+  color: number;
 
   constructor() {
     this.id = this.generateUuid();

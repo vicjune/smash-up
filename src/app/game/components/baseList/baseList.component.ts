@@ -11,10 +11,10 @@ import { MAX_PLAYERS } from '@shared/constants';
   styleUrls: ['./baseList.component.scss']
 })
 export class BaseListComponent implements OnInit {
-  addPopin = false;
+  // addPopin = false;
   deletePopin = false;
   conquerPopin = false;
-  newBase: Base;
+  newBase = false;
   conqueringBase: Base;
   MAX_BASES: number = MAX_PLAYERS + 1;
 
@@ -24,11 +24,6 @@ export class BaseListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-  }
-
-  addClicked() {
-    this.newBase = new Base(this.baseService.getNewColor());
-    this.addPopin = true;
   }
 
   deleteClicked(base: Base) {
@@ -44,10 +39,9 @@ export class BaseListComponent implements OnInit {
     }
   }
 
-  addBase(index) {
-    if (index === 1) {
-      this.baseService.add(this.newBase);
-    }
+  addBase() {
+    this.newBase = true;
+    this.baseService.add(new Base());
   }
 
   editBase(base) {

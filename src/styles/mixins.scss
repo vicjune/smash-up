@@ -3,8 +3,8 @@
   @each $color in $colorArray {
     $i: index($colorArray, $color);
 
-    &.color-#{$i},
-    .color-#{$i} & {
+    .color-#{$i} &,
+    &.color-#{$i}.color-#{$i}.color-#{$i} {
       @if ($property != 'background-gradient') {
         #{$property}: transparentize($color, 1 - $opacity);
 

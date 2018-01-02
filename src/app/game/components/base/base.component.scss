@@ -1,13 +1,47 @@
 @import 'styles';
 
 .base {
-  position: absolute;
+  position: fixed;
   top: 30px;
   left: 40px;
   user-select: none;
+  transition: left 0.5s, top 0.5s, transform 0.5s, z-index 0s ease 0.5s;
 
-  &.editMode {
-    position: static;
+  &.detailsMode {
+    z-index: 5;
+    top: 50% !important;
+    left: 50% !important;
+    transition: left 0.5s, top 0.5s, transform 0.5s;
+  }
+
+  &__resistanceEdit {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    color: white;
+
+    &__label {
+      margin-right: auto;
+      font-size: 20px;
+    }
+
+    &__value {
+      font-size: 40px;
+      margin: 0 8px;
+      flex-basis: 45px;
+      flex-shrink: 0;
+      flex-grow: 0;
+      text-align: center;
+    }
+
+    &__button {
+      font-size: 30px;
+      color: white;
+
+      &:active {
+        opacity: 0.5;
+      }
+    }
   }
 
   &__card {
@@ -21,6 +55,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+
+    .detailsMode & {
+      cursor: default;
+    }
 
     .conquered:not(.editMode) & {
       &:before {
@@ -40,6 +79,7 @@
       top: 10px;
       left: 15px;
       font-size: 40px;
+      line-height: 40px;
       color: white;
       @include color($baseColors, color);
 
@@ -70,6 +110,7 @@
         display: inline-block;
         position: relative;
         font-size: 100px;
+        line-height: 100px;
         @include color($baseColors, color);
         padding-bottom: 8px;
         flex-basis: 55px;
@@ -108,6 +149,46 @@
           }
         }
       }
+    }
+  }
+
+  &__colorEdit {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    width: 300px;
+
+    &__color {
+      height: 30px;
+      width: 30px;
+      border-radius: 5px;
+      border: 1px solid white;
+      margin: 0 10px 10px;
+      @include color($baseColors, background-color);
+
+      &:active:active:active {
+        background-color: white;
+      }
+    }
+  }
+
+  &__backdrop {
+    position: fixed;
+    z-index: 4;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: black;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.5s, visibility 0s ease 0.5s;
+
+    &.visible {
+      opacity: 0.5;
+      visibility: visible;
+      transition: opacity 0.5s;
     }
   }
 }

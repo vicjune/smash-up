@@ -31,6 +31,7 @@ export class BaseService extends EntityService {
   add(base: Base): void {
     const bases = this.entitiesSubject.getValue();
     if (bases.length < MAX_PLAYERS + 1) {
+      base.color = this.getNewColor();
       super.add(base);
     }
   }

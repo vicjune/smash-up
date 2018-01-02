@@ -1,15 +1,11 @@
 <div class="baseList">
-  <app-base *ngFor="let base of (baseService.bind() | async)" [ngModel]="base" (ngModelChange)="editBase($event)" (delete)="deleteClicked(base)" (conquer)="conquerClicked(base)"></app-base>
+  <app-base *ngFor="let base of (baseService.bind() | async)" [ngModel]="base" (ngModelChange)="editBase($event)" (delete)="deleteClicked(base)" (conquer)="conquerClicked(base)" [newBase]="newBase"></app-base>
 
-  <button (click)="addClicked()" class="baseList__addButton" *ngIf="(playerService.bind() | async).length > 1 && (baseService.bind() | async).length < MAX_BASES">
+  <button (click)="addBase()" class="baseList__addButton" *ngIf="(playerService.bind() | async).length > 1 && (baseService.bind() | async).length < MAX_BASES">
     <i class="icon-plus"></i>
     <span class="baseList__addButton__label">{{'ADD_BASE' | translate}}</span>
   </button>
 </div>
-
-<app-popin [(modal)]="addPopin" [title]="'NEW_BASE' | translate" [buttons]="[{text: 'CANCEL' | translate, secondary: true}, {text: 'ADD' | translate}]" (buttonPressed)="addBase($event)">
-  <app-base [(ngModel)]="newBase" [editMode]="true"></app-base>
-</app-popin>
 
 <app-popin [(modal)]="deletePopin" [title]="'DELETE_BASE_PROMPT' | translate" [buttons]="[{text: 'CANCEL' | translate, secondary: true}, {text: 'DELETE' | translate, danger: true}]" (buttonPressed)="deleteBase($event)">
 </app-popin>
