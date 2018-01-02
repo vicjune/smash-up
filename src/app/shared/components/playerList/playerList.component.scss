@@ -24,56 +24,17 @@
 
   &__player {
     border: 5px solid white;
-    background-color: white;
     position: relative;
     box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
     transition: all 0.5s;
+    @include color($playerColors, border-color);
+    background-color: rgba(0, 0, 0, 0.4);
 
     &.playing {
       box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
-      border-color: white !important;
-      background-color: transparent !important;
-
-      &:before {
-        opacity: 0.7 !important;
-      }
-    }
-
-    @each $color in $playerColors {
-      $i: index($playerColors, $color);
-
-      &.color-#{$i} {
-        border-color: $color;
-        background-color: rgba(0, 0, 0, 0.582);
-
-        &:before {
-          content: '';
-          position: absolute;
-          z-index: -1;
-          background-color: $color;
-          top: 0;
-          left: 0;
-          bottom: 0;
-          right: 0;
-          opacity: 0.2;
-          transition: opacity 0.5s;
-        }
-
-        .playerList__player__score {
-          color: $color;
-        }
-
-        .playerList__player__score__score {
-          &.underscore:after {
-            background-color: $color;
-          }
-        }
-
-        .playerList__player__valueButton {
-          color: $color;
-          border-color: $color;
-        }
-      }
+      border-color: white;
+      background-color: transparent;
+      @include color($playerColors, background-color, -10);
     }
 
     &__button {
@@ -88,7 +49,6 @@
       left: 50%;
       transform: translate(-50%, -50%);
       font-size: 20px;
-      height: 25px;
       white-space: nowrap;
       overflow: hidden;
       color: rgba(255, 255, 255, 0.534);
@@ -104,30 +64,26 @@
     &__score {
       position: absolute;
       top: 5px;
-      left: 14px;
+      left: 10px;
       font-size: 40px;
       transition: color 0.5s;
+      line-height: 40px;
+      @include color($playerColors, color);
 
       &.upsideDown {
         left: auto;
         top: auto;
         bottom: 5px;
-        right: 14px;
+        right: 10px;
         transform: rotate(180deg);
       }
 
       .playing & {
-        color: white !important;
+        color: white;
       }
 
       &__score {
         position: relative;
-
-        .playing & {
-          &:after {
-            background-color: white !important;
-          }
-        }
 
         &.underscore {
           &:after {
@@ -138,6 +94,11 @@
             right: 0;
             height: 2px;
             transition: background-color 0.5s;
+            @include color($playerColors, color);
+
+            .playing & {
+              background-color: white;
+            }
           }
         }
       }
@@ -170,14 +131,17 @@
     &__valueButton {
       height: 30px;
       width: 30px;
-      line-height: 10px;
+      line-height: 22px;
       border-radius: 50%;
       color: white;
       border: 3px solid white;
 
+      @include color($playerColors, color);
+      @include color($playerColors, border-color);
+
       &:active {
-        color: white !important;
-        border-color: white !important;
+        color: white;
+        border-color: white;
       }
 
       &[disabled] {

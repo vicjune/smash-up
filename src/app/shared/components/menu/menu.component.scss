@@ -1,3 +1,5 @@
+@import 'styles';
+
 .menu {
   position: fixed;
   top: 0;
@@ -73,6 +75,10 @@
     &__resetGame {
       border-bottom: 1px solid white;
       margin-bottom: 80px;
+    }
+
+    &__deletePlayer {
+      @include color($playerColors, color, 10);
     }
   }
 }

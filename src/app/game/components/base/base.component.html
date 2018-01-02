@@ -1,9 +1,15 @@
-<div *ngIf="base">
-  <div>
-    {{base.resistance}}
+<div *ngIf="base" [class]="'base color-' + base.color" [ngClass]="{'editMode': editMode, 'conquered': base.resistance <= 0}">
+  <div class="base__card">
+    <div class="base__card__resistance">
+      <span class="base__card__resistance__current">{{base.resistance}}</span>
+      <span class="base__card__resistance__max" [ngClass]="{'displayed': base.resistance < base.maxResistance}">/{{base.maxResistance}}</span>
+    </div>
+    <div class="base__card__resistance upsideDown">
+      <span class="base__card__resistance__current">{{base.resistance}}</span>
+      <span class="base__card__resistance__max" [ngClass]="{'displayed': base.resistance < base.maxResistance}">/{{base.maxResistance}}</span>
+    </div>
+    <div class="base__card__rewards">
+      <span class="base__card__rewards__reward" *ngFor="let reward of base.rewards">{{reward}}</span>
+    </div>
   </div>
-  <div>
-    {{base.rewards[0]}}{{base.rewards[1]}}{{base.rewards[2]}}
-  </div>
-  {{base.scores}}
 </div>

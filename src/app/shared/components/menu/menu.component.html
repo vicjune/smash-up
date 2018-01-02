@@ -10,7 +10,7 @@
       <i class="icon-reload"></i>
       <span>{{'RESET_GAME' | translate}}</span>
     </button>
-    <button class="menu__wrapper__button menu__wrapper__deletePlayer" *ngFor="let player of (playerService.bind() | async)" (click)="deletePlayerClicked(player)">
+    <button [class]="'menu__wrapper__button menu__wrapper__deletePlayer color-' + player.color" *ngFor="let player of (playerService.bind() | async)" (click)="deletePlayerClicked(player)">
       <i class="icon-bin2"></i>
       <span>{{player.name}}</span>
     </button>

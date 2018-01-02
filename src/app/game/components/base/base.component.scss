@@ -1,0 +1,82 @@
+@import 'styles';
+
+.base {
+  position: absolute;
+  top: 30px;
+  left: 40px;
+
+  &.editMode {
+    position: static;
+  }
+
+  &__card {
+    position: relative;
+    background-color: rgb(70, 20, 20);
+    @include color($baseColors, 'background-gradient');
+    border-radius: 15px;
+    height: 213px;
+    width: 300px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .conquered:not(.editMode) & {
+      &:before {
+        content: '';
+        position: absolute;
+        top: -5px;
+        left: -5px;
+        bottom: -5px;
+        right: -5px;
+        border-radius: 15px;
+        border: 5px solid $danger;
+      }
+    }
+
+    &__resistance {
+      position: absolute;
+      top: 10px;
+      left: 15px;
+      font-size: 40px;
+      color: white;
+      @include color($baseColors, color);
+
+      &.upsideDown {
+        top: auto;
+        left: auto;
+        bottom: 10px;
+        right: 15px;
+        transform: rotate(180deg);
+      }
+
+      &__max {
+        opacity: 0;
+        transition: opacity 0.5s;
+
+        &.displayed {
+          opacity: 0.3;
+        }
+      }
+    }
+
+    &__rewards {
+      &__reward {
+        display: inline-block;
+        font-size: 100px;
+        @include color($baseColors, color);
+        margin-right: 40px;
+        padding-bottom: 8px;
+
+        &:nth-child(2) {
+          @include color($baseColors, color, 20);
+        }
+
+        &:last-child:last-child {
+          margin-right: 0;
+          color: white;
+        }
+      }
+    }
+  }
+}

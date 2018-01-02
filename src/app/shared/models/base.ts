@@ -7,7 +7,7 @@ export class Base extends Entity {
   scores: {playerId: string, score: number, scoreModifier: number}[];
   rewards: number[];
 
-  constructor(color: number, resistance: number, rewards: number[]) {
+  constructor(resistance: number, rewards: number[], color: number) {
     super();
     this.scores = [];
     this.color = color;

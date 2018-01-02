@@ -40,6 +40,15 @@ export class EntityService {
     this.update([]);
   }
 
+  getNewColor(): number {
+    const existingItems = this.entitiesSubject.getValue() as any;
+    for (let index = 1; index < 99; index++) {
+      if (existingItems.map(item => item.color).indexOf(index) === -1) {
+        return index;
+      }
+    }
+  }
+
   protected get(id: string): {entity: Entity, index: number} {
     const entities = this.entitiesSubject.getValue();
     const entityIndex = entities.map(ent => ent.id).indexOf(id);
@@ -60,7 +69,7 @@ export class EntityService {
     this.entitiesSubject.next(entities);
   }
 
-  protected arrayDiff(longArray, shortArray) {
+  protected arrayDiff(longArray: any[], shortArray: any[]): any[] {
     return longArray.filter(i => shortArray.indexOf(i) < 0);
   }
 }

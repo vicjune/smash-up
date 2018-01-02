@@ -44,12 +44,7 @@ export class PlayerService extends EntityService {
   add(player: Player): void {
     const players = this.entitiesSubject.getValue() as Player[];
     if (players.length < MAX_PLAYERS) {
-      for (let index = 0; index < MAX_PLAYERS; index++) {
-        if (players.map(playerFromList => playerFromList.color).indexOf(index) === -1) {
-          player.color = index;
-          break;
-        }
-      }
+      player.color = this.getNewColor();
       if (players.length === 0) {
         player.playing = true;
       }
