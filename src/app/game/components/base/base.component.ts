@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, forwardRef } from '@angular/core';
+import { Component, OnInit, Input, forwardRef, EventEmitter, Output } from '@angular/core';
 import {FormControl, ControlValueAccessor, NG_VALUE_ACCESSOR, NG_VALIDATORS} from '@angular/forms';
 import { Observable } from 'rxjs/Rx';
 
@@ -17,6 +17,8 @@ import { BaseService } from '@shared/services/base.service';
 })
 export class BaseComponent implements OnInit, ControlValueAccessor {
   @Input() newBase: boolean;
+  @Output() delete: EventEmitter<void> = new EventEmitter<void>();
+  @Output() conquer: EventEmitter<void> = new EventEmitter<void>();
 
   editMode = false;
   detailsMode = false;
@@ -52,30 +54,40 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
 
   increaseReward(index) {
     if (this.base.rewards[index] < BASE_REWARD_LIMITS[1]) {
-      this.base.rewards[index] ++;
+      const base = this.base;
+      base.rewards[index] ++;
+      this.base = base;
     }
   }
 
   decreaseReward(index) {
     if (this.base.rewards[index] > BASE_REWARD_LIMITS[0]) {
-      this.base.rewards[index] --;
+      const base = this.base;
+      base.rewards[index] --;
+      this.base = base;
     }
   }
 
   increaseResistance() {
     if (this.base.maxResistance < BASE_MAX_RESISTANCE) {
-      this.base.maxResistance ++;
+      const base = this.base;
+      base.maxResistance ++;
+      this.base = base;
     }
   }
 
   decreaseResistance() {
     if (this.base.maxResistance > 0) {
-      this.base.maxResistance --;
+      const base = this.base;
+      base.maxResistance --;
+      this.base = base;
     }
   }
 
   chooseColor(color: number) {
-    this.base.color = color;
+    const base = this.base;
+    base.color = color;
+    this.base = base;
   }
 
   getTransform(): string {
@@ -99,6 +111,14 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
   exitMoreDetails() {
     this.detailsMode = false;
     this.editMode = false;
+  }
+
+  deleteBase() {
+    this.delete.emit();
+  }
+
+  conquerBase() {
+    this.conquer.emit();
   }
 
   writeValue(value) {

@@ -22,16 +22,16 @@ export class EntityService {
 
   edit(entity: Entity): void {
     const entities = this.entitiesSubject.getValue();
-    if (this.get(entity.id).entity) {
-      entities[this.get(entity.id).index] = entity;
+    if (this.get(entity.id, entities).entity) {
+      entities[this.get(entity.id, entities).index] = entity;
     }
     this.update(entities);
   }
 
   delete(id: string): void {
     const entities = this.entitiesSubject.getValue();
-    if (this.get(id).entity) {
-      entities.splice(this.get(id).index, 1);
+    if (this.get(id, entities).entity) {
+      entities.splice(this.get(id, entities).index, 1);
     }
     this.update(entities);
   }
@@ -60,8 +60,7 @@ export class EntityService {
     });
   }
 
-  protected get(id: string): {entity: Entity, index: number} {
-    const entities = this.entitiesSubject.getValue();
+  protected get(id: string, entities: Entity[]): {entity: Entity, index: number} {
     const entityIndex = entities.map(ent => ent.id).indexOf(id);
     if (entityIndex !== -1) {
       return {

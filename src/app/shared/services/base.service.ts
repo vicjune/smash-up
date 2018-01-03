@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs/Rx';
 
+import { Player } from '@shared/models/player';
 import { EntityService } from '@shared/services/entity.service';
 import { Base } from '@shared/models/base';
 import { MAX_PLAYERS } from '@shared/constants';
@@ -18,14 +19,14 @@ export class BaseService extends EntityService {
     if (localEntities) {
       this.entitiesSubject.next(JSON.parse(localEntities));
     }
-
-    this.playerService.bind().subscribe(players => {
-      this.removeDeletedPlayers(players);
-    });
   }
 
   bind(): Observable<Base[]> {
-    return super.bind().map(entities => entities.map(entity => entity as Base));
+    return this.playerService.bind().switchMap(players => super.bind().map((bases: Base[]) => bases.map(base => {
+      base.scores = this.getScoresWithoutDeletedPlayers(base, players);
+      base.resistance = this.getResistance(base, players);
+      return base;
+    })));
   }
 
   add(base: Base): void {
@@ -34,10 +35,6 @@ export class BaseService extends EntityService {
       base.color = this.getNewColor();
       super.add(base);
     }
-  }
-
-  edit(base: Base) {
-    super.edit(base);
   }
 
   conquer(base: Base): void {
@@ -74,34 +71,30 @@ export class BaseService extends EntityService {
     sortedScores.forEach(score => {
       this.playerService.updateScore(score.reward, score.id, true);
     });
+
+    this.delete(base.id);
   }
 
-  private removeDeletedPlayers(players): void {
-    const bases = this.entitiesSubject.getValue() as Base[];
-    const playerIds = players.map(player => player.id);
-
-    for (const base of bases) {
-      const basePlayerIds = base.scores.map(score => score.playerId);
-      // const playerMissingIds = this.arrayDiff(playerIds, basePlayerIds);
-      const playerSurplusIds = this.arrayDiff(basePlayerIds, playerIds);
-
-      // if (playerMissingIds.length > 0) {
-      //   for (const playerMissingId of playerMissingIds) {
-      //     base.scores.push({
-      //       playerId: playerMissingId,
-      //       score: 0,
-      //       scoreModifier: 0
-      //     });
-      //   }
-      // }
-
-      if (playerSurplusIds.length > 0) {
-        for (const playerSurplusId of playerSurplusIds) {
-          base.scores.splice(base.scores.map(score => score.playerId).indexOf(playerSurplusId), 1);
-        }
+  private getResistance(base: Base, players: Player[]): number {
+    return base.maxResistance - base.scores.map(score => {
+      if ((this.get(score.playerId, players).entity as Player).playing) {
+        return score.score + score.scoreModifier;
       }
+      return score.score;
+    }).reduce((a, b) => a + b, 0);
+  }
 
-      this.edit(base);
+  private getScoresWithoutDeletedPlayers(base: Base, players: Player[]): {playerId: string, score: number, scoreModifier: number}[] {
+    const playerIds = players.map(player => player.id);
+    const basePlayerIds = base.scores.map(score => score.playerId);
+    const playerSurplusIds = this.arrayDiff(basePlayerIds, playerIds);
+
+    if (playerSurplusIds.length > 0) {
+      for (const playerSurplusId of playerSurplusIds) {
+        base.scores.splice(base.scores.map(score => score.playerId).indexOf(playerSurplusId), 1);
+      }
     }
+
+    return base.scores;
   }
 }

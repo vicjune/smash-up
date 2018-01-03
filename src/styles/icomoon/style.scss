@@ -2,11 +2,11 @@
 
 @font-face {
   font-family: 'icomoon';
-  src:  url('#{$icomoon-font-path}/icomoon.eot?mfgde4');
-  src:  url('#{$icomoon-font-path}/icomoon.eot?mfgde4#iefix') format('embedded-opentype'),
-    url('#{$icomoon-font-path}/icomoon.ttf?mfgde4') format('truetype'),
-    url('#{$icomoon-font-path}/icomoon.woff?mfgde4') format('woff'),
-    url('#{$icomoon-font-path}/icomoon.svg?mfgde4#icomoon') format('svg');
+  src:  url('#{$icomoon-font-path}/icomoon.eot?syv2jj');
+  src:  url('#{$icomoon-font-path}/icomoon.eot?syv2jj#iefix') format('embedded-opentype'),
+    url('#{$icomoon-font-path}/icomoon.ttf?syv2jj') format('truetype'),
+    url('#{$icomoon-font-path}/icomoon.woff?syv2jj') format('woff'),
+    url('#{$icomoon-font-path}/icomoon.svg?syv2jj#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -34,6 +34,16 @@
 .icon-minus-square {
   &:before {
     content: $icon-minus-square;
+  }
+}
+.icon-pencil {
+  &:before {
+    content: $icon-pencil;
+  }
+}
+.icon-checkmark {
+  &:before {
+    content: $icon-checkmark;
   }
 }
 .icon-reload {

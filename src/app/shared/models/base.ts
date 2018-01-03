@@ -16,7 +16,6 @@ export class Base extends Entity {
     super();
     this.scores = [];
     this.maxResistance = 20;
-    this.resistance = this.maxResistance;
     this.rewards = [0, 0, 0];
     this.position = {
       x: Math.random() * 50,

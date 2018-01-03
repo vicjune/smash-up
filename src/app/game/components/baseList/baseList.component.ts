@@ -11,11 +11,11 @@ import { MAX_PLAYERS } from '@shared/constants';
   styleUrls: ['./baseList.component.scss']
 })
 export class BaseListComponent implements OnInit {
-  // addPopin = false;
   deletePopin = false;
   conquerPopin = false;
   newBase = false;
   conqueringBase: Base;
+  deletingBase: Base;
   MAX_BASES: number = MAX_PLAYERS + 1;
 
   constructor(
@@ -27,6 +27,7 @@ export class BaseListComponent implements OnInit {
   }
 
   deleteClicked(base: Base) {
+    this.deletingBase = base;
     this.deletePopin = true;
   }
 
@@ -35,7 +36,7 @@ export class BaseListComponent implements OnInit {
     if (base.resistance > 0) {
       this.conquerPopin = true;
     } else {
-      this.conquerBase(base);
+      this.baseService.conquer(base);
     }
   }
 
@@ -48,11 +49,15 @@ export class BaseListComponent implements OnInit {
     this.baseService.edit(base);
   }
 
-  deleteBase(base) {
-    this.baseService.delete(base.id);
+  deleteBase(index) {
+    if (index === 1) {
+      this.baseService.delete(this.deletingBase.id);
+    }
   }
 
-  conquerBase(base) {
-    this.baseService.conquer(base);
+  conquerBase(index) {
+    if (index === 1) {
+      this.baseService.conquer(this.conqueringBase);
+    }
   }
 }

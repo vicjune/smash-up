@@ -41,6 +41,36 @@
       &:active {
         opacity: 0.5;
       }
+
+      &[disabled] {
+        opacity: 0.3;
+      }
+    }
+  }
+
+  &__conquestAction {
+    margin: 10px 0;
+
+    &__button {
+      padding: 5px 10px;
+      border-radius: 5px;
+      border: 1px solid $danger;
+      background-color: $danger;
+      color: white;
+      font-size: 18px;
+
+      &:active {
+        opacity: 0.5;
+      }
+
+      .forceConquest & {
+        color: $danger;
+        background-color: transparent;
+      }
+
+      &__icon {
+        margin-right: 5px;
+      }
     }
   }
 
@@ -71,6 +101,51 @@
         right: -5px;
         border-radius: 15px;
         border: 5px solid $danger;
+      }
+    }
+
+    &__actions {
+      position: absolute;
+      right: -40px;
+      top: 50%;
+      transform: translateY(-50%);
+
+      &__button {
+        height: 30px;
+        width: 30px;
+        border-radius: 5px;
+        display: block;
+        color: white;
+        font-size: 16px;
+        padding: 0;
+        text-align: center;
+
+        &:active {
+          opacity: 0.5;
+        }
+
+        .editMode & {
+          color: white;
+        }
+
+        &.edit {
+          margin-bottom: 10px;
+          color: $primary;
+          border: 1px solid $primary;
+
+          .editMode & {
+            background-color: $primary;
+          }
+        }
+
+        &.delete {
+          border: 1px solid $danger;
+          color: $danger;
+
+          .editMode & {
+            background-color: $danger;
+          }
+        }
       }
     }
 
@@ -164,7 +239,7 @@
       width: 30px;
       border-radius: 5px;
       border: 1px solid white;
-      margin: 0 10px 10px;
+      margin: 0 5px 10px;
       @include color($baseColors, background-color);
 
       &:active:active:active {

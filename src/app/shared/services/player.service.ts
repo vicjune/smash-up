@@ -58,8 +58,8 @@ export class PlayerService extends EntityService {
 
   delete(id: string): void {
     const players = this.entitiesSubject.getValue() as Player[];
-    if (this.get(id).entity) {
-      const playing = (this.get(id).entity as Player).playing;
+    if (this.get(id, players).entity) {
+      const playing = (this.get(id, players).entity as Player).playing;
       super.delete(id);
       if (players[0] && !players[0].playing) {
         players[0].playing = playing;
@@ -70,27 +70,27 @@ export class PlayerService extends EntityService {
 
   updateScore(modifier: number, id: string, fromConquest = false): void {
     const players = this.entitiesSubject.getValue() as Player[];
-    const player = this.get(id).entity as Player;
+    const player = this.get(id, players).entity as Player;
     if (player) {
       if (!fromConquest) {
         if (player.score + modifier >= 0) {
-          players[this.get(id).index].score = player.score + modifier;
+          players[this.get(id, players).index].score = player.score + modifier;
         } else {
-          players[this.get(id).index].score = 0;
+          players[this.get(id, players).index].score = 0;
         }
       } else {
-        players[this.get(id).index].scoreModifier = modifier;
-        players[this.get(id).index].scoreModifierDisplay = true;
+        players[this.get(id, players).index].scoreModifier = modifier;
+        players[this.get(id, players).index].scoreModifierDisplay = true;
         setTimeout(() => {
-          players[this.get(id).index].scoreModifierDisplay = false;
+          players[this.get(id, players).index].scoreModifierDisplay = false;
           this.update(players);
         }, PLAYER_SCORE_MODIFIER_TIMEOUT - 300);
         setTimeout(() => {
-          players[this.get(id).index].scoreModifier = 0;
+          players[this.get(id, players).index].scoreModifier = 0;
           if (player.score + modifier >= 0) {
-            players[this.get(id).index].score = player.score + modifier;
+            players[this.get(id, players).index].score = player.score + modifier;
           } else {
-            players[this.get(id).index].score = 0;
+            players[this.get(id, players).index].score = 0;
           }
           this.update(players);
         }, PLAYER_SCORE_MODIFIER_TIMEOUT);

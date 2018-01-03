@@ -64,6 +64,66 @@
     {
       "icon": {
         "paths": [
+          "M864 0c88.364 0 160 71.634 160 160 0 36.020-11.91 69.258-32 96l-64 64-224-224 64-64c26.742-20.090 59.978-32 96-32zM64 736l-64 288 288-64 592-592-224-224-592 592zM715.578 363.578l-448 448-55.156-55.156 448-448 55.156 55.156z"
+        ],
+        "attrs": [],
+        "isMulticolor": false,
+        "isMulticolor2": false,
+        "tags": [
+          "pencil",
+          "write",
+          "edit"
+        ],
+        "defaultCode": 59653,
+        "grid": 16
+      },
+      "attrs": [],
+      "properties": {
+        "ligatures": "pencil, write",
+        "name": "pencil",
+        "id": 5,
+        "order": 17,
+        "prevSize": 32,
+        "code": 59653
+      },
+      "setIdx": 2,
+      "setId": 2,
+      "iconIdx": 5
+    },
+    {
+      "icon": {
+        "paths": [
+          "M864 128l-480 480-224-224-160 160 384 384 640-640z"
+        ],
+        "attrs": [],
+        "isMulticolor": false,
+        "isMulticolor2": false,
+        "tags": [
+          "checkmark",
+          "tick",
+          "correct",
+          "accept",
+          "ok"
+        ],
+        "defaultCode": 59920,
+        "grid": 16
+      },
+      "attrs": [],
+      "properties": {
+        "ligatures": "checkmark, tick",
+        "name": "checkmark",
+        "id": 272,
+        "order": 18,
+        "prevSize": 32,
+        "code": 59920
+      },
+      "setIdx": 2,
+      "setId": 2,
+      "iconIdx": 272
+    },
+    {
+      "icon": {
+        "paths": [
           "M768 576c0 141.12-114.752 256-256 256s-256-114.88-256-256 114.752-256 256-256l75.488 0.864-37.248 37.248 90.496 90.496 192.384-192.608-192.384-192-90.496 90.496 37.76 37.504h-76c-212 0-384 171.872-384 384s172 384 384 384 384-171.872 384-384h-128z"
         ],
         "attrs": [
