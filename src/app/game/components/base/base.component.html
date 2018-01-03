@@ -1,23 +1,25 @@
 <div *ngIf="base" [class]="'base color-' + base.color" [ngClass]="{'detailsMode': detailsMode, 'editMode': editMode, 'conquered': base.resistance <= 0}" [ngStyle]="{'transform': getTransform(), 'left': base.position.x + '%', 'top': base.position.y + '%'}">
 
-  <div class="base__resistanceEdit" *ngIf="editMode">
-    <span class="base__resistanceEdit__label">{{'BASE_RESISTANCE' | translate}}</span>
-    <button class="base__resistanceEdit__button minus" [disabled]="base.maxResistance <= 0" (click)="decreaseResistance()"><i class="icon-minus-square"></i></button>
-    <span class="base__resistanceEdit__value">{{base.maxResistance}}</span>
-    <button class="base__resistanceEdit__button plus" [disabled]="base.maxResistance >= BASE_MAX_RESISTANCE" (click)="increaseResistance()"><i class="icon-plus-square"></i></button>
-  </div>
+  <div class="base__topPart">
+    <div class="base__resistanceEdit" *ngIf="editMode">
+      <span class="base__resistanceEdit__label">{{'BASE_RESISTANCE' | translate}}</span>
+      <button class="base__resistanceEdit__button minus" [disabled]="base.maxResistance <= 0" (click)="decreaseResistance()"><i class="icon-minus-square"></i></button>
+      <span class="base__resistanceEdit__value">{{base.maxResistance}}</span>
+      <button class="base__resistanceEdit__button plus" [disabled]="base.maxResistance >= BASE_MAX_RESISTANCE" (click)="increaseResistance()"><i class="icon-plus-square"></i></button>
+    </div>
 
-  <div class="base__conquestAction" [ngClass]="{'forceConquest': base.resistance > 0}" *ngIf="!editMode && detailsMode && base.scores.length > 0">
-    <button class="base__conquestAction__button" (click)="conquerBase()">
-      <i class="icon-eyedropper base__conquestAction__button__icon"></i>
-      <span>{{(base.resistance <= 0 ? 'CONQUEST' : 'FORCE_CONQUEST') | translate}}</span>
-    </button>
+    <div class="base__conquestAction" [ngClass]="{'forceConquest': base.resistance > 0, 'display': base.scores.length > 0}" *ngIf="!editMode && detailsMode">
+      <button class="base__conquestAction__button" (click)="conquerBase()">
+        <i class="icon-flag base__conquestAction__button__icon"></i>
+        <span>{{(base.resistance <= 0 ? 'CONQUEST' : 'FORCE_CONQUEST') | translate}}</span>
+      </button>
+    </div>
   </div>
 
   <div class="base__card" (click)="seeMoreDetails()">
     <div class="base__card__actions" *ngIf="detailsMode">
       <button class="base__card__actions__button edit" (click)="editMode = !editMode"><i [class]="editMode ? 'icon-checkmark' : 'icon-pencil'"></i></button>
-      <button class="base__card__actions__button delete" (click)="deleteBase()"><i class="icon-bin2"></i></button>
+      <button class="base__card__actions__button delete" (click)="deleteBase()" *ngIf="editMode"><i class="icon-bin2"></i></button>
     </div>
 
     <ng-container *ngIf="!editMode">
@@ -42,12 +44,31 @@
     </div>
   </div>
 
-  <div class="base__colorEdit" *ngIf="editMode">
-    <button [class]="'base__colorEdit__color color-' + color" *ngFor="let color of (bindAvailableColors() | async)" (click)="chooseColor(color)"></button>
-  </div>
+  <div class="base__bottomPart">
+    <div class="base__colorEdit" *ngIf="editMode">
+      <button [class]="'base__colorEdit__color color-' + color" *ngFor="let color of (bindAvailableColors() | async)" (click)="chooseColor(color)"></button>
+    </div>
 
-  <div class="base__playerScores" *ngIf="!editMode">
+    <div class="base__playerScores" *ngIf="!editMode && detailsMode">
+      <div [class]="'base__playerScores__score color-' + player.color" *ngFor="let player of (playerService.bind() | async)">
+        <button *ngIf="!getScore(player.id).score" class="base__playerScores__score__button add" (click)="addScore(player.id)"><i class="icon-plus2"></i>{{player.name}}</button>
+        <button *ngIf="getScore(player.id).score" class="base__playerScores__score__button delete" (click)="deleteScore(player.id)"><i class="icon-blocked"></i>{{player.name}}</button>
+        <ng-container *ngIf="getScore(player.id).score">
+          <button class="base__playerScores__score__button minus" [disabled]="getScore(player.id).score.score <= 0" (click)="decreaseScore(player.id)"><i class="icon-minus-square"></i></button>
+          <span class="base__playerScores__score__value">{{getScore(player.id).score.score}}</span>
+          <button class="base__playerScores__score__button plus" (click)="increaseScore(player.id)"><i class="icon-plus-square"></i></button>
+          <button class="base__playerScores__score__button minus" (click)="decreaseScoreModifier(player.id)"><i class="icon-minus-square"></i></button>
+          <span class="base__playerScores__score__value">{{getScore(player.id).score.scoreModifier > 0 ? '+' : ''}}{{getScore(player.id).score.scoreModifier}}</span>
+          <button class="base__playerScores__score__button plus" (click)="increaseScoreModifier(player.id)"><i class="icon-plus-square"></i></button>
+        </ng-container>
+      </div>
+    </div>
 
+    <div class="base__playerScoresReduced" *ngIf="!editMode && !detailsMode">
+      <div class="base__playerScoresReduced__score" *ngFor="let score of base.scores; let i = index">
+        {{score.totalScore}}
+      </div>
+    </div>
   </div>
 </div>
 

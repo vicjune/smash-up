@@ -2,11 +2,11 @@
 
 @font-face {
   font-family: 'icomoon';
-  src:  url('#{$icomoon-font-path}/icomoon.eot?syv2jj');
-  src:  url('#{$icomoon-font-path}/icomoon.eot?syv2jj#iefix') format('embedded-opentype'),
-    url('#{$icomoon-font-path}/icomoon.ttf?syv2jj') format('truetype'),
-    url('#{$icomoon-font-path}/icomoon.woff?syv2jj') format('woff'),
-    url('#{$icomoon-font-path}/icomoon.svg?syv2jj#icomoon') format('svg');
+  src:  url('#{$icomoon-font-path}/icomoon.eot?6ebcsg');
+  src:  url('#{$icomoon-font-path}/icomoon.eot?6ebcsg#iefix') format('embedded-opentype'),
+    url('#{$icomoon-font-path}/icomoon.ttf?6ebcsg') format('truetype'),
+    url('#{$icomoon-font-path}/icomoon.woff?6ebcsg') format('woff'),
+    url('#{$icomoon-font-path}/icomoon.svg?6ebcsg#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -26,29 +26,34 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-plus-square {
-  &:before {
-    content: $icon-plus-square;
-  }
-}
 .icon-minus-square {
   &:before {
     content: $icon-minus-square;
   }
 }
-.icon-pencil {
+.icon-plus-square {
   &:before {
-    content: $icon-pencil;
+    content: $icon-plus-square;
   }
 }
-.icon-checkmark {
+.icon-plus2 {
   &:before {
-    content: $icon-checkmark;
+    content: $icon-plus2;
+  }
+}
+.icon-blocked {
+  &:before {
+    content: $icon-blocked;
   }
 }
 .icon-reload {
   &:before {
     content: $icon-reload;
+  }
+}
+.icon-pencil {
+  &:before {
+    content: $icon-pencil;
   }
 }
 .icon-eyedropper {
@@ -71,6 +76,11 @@
     content: $icon-menu;
   }
 }
+.icon-flag {
+  &:before {
+    content: $icon-flag;
+  }
+}
 .icon-heart {
   &:before {
     content: $icon-heart;
@@ -89,6 +99,11 @@
 .icon-cross {
   &:before {
     content: $icon-cross;
+  }
+}
+.icon-checkmark {
+  &:before {
+    content: $icon-checkmark;
   }
 }
 

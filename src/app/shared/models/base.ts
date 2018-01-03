@@ -4,7 +4,7 @@ export class Base extends Entity {
   color: number;
   resistance: number;
   maxResistance: number;
-  scores: {playerId: string, score: number, scoreModifier: number}[];
+  scores: Score[];
   rewards: number[];
   position: {
     x: number,
@@ -22,5 +22,18 @@ export class Base extends Entity {
       y: Math.random() * 50,
       rotation: Math.random()
     };
+  }
+}
+
+export class Score {
+  playerId: string;
+  score: number;
+  scoreModifier: number;
+  totalScore: number;
+
+  constructor(playerId: string) {
+    this.playerId = playerId;
+    this.score = 0;
+    this.scoreModifier = 0;
   }
 }

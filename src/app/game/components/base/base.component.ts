@@ -2,9 +2,11 @@ import { Component, OnInit, Input, forwardRef, EventEmitter, Output } from '@ang
 import {FormControl, ControlValueAccessor, NG_VALUE_ACCESSOR, NG_VALIDATORS} from '@angular/forms';
 import { Observable } from 'rxjs/Rx';
 
+import { Score } from '@shared/models/base';
 import { Base } from '@shared/models/base';
 import { BASE_REWARD_LIMITS, MAX_CARD_ROTATION_DEG, BASE_MAX_RESISTANCE, AVAILABLE_COLORS } from '@shared/constants';
 import { BaseService } from '@shared/services/base.service';
+import { PlayerService } from '@shared/services/player.service';
 
 @Component({
   selector: 'app-base',
@@ -38,7 +40,8 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
   propagateChange: Function = () => {};
 
   constructor(
-    public baseService: BaseService
+    public baseService: BaseService,
+    public playerService: PlayerService
   ) { }
 
   ngOnInit() {
@@ -52,7 +55,7 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
     return this.baseService.bindAvailableColors(AVAILABLE_COLORS);
   }
 
-  increaseReward(index) {
+  increaseReward(index: number) {
     if (this.base.rewards[index] < BASE_REWARD_LIMITS[1]) {
       const base = this.base;
       base.rewards[index] ++;
@@ -60,7 +63,7 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
     }
   }
 
-  decreaseReward(index) {
+  decreaseReward(index: number) {
     if (this.base.rewards[index] > BASE_REWARD_LIMITS[0]) {
       const base = this.base;
       base.rewards[index] --;
@@ -84,6 +87,44 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
     }
   }
 
+  increaseScore(playerId: string) {
+    const base = this.base;
+    base.scores[this.getScore(playerId).index].score ++;
+    this.base = base;
+  }
+
+  decreaseScore(playerId: string) {
+    if (this.base.scores[this.getScore(playerId).index].score > 0) {
+      const base = this.base;
+      base.scores[this.getScore(playerId).index].score --;
+      this.base = base;
+    }
+  }
+
+  increaseScoreModifier(playerId: string) {
+    const base = this.base;
+    base.scores[this.getScore(playerId).index].scoreModifier ++;
+    this.base = base;
+  }
+
+  decreaseScoreModifier(playerId: string) {
+    const base = this.base;
+    base.scores[this.getScore(playerId).index].scoreModifier --;
+    this.base = base;
+  }
+
+  addScore(playerId: string) {
+    const base = this.base;
+    base.scores.push(new Score(playerId));
+    this.base = base;
+  }
+
+  deleteScore(playerId: string) {
+    const base = this.base;
+    base.scores.splice(this.getScore(playerId).index, 1);
+    this.base = base;
+  }
+
   chooseColor(color: number) {
     const base = this.base;
     base.color = color;
@@ -100,6 +141,15 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
     return 'translate(0, 0) rotate(' + (Math.floor(
       this.base.position.rotation * (MAX_CARD_ROTATION_DEG + MAX_CARD_ROTATION_DEG + 1)
     ) - MAX_CARD_ROTATION_DEG) + 'deg) scale(1)';
+  }
+
+
+  getScore(playerId: string): {score: Score, index: number} {
+    const index = this.base.scores.map(score => score.playerId).indexOf(playerId);
+    if (index !== -1) {
+      return {score: this.base.scores[index], index: index};
+    }
+    return {score: null, index: -1};
   }
 
   seeMoreDetails() {
@@ -137,5 +187,4 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
   validate(c: FormControl) {
     return null;
   }
-
 }

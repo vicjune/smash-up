@@ -1,3 +1,4 @@
+import { Score } from './../models/base';
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs/Rx';
 
@@ -76,15 +77,10 @@ export class BaseService extends EntityService {
   }
 
   private getResistance(base: Base, players: Player[]): number {
-    return base.maxResistance - base.scores.map(score => {
-      if ((this.get(score.playerId, players).entity as Player).playing) {
-        return score.score + score.scoreModifier;
-      }
-      return score.score;
-    }).reduce((a, b) => a + b, 0);
+    return base.maxResistance - base.scores.map(score => score.totalScore).reduce((a, b) => a + b, 0);
   }
 
-  private getScoresWithoutDeletedPlayers(base: Base, players: Player[]): {playerId: string, score: number, scoreModifier: number}[] {
+  private getScoresWithoutDeletedPlayers(base: Base, players: Player[]): Score[] {
     const playerIds = players.map(player => player.id);
     const basePlayerIds = base.scores.map(score => score.playerId);
     const playerSurplusIds = this.arrayDiff(basePlayerIds, playerIds);
@@ -95,6 +91,13 @@ export class BaseService extends EntityService {
       }
     }
 
-    return base.scores;
+    return base.scores.map(score => {
+      if ((this.get(score.playerId, players).entity as Player).playing) {
+        score.totalScore = score.score + score.scoreModifier;
+      } else {
+        score.totalScore = score.score;
+      }
+      return score;
+    });
   }
 }

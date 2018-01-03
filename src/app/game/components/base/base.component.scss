@@ -4,14 +4,28 @@
   position: fixed;
   top: 30px;
   left: 40px;
+  height: 330px;
   user-select: none;
   transition: left 0.5s, top 0.5s, transform 0.5s, z-index 0s ease 0.5s;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
 
   &.detailsMode {
     z-index: 5;
     top: 50% !important;
     left: 50% !important;
     transition: left 0.5s, top 0.5s, transform 0.5s;
+  }
+
+  &__topPart,
+  &__bottomPart {
+    height: 58px;
+    pointer-events: none;
+
+    .detailsMode & {
+      pointer-events: auto;
+    }
   }
 
   &__resistanceEdit {
@@ -50,6 +64,16 @@
 
   &__conquestAction {
     margin: 10px 0;
+    opacity: 0;
+    transition: opacity 0.5s, visibility 0s ease 0.5s;
+    pointer-events: none;
+
+    &.display {
+      pointer-events: auto;
+      visibility: visible;
+      opacity: 1;
+      transition: opacity 0.5s;
+    }
 
     &__button {
       padding: 5px 10px;
@@ -79,7 +103,7 @@
     background-color: rgb(70, 20, 20);
     @include color($baseColors, 'background-gradient');
     border-radius: 15px;
-    height: 213px;
+    height: 214px;
     width: 300px;
     box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
     display: flex;
@@ -107,8 +131,7 @@
     &__actions {
       position: absolute;
       right: -40px;
-      top: 50%;
-      transform: translateY(-50%);
+      top: 0;
 
       &__button {
         height: 30px;
@@ -129,7 +152,6 @@
         }
 
         &.edit {
-          margin-bottom: 10px;
           color: $primary;
           border: 1px solid $primary;
 
@@ -139,6 +161,7 @@
         }
 
         &.delete {
+          margin-top: 10px;
           border: 1px solid $danger;
           color: $danger;
 
@@ -245,6 +268,58 @@
       &:active:active:active {
         background-color: white;
       }
+    }
+  }
+
+  &__playerScores {
+    margin-top: 10px;
+
+    &__score {
+      display: flex;
+      align-items: center;
+      font-size: 18px;
+      @include color($playerColors, color);
+
+      &__value {
+        width: 28px;
+        display: block;
+        text-align: center;
+      }
+
+      &__button {
+        font-size: 18px;
+        display: block;
+        color: inherit;
+
+        &.add,
+        &.delete {
+          margin-right: auto;
+
+          i {
+            margin-right: 10px;
+          }
+        }
+
+        &.active {
+          opacity: 0.5;
+        }
+
+        &[disabled] {
+          opacity: 0.3;
+        }
+      }
+    }
+  }
+
+  &__playerScoresReduced {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-around;
+
+    &__score {
+      font-size: 30px;
+      color: white;
+      opacity: 0.8;
     }
   }
 
