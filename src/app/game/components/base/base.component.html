@@ -7,7 +7,7 @@
     <button class="base__resistanceEdit__button plus" [disabled]="base.maxResistance >= BASE_MAX_RESISTANCE" (click)="increaseResistance()"><i class="icon-plus-square"></i></button>
   </div>
 
-  <div class="base__conquestAction" [ngClass]="{'forceConquest': base.resistance > 0}" *ngIf="!editMode && detailsMode">
+  <div class="base__conquestAction" [ngClass]="{'forceConquest': base.resistance > 0}" *ngIf="!editMode && detailsMode && base.scores.length > 0">
     <button class="base__conquestAction__button" (click)="conquerBase()">
       <i class="icon-eyedropper base__conquestAction__button__icon"></i>
       <span>{{(base.resistance <= 0 ? 'CONQUEST' : 'FORCE_CONQUEST') | translate}}</span>
