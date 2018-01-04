@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, forwardRef, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, Input, forwardRef, EventEmitter, Output, OnDestroy } from '@angular/core';
 import {FormControl, ControlValueAccessor, NG_VALUE_ACCESSOR, NG_VALIDATORS} from '@angular/forms';
 import { Observable } from 'rxjs/Rx';
 
@@ -17,7 +17,7 @@ import { PlayerService } from '@shared/services/player.service';
     {provide: NG_VALIDATORS, useExisting: forwardRef(() => BaseComponent), multi: true}
   ]
 })
-export class BaseComponent implements OnInit, ControlValueAccessor {
+export class BaseComponent implements OnInit, OnDestroy, ControlValueAccessor {
   @Input() newBase: boolean;
   @Output() delete: EventEmitter<void> = new EventEmitter<void>();
   @Output() conquer: EventEmitter<void> = new EventEmitter<void>();
@@ -228,5 +228,13 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
 
   validate(c: FormControl) {
     return null;
+  }
+
+  ngOnDestroy() {
+    this.openedModifierTimeout.forEach(timeout => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+    });
   }
 }
