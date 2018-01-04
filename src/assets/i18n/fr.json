@@ -15,5 +15,6 @@
   "CONQUEST": "Conquète",
   "FORCE_CONQUEST": "Forcer la conquète",
   "ADD_BASE": "Ajouter une base",
-  "BASE_RESISTANCE": "Résistance"
+  "BASE_RESISTANCE": "Résistance",
+  "ON_TURN": "durant le tour"
 }

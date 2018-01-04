@@ -24,6 +24,7 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
 
   editMode = false;
   detailsMode = false;
+  openedModifiers: boolean[] = [];
 
   BASE_REWARD_LIMITS = BASE_REWARD_LIMITS;
   BASE_MAX_RESISTANCE = BASE_MAX_RESISTANCE;
@@ -87,42 +88,44 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
     }
   }
 
-  increaseScore(playerId: string) {
+  increaseScore(scoreIndex: number) {
     const base = this.base;
-    base.scores[this.getScore(playerId).index].score ++;
+    base.scores[scoreIndex].score ++;
     this.base = base;
   }
 
-  decreaseScore(playerId: string) {
-    if (this.base.scores[this.getScore(playerId).index].score > 0) {
+  decreaseScore(scoreIndex: number) {
+    if (this.base.scores[scoreIndex].score > 0) {
       const base = this.base;
-      base.scores[this.getScore(playerId).index].score --;
+      base.scores[scoreIndex].score --;
       this.base = base;
     }
   }
 
-  increaseScoreModifier(playerId: string) {
+  increaseScoreModifier(scoreIndex: number) {
     const base = this.base;
-    base.scores[this.getScore(playerId).index].scoreModifier ++;
+    base.scores[scoreIndex].scoreModifier ++;
     this.base = base;
   }
 
-  decreaseScoreModifier(playerId: string) {
+  decreaseScoreModifier(scoreIndex: number) {
     const base = this.base;
-    base.scores[this.getScore(playerId).index].scoreModifier --;
+    base.scores[scoreIndex].scoreModifier --;
     this.base = base;
   }
 
   addScore(playerId: string) {
     const base = this.base;
     base.scores.push(new Score(playerId));
+    this.openedModifiers.push(false);
     this.base = base;
   }
 
-  deleteScore(playerId: string) {
+  deleteScore(scoreIndex: number) {
     const base = this.base;
-    base.scores.splice(this.getScore(playerId).index, 1);
+    base.scores.splice(scoreIndex, 1);
     this.base = base;
+    this.openedModifiers.splice(scoreIndex, 1);
   }
 
   chooseColor(color: number) {
