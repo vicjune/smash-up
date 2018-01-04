@@ -25,6 +25,7 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
   editMode = false;
   detailsMode = false;
   openedModifiers: boolean[] = [];
+  openedModifierTimeout: any[] = [];
 
   BASE_REWARD_LIMITS = BASE_REWARD_LIMITS;
   BASE_MAX_RESISTANCE = BASE_MAX_RESISTANCE;
@@ -128,6 +129,37 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
     this.openedModifiers.splice(scoreIndex, 1);
   }
 
+  openModifierClick(scoreIndex: number) {
+    if (this.openedModifiers[scoreIndex] && this.base.scores[scoreIndex].scoreModifier === 0) {
+      this.openedModifiers[scoreIndex] = false;
+    } else {
+      this.openedModifiers[scoreIndex] = true;
+    }
+
+    if (this.openedModifierTimeout[scoreIndex]) {
+      clearTimeout(this.openedModifierTimeout[scoreIndex]);
+    }
+    this.openedModifierTimeout[scoreIndex] = setTimeout(() => {
+      if (this.base.scores[scoreIndex].scoreModifier === 0) {
+        this.openedModifiers[scoreIndex] = false;
+      }
+    }, 3000);
+  }
+
+  modifierLeave(scoreIndex: number) {
+    this.openedModifierTimeout[scoreIndex] = setTimeout(() => {
+      if (this.base.scores[scoreIndex].scoreModifier === 0) {
+        this.openedModifiers[scoreIndex] = false;
+      }
+    }, 3000);
+  }
+
+  modifierEnter(scoreIndex: number) {
+    if (this.openedModifierTimeout[scoreIndex]) {
+      clearTimeout(this.openedModifierTimeout[scoreIndex]);
+    }
+  }
+
   chooseColor(color: number) {
     const base = this.base;
     base.color = color;
@@ -177,6 +209,13 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
   writeValue(value) {
     if (value) {
       this.base = value;
+
+      this.base.scores.forEach((score, index) => {
+        this.openedModifiers[index] = false;
+        if (score.scoreModifier !== 0) {
+          this.openedModifiers[index] = true;
+        }
+      });
     }
   }
 

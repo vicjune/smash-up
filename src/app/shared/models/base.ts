@@ -18,8 +18,8 @@ export class Base extends Entity {
     this.maxResistance = 20;
     this.rewards = [0, 0, 0];
     this.position = {
-      x: Math.random() * 50,
-      y: Math.random() * 50,
+      x: Math.floor(Math.random() * (60 - 30 + 1)) + 30,
+      y: Math.floor(Math.random() * (60 - 30 + 1)) + 30,
       rotation: Math.random()
     };
   }
