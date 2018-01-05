@@ -387,15 +387,16 @@
 
         &__toggle {
           position: absolute;
-          right: -32px;
+          right: -34px;
           top: 29px;
           transform: rotate(-90deg);
-          height: 10px;
+          height: 13px;
           width: 60px;
           white-space: nowrap;
           text-align: center;
           color: white;
           font-size: 8px;
+          line-height: 10px;
           font-weight: 200;
           transition: transform 0.5s;
           opacity: 0.8;
