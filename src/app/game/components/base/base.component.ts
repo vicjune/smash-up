@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, forwardRef, EventEmitter, Output, OnDestroy } from '@angular/core';
-import {FormControl, ControlValueAccessor, NG_VALUE_ACCESSOR, NG_VALIDATORS} from '@angular/forms';
+import { Component, OnInit, Input, forwardRef, EventEmitter, Output, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { FormControl, ControlValueAccessor, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 import { Observable } from 'rxjs/Rx';
 
 import { Score } from '@shared/models/base';
@@ -13,8 +13,8 @@ import { PlayerService } from '@shared/services/player.service';
   templateUrl: './base.component.html',
   styleUrls: ['./base.component.scss'],
   providers: [
-    {provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => BaseComponent), multi: true},
-    {provide: NG_VALIDATORS, useExisting: forwardRef(() => BaseComponent), multi: true}
+    { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => BaseComponent), multi: true },
+    { provide: NG_VALIDATORS, useExisting: forwardRef(() => BaseComponent), multi: true }
   ]
 })
 export class BaseComponent implements OnInit, OnDestroy, ControlValueAccessor {
@@ -26,9 +26,15 @@ export class BaseComponent implements OnInit, OnDestroy, ControlValueAccessor {
   detailsMode = false;
   openedModifiers: boolean[] = [];
   openedModifierTimeout: any[] = [];
+  dragging = false;
+
+  coordinates: number[] = [0, 0];
+  mouseOffset: number[] = [0, 0];
 
   BASE_REWARD_LIMITS = BASE_REWARD_LIMITS;
   BASE_MAX_RESISTANCE = BASE_MAX_RESISTANCE;
+
+  @ViewChild('baseRef') baseRef: ElementRef;
 
   private _base: Base;
   get base() {
@@ -39,7 +45,7 @@ export class BaseComponent implements OnInit, OnDestroy, ControlValueAccessor {
     this.propagateChange(val);
   }
 
-  propagateChange: Function = () => {};
+  propagateChange: Function = () => { };
 
   constructor(
     public baseService: BaseService,
@@ -60,7 +66,7 @@ export class BaseComponent implements OnInit, OnDestroy, ControlValueAccessor {
   increaseReward(index: number) {
     if (this.base.rewards[index] < BASE_REWARD_LIMITS[1]) {
       const base = this.base;
-      base.rewards[index] ++;
+      base.rewards[index]++;
       this.base = base;
     }
   }
@@ -68,7 +74,7 @@ export class BaseComponent implements OnInit, OnDestroy, ControlValueAccessor {
   decreaseReward(index: number) {
     if (this.base.rewards[index] > BASE_REWARD_LIMITS[0]) {
       const base = this.base;
-      base.rewards[index] --;
+      base.rewards[index]--;
       this.base = base;
     }
   }
@@ -76,7 +82,7 @@ export class BaseComponent implements OnInit, OnDestroy, ControlValueAccessor {
   increaseResistance() {
     if (this.base.maxResistance < BASE_MAX_RESISTANCE) {
       const base = this.base;
-      base.maxResistance ++;
+      base.maxResistance++;
       this.base = base;
     }
   }
@@ -84,34 +90,34 @@ export class BaseComponent implements OnInit, OnDestroy, ControlValueAccessor {
   decreaseResistance() {
     if (this.base.maxResistance > 0) {
       const base = this.base;
-      base.maxResistance --;
+      base.maxResistance--;
       this.base = base;
     }
   }
 
   increaseScore(scoreIndex: number) {
     const base = this.base;
-    base.scores[scoreIndex].score ++;
+    base.scores[scoreIndex].score++;
     this.base = base;
   }
 
   decreaseScore(scoreIndex: number) {
     if (this.base.scores[scoreIndex].score > 0) {
       const base = this.base;
-      base.scores[scoreIndex].score --;
+      base.scores[scoreIndex].score--;
       this.base = base;
     }
   }
 
   increaseScoreModifier(scoreIndex: number) {
     const base = this.base;
-    base.scores[scoreIndex].scoreModifier ++;
+    base.scores[scoreIndex].scoreModifier++;
     this.base = base;
   }
 
   decreaseScoreModifier(scoreIndex: number) {
     const base = this.base;
-    base.scores[scoreIndex].scoreModifier --;
+    base.scores[scoreIndex].scoreModifier--;
     this.base = base;
   }
 
@@ -179,16 +185,16 @@ export class BaseComponent implements OnInit, OnDestroy, ControlValueAccessor {
   }
 
 
-  getScore(playerId: string): {score: Score, index: number} {
+  getScore(playerId: string): { score: Score, index: number } {
     const index = this.base.scores.map(score => score.playerId).indexOf(playerId);
     if (index !== -1) {
-      return {score: this.base.scores[index], index: index};
+      return { score: this.base.scores[index], index: index };
     }
-    return {score: null, index: -1};
+    return { score: null, index: -1 };
   }
 
   seeMoreDetails() {
-    if (!this.detailsMode && !this.editMode) {
+    if (!this.detailsMode && !this.editMode && !this.dragging) {
       this.detailsMode = true;
     }
   }
@@ -216,6 +222,8 @@ export class BaseComponent implements OnInit, OnDestroy, ControlValueAccessor {
           this.openedModifiers[index] = true;
         }
       });
+
+      this.coordinates = [this.base.position.x, this.base.position.y];
     }
   }
 
@@ -223,11 +231,75 @@ export class BaseComponent implements OnInit, OnDestroy, ControlValueAccessor {
     this.propagateChange = fn;
   }
 
-  registerOnTouched() {}
+  registerOnTouched() { }
 
 
   validate(c: FormControl) {
     return null;
+  }
+
+  mouseDown(e) {
+    if (!this.dragging && (!e.touches || e.touches.length === 1)) {
+      e.preventDefault();
+      this.dragging = true;
+      this.mouseOffset = [this.convertEvent(e).offsetX, this.convertEvent(e).offsetY];
+      this.coordinates = [
+        this.toPercentage(this.convertEvent(e).pageX - this.mouseOffset[0], 'x'),
+        this.toPercentage(this.convertEvent(e).pageY - this.mouseOffset[1], 'y')
+      ];
+    }
+  }
+
+  mouseMove(e) {
+    if (this.dragging && (!e.touches || e.touches.length === 1)) {
+      const x = this.toPercentage(this.convertEvent(e).pageX - this.mouseOffset[0], 'x');
+      const y = this.toPercentage(this.convertEvent(e).pageY - this.mouseOffset[1], 'y');
+      this.coordinates = [x, y];
+      if (x > 0 && x + 300 < 100 && y > 0 && y + 214 < 100) {
+      }
+    }
+  }
+
+  mouseUp() {
+    if (this.dragging) {
+      const base = this.base;
+      base.position.x = this.coordinates[0];
+      base.position.y = this.coordinates[1];
+      this.base = base;
+
+      setTimeout(() => {
+        this.dragging = false;
+      });
+    }
+  }
+
+  private convertEvent(event) {
+    if ('targetTouches' in event) {
+      const bouncingRect = this.baseRef.nativeElement.getBoundingClientRect();
+      return {
+        pageX: event.targetTouches[0].pageX,
+        pageY: event.targetTouches[0].pageY,
+        offsetX: event.targetTouches[0].pageX - bouncingRect.left - (window.pageXOffset || document.documentElement.scrollLeft),
+        offsetY: event.targetTouches[0].pageY - bouncingRect.top - (window.pageYOffset || document.documentElement.scrollTop)
+      };
+    } else {
+      return {
+        pageX: event.pageX,
+        pageY: event.pageY,
+        offsetX: event.offsetX,
+        offsetY: event.offsetY
+      };
+    }
+  }
+
+  private toPercentage(value: number, direction: string): number {
+    if (direction === 'x') {
+      return value * 100 / window.innerWidth;
+    } else if (direction === 'y') {
+      return value * 100 / window.innerHeight;
+    } else {
+      return value;
+    }
   }
 
   ngOnDestroy() {

@@ -1,4 +1,17 @@
-<div *ngIf="base" [class]="'base color-' + base.color" [ngClass]="{'detailsMode': detailsMode, 'editMode': editMode, 'conquered': base.resistance <= 0}" [ngStyle]="{'transform': getTransform(), 'left': base.position.x + '%', 'top': base.position.y + '%'}">
+<div #baseRef
+  *ngIf="base"
+  [class]="'base color-' + base.color"
+  [ngClass]="{'detailsMode': detailsMode, 'editMode': editMode, 'conquered': base.resistance <= 0, 'dragging': dragging}"
+  [ngStyle]="{'transform': getTransform(), 'left.%': coordinates[0], 'top.%': coordinates[1]}"
+  (mousedown)="mouseDown($event)"
+  (touchstart)="mouseDown($event)"
+  (window:mousemove)="mouseMove($event)"
+  (window:touchmove)="mouseMove($event)"
+  (window:mouseup)="mouseUp()"
+  (window:mouseleave)="mouseUp()"
+  (window:touchend)="mouseUp()"
+  (window:touchcancel)="mouseUp()"
+  (click)="seeMoreDetails()">
 
   <div class="base__topPart">
     <div class="base__resistanceEdit" *ngIf="editMode">
@@ -16,7 +29,7 @@
     </div>
   </div>
 
-  <div class="base__card" (click)="seeMoreDetails()">
+  <div class="base__card">
     <div class="base__card__addScoreList" *ngIf="!editMode && detailsMode">
       <ng-container *ngFor="let player of (playerService.bind() | async)">
         <button [class]="'base__card__addScoreList__button color-' + player.color" *ngIf="!getScore(player.id).score" (click)="addScore(player.id)"><i class="icon-eyedropper"></i></button>

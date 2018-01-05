@@ -4,12 +4,18 @@
   position: fixed;
   user-select: none;
   transition: left 0.5s, top 0.5s, transform 0.5s, z-index 0s ease 0.5s;
+  cursor: pointer;
 
   &.detailsMode {
+    cursor: default;
     z-index: 5;
     top: 50% !important;
     left: 50% !important;
     transition: left 0.5s, top 0.5s, transform 0.5s;
+  }
+
+  &.dragging {
+    transition: transform 0.5s;
   }
 
   &__topPart,
@@ -57,6 +63,7 @@
     &__button {
       font-size: 30px;
       color: white;
+      padding: 0 5px;
 
       &:active {
         opacity: 0.5;
@@ -115,10 +122,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
+    pointer-events: none;
 
     .detailsMode & {
-      cursor: default;
+      pointer-events: auto;
     }
 
     .conquered:not(.editMode) & {
@@ -260,6 +267,7 @@
           top: -40px;
           left: 50%;
           transform: translateX(-50%);
+          padding: 0 5px;
 
           &.minus {
             top: auto;
@@ -344,12 +352,12 @@
 
         &__delete {
           position: absolute;
-          top: 1px;
-          left: 1px;
+          top: 0;
+          left: 0;
           color: white;
           font-size: 20px;
           line-height: 20px;
-          padding: 0;
+          padding: 1px;
 
           &:active {
             opacity: 0.5;
@@ -373,6 +381,7 @@
               color: white;
               font-size: 18px;
               display: block;
+              padding: 0 5px;
 
               &:active {
                 opacity: 0.5;
@@ -387,11 +396,11 @@
 
         &__toggle {
           position: absolute;
-          right: -34px;
-          top: 29px;
+          right: -31px;
+          top: 24px;
           transform: rotate(-90deg);
           height: 13px;
-          width: 60px;
+          width: 54px;
           white-space: nowrap;
           text-align: center;
           color: white;
@@ -418,7 +427,7 @@
           top: 5px;
           bottom: 5px;
           right: -10px;
-          padding: 0 12px 0 0;
+          padding: 0 15px 0 0;
           transition: transform 0.5s;
           @include color($playerColors, background-color, -30);
           display: flex;
@@ -437,7 +446,7 @@
             color: white;
             opacity: 0.8;
             line-height: 5px;
-            padding: 8px;
+            padding: 5px;
             z-index: 1;
 
             &:active {

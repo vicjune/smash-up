@@ -23,11 +23,15 @@
 
   &__closeButton {
     position: absolute;
-    top: 15px;
-    right: 15px;
+    top: 5px;
+    right: 10px;
     color: rgb(131, 131, 131);
-    padding: 0;
+    padding: 5px;
     font-size: 18px;
+
+    &:active {
+      opacity: 0.5;
+    }
   }
 
   &__title {

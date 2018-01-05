@@ -131,14 +131,11 @@
     &__valueButton {
       font-size: 30px;
       line-height: 20px;
-      color: white;
-
+      padding: 0 5px;
       @include color($playerColors, color);
-      @include color($playerColors, border-color);
 
-      &:active:active {
-        color: white;
-        border-color: white;
+      &:active {
+        opacity: 0.5;
       }
 
       &[disabled] {
