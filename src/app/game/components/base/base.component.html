@@ -17,6 +17,12 @@
   </div>
 
   <div class="base__card" (click)="seeMoreDetails()">
+    <div class="base__card__addScoreList" *ngIf="!editMode && detailsMode">
+      <ng-container *ngFor="let player of (playerService.bind() | async)">
+        <button [class]="'base__card__addScoreList__button color-' + player.color" *ngIf="!getScore(player.id).score" (click)="addScore(player.id)"><i class="icon-eyedropper"></i></button>
+      </ng-container>
+    </div>
+
     <div class="base__card__actions" *ngIf="detailsMode">
       <button class="base__card__actions__button edit" (click)="editMode = !editMode"><i [class]="editMode ? 'icon-checkmark' : 'icon-pencil'"></i></button>
       <button class="base__card__actions__button delete" (click)="deleteBase()" *ngIf="editMode"><i class="icon-bin2"></i></button>
@@ -72,12 +78,6 @@
           </button>
           <button class="base__playerScores__list__score__delete" (click)="deleteScore(i)"><i class="icon-blocked"></i></button>
           </div>
-      </div>
-
-      <div class="base__playerScores__addList">
-        <ng-container *ngFor="let player of (playerService.bind() | async)">
-          <button [class]="'base__playerScores__addList__button color-' + player.color" *ngIf="!getScore(player.id).score" (click)="addScore(player.id)"><i class="icon-eyedropper"></i></button>
-        </ng-container>
       </div>
     </div>
 

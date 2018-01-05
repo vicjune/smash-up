@@ -134,6 +134,28 @@
       }
     }
 
+    &__addScoreList {
+      position: absolute;
+      bottom: 0;
+      left: -40px;
+      margin-right: 10px;
+
+      &__button {
+        display: block;
+        height: 30px;
+        width: 30px;
+        border-radius: 5px;
+        margin-top: 10px;
+        @include color($playerColors, background-color);
+        color: white;
+        font-size: 17px;
+
+        &:active {
+          opacity: 0.5;
+        }
+      }
+    }
+
     &__actions {
       position: absolute;
       right: -40px;
@@ -413,6 +435,9 @@
             display: block;
             color: white;
             opacity: 0.8;
+            line-height: 5px;
+            padding: 8px;
+            z-index: 1;
 
             &:active {
               opacity: 0.4;
@@ -424,31 +449,12 @@
             width: 20px;
             text-align: center;
             opacity: 0.8;
+            line-height: 8px;
 
             .zero & {
               opacity: 0.4;
             }
           }
-        }
-      }
-    }
-
-    &__addList {
-      margin-top: 10px;
-      display: flex;
-      justify-content: center;
-
-      &__button {
-        height: 30px;
-        width: 30px;
-        border-radius: 5px;
-        margin: 0 5px;
-        @include color($playerColors, background-color);
-        color: white;
-        font-size: 17px;
-
-        &:active {
-          opacity: 0.5;
         }
       }
     }

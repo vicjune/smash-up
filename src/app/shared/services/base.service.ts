@@ -92,6 +92,11 @@ export class BaseService extends EntityService {
       } else {
         score.totalScore = score.score;
       }
+
+      if (score.totalScore < 0) {
+        score.totalScore = 0;
+      }
+
       return score;
     });
   }
