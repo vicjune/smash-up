@@ -27,6 +27,8 @@ export class BaseComponent implements OnInit, OnDestroy, ControlValueAccessor {
   openedModifiers: boolean[] = [];
   openedModifierTimeout: any[] = [];
   dragging = false;
+  draggingStart = false;
+  draggingStartTimeout;
 
   coordinates: number[] = [0, 0];
   mouseOffset: number[] = [0, 0];
@@ -239,37 +241,44 @@ export class BaseComponent implements OnInit, OnDestroy, ControlValueAccessor {
   }
 
   mouseDown(e) {
-    if (!this.dragging && (!e.touches || e.touches.length === 1)) {
-      e.preventDefault();
+    if (!this.dragging && (!e.touches || e.touches.length === 1) && !this.detailsMode) {
+      this.draggingStart = true;
       this.dragging = true;
       this.mouseOffset = [this.convertEvent(e).offsetX, this.convertEvent(e).offsetY];
-      this.coordinates = [
-        this.toPercentage(this.convertEvent(e).pageX - this.mouseOffset[0], 'x'),
-        this.toPercentage(this.convertEvent(e).pageY - this.mouseOffset[1], 'y')
-      ];
+
+      this.draggingStartTimeout = setTimeout(() => {
+        this.draggingStart = false;
+      }, 200);
     }
   }
 
   mouseMove(e) {
-    if (this.dragging && (!e.touches || e.touches.length === 1)) {
+    if (this.dragging && (!e.touches || e.touches.length === 1) && !this.detailsMode) {
       const x = this.toPercentage(this.convertEvent(e).pageX - this.mouseOffset[0], 'x');
       const y = this.toPercentage(this.convertEvent(e).pageY - this.mouseOffset[1], 'y');
-      this.coordinates = [x, y];
-      if (x > 0 && x + 300 < 100 && y > 0 && y + 214 < 100) {
+      if (x > 0 && x + this.toPercentage(300, 'x') < 100 && y > 0 && y + this.toPercentage(214, 'y') < 100) {
+        this.coordinates = [x, y];
       }
     }
   }
 
-  mouseUp() {
+  mouseUp(e) {
+    if (this.draggingStartTimeout) {
+      clearTimeout(this.draggingStartTimeout);
+    }
+
     if (this.dragging) {
       const base = this.base;
       base.position.x = this.coordinates[0];
       base.position.y = this.coordinates[1];
       this.base = base;
+      this.dragging = false;
+    }
 
-      setTimeout(() => {
-        this.dragging = false;
-      });
+    if (this.draggingStart) {
+      this.draggingStart = false;
+      this.dragging = false;
+      this.seeMoreDetails();
     }
   }
 

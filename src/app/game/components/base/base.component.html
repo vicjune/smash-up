@@ -7,11 +7,10 @@
   (touchstart)="mouseDown($event)"
   (window:mousemove)="mouseMove($event)"
   (window:touchmove)="mouseMove($event)"
-  (window:mouseup)="mouseUp()"
-  (window:mouseleave)="mouseUp()"
-  (window:touchend)="mouseUp()"
-  (window:touchcancel)="mouseUp()"
-  (click)="seeMoreDetails()">
+  (window:mouseup)="mouseUp($event)"
+  (window:mouseleave)="mouseUp($event)"
+  (window:touchend)="mouseUp($event)"
+  (window:touchcancel)="mouseUp($event)">
 
   <div class="base__topPart">
     <div class="base__resistanceEdit" *ngIf="editMode">
