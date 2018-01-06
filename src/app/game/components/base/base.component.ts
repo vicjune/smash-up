@@ -257,9 +257,24 @@ export class BaseComponent implements OnInit, OnDestroy, ControlValueAccessor {
     if (this.dragging && (!e.touches || e.touches.length === 1) && !this.detailsMode) {
       const x = this.toPercentage(this.convertEvent(e).pageX - this.mouseOffset[0], 'x');
       const y = this.toPercentage(this.convertEvent(e).pageY - this.mouseOffset[1], 'y');
-      if (x > 0 && x + this.toPercentage(300, 'x') < 100 && y > 0 && y + this.toPercentage(214, 'y') < 100) {
-        this.coordinates = [x, y];
+      let inRangeX = x;
+      let inRangeY = y;
+
+      if (x <= 0) {
+        inRangeX = 0;
       }
+      if (x + this.toPercentage(300, 'x') >= 100) {
+        inRangeX = 100 - this.toPercentage(300, 'x');
+      }
+
+      if (y <= 0) {
+        inRangeY = 0;
+      }
+      if (y + this.toPercentage(214, 'y') >= 100) {
+        inRangeY = 100 - this.toPercentage(214, 'y');
+      }
+
+      this.coordinates = [inRangeX, inRangeY];
     }
   }
 
