@@ -1,0 +1,109 @@
+@import "variables";
+
+@font-face {
+  font-family: 'icomoon';
+  src:  url('#{$icomoon-font-path}/icomoon.eot?6ebcsg');
+  src:  url('#{$icomoon-font-path}/icomoon.eot?6ebcsg#iefix') format('embedded-opentype'),
+    url('#{$icomoon-font-path}/icomoon.ttf?6ebcsg') format('truetype'),
+    url('#{$icomoon-font-path}/icomoon.woff?6ebcsg') format('woff'),
+    url('#{$icomoon-font-path}/icomoon.svg?6ebcsg#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-minus-square {
+  &:before {
+    content: $icon-minus-square;
+  }
+}
+.icon-plus-square {
+  &:before {
+    content: $icon-plus-square;
+  }
+}
+.icon-plus2 {
+  &:before {
+    content: $icon-plus2;
+  }
+}
+.icon-blocked {
+  &:before {
+    content: $icon-blocked;
+  }
+}
+.icon-reload {
+  &:before {
+    content: $icon-reload;
+  }
+}
+.icon-pencil {
+  &:before {
+    content: $icon-pencil;
+  }
+}
+.icon-eyedropper {
+  &:before {
+    content: $icon-eyedropper;
+  }
+}
+.icon-spades {
+  &:before {
+    content: $icon-spades;
+  }
+}
+.icon-bin2 {
+  &:before {
+    content: $icon-bin2;
+  }
+}
+.icon-menu {
+  &:before {
+    content: $icon-menu;
+  }
+}
+.icon-flag {
+  &:before {
+    content: $icon-flag;
+  }
+}
+.icon-heart {
+  &:before {
+    content: $icon-heart;
+  }
+}
+.icon-plus {
+  &:before {
+    content: $icon-plus;
+  }
+}
+.icon-minus {
+  &:before {
+    content: $icon-minus;
+  }
+}
+.icon-cross {
+  &:before {
+    content: $icon-cross;
+  }
+}
+.icon-checkmark {
+  &:before {
+    content: $icon-checkmark;
+  }
+}
+

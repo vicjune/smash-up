@@ -1,0 +1,20 @@
+{
+  "ADD_PLAYER": "Ajouter un joueur",
+  "RESET_GAME": "Nouveau jeu",
+  "NEW_PLAYER": "Nouveau joueur",
+  "CANCEL": "Annuler",
+  "ADD": "Ajouter",
+  "PLAYER_NAME": "Nom du joueur",
+  "REMOVE_PROMPT": "Voulez-vous retirer {{playerName}} du jeu ?",
+  "REMOVE": "Retirer",
+  "RESET_PROMPT": "Voulez-vous réinitialiser le jeu ?",
+  "RESET": "Réinitialiser",
+  "REMOVE_BASE_PROMPT": "Voulez-vous retirer cette base (sans la conquérir) ?",
+  "CONQUER_BASE_PROMPT": "Cette base possède encore {{baseResistance}} points. Voulez-vous forcer la conquète ?",
+  "CONQUER": "Conquérir",
+  "CONQUEST": "Conquète",
+  "FORCE_CONQUEST": "Forcer la conquète",
+  "ADD_BASE": "Ajouter une base",
+  "BASE_RESISTANCE": "Résistance",
+  "ON_TURN": "durant le tour"
+}

@@ -1,0 +1,23 @@
+@mixin color($colorArray, $property: null, $lighten: 0, $opacity: 1) {
+
+  @each $color in $colorArray {
+    $i: index($colorArray, $color);
+
+    .color-#{$i} &,
+    &.color-#{$i}.color-#{$i}.color-#{$i} {
+      @if ($property != 'background-gradient') {
+        #{$property}: transparentize($color, 1 - $opacity);
+
+        @if ($lighten > 0) {
+          #{$property}: transparentize(lighten($color, $lighten), 1 - $opacity);
+        }
+
+        @if ($lighten < 0) {
+          #{$property}: transparentize(darken($color, -$lighten), 1 - $opacity);
+        }
+      } @else {
+        background: linear-gradient(to top right, darken($color, 50%) , darken($color, 30%));
+      }
+    }
+  }
+}

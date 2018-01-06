@@ -18,8 +18,7 @@
     "forin": true,
     "import-blacklist": [
       true,
-      "rxjs",
-      "rxjs/Rx"
+      "rxjs"
     ],
     "import-spacing": true,
     "indent": [
@@ -45,7 +44,7 @@
       }
     ],
     "no-arg": true,
-    "no-bitwise": true,
+    "no-bitwise": false,
     "no-console": [
       true,
       "debug",
