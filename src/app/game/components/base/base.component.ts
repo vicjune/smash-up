@@ -242,6 +242,7 @@ export class BaseComponent implements OnInit, OnDestroy, ControlValueAccessor {
 
   mouseDown(e) {
     if (!this.dragging && (!e.touches || e.touches.length === 1) && !this.detailsMode) {
+      e.preventDefault();
       this.draggingStart = true;
       this.dragging = true;
       this.mouseOffset = [this.convertEvent(e).offsetX, this.convertEvent(e).offsetY];

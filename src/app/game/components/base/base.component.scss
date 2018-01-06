@@ -462,6 +462,7 @@
             text-align: center;
             opacity: 0.8;
             line-height: 8px;
+            z-index: 1;
 
             .zero & {
               opacity: 0.4;
