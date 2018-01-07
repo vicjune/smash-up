@@ -94,10 +94,17 @@
             right: 0;
             height: 2px;
             transition: background-color 0.5s;
-            @include color($playerColors, color);
 
-            .playing & {
+            .playing.playing & {
               background-color: white;
+            }
+          }
+
+          @each $color in $playerColors {
+            $i: index($playerColors, $color);
+
+            .color-#{$i} &:after {
+              background-color: $color;
             }
           }
         }
