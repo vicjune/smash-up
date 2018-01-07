@@ -146,8 +146,9 @@
     &__addScoreList {
       position: absolute;
       bottom: 0;
-      left: -40px;
+      left: -50px;
       margin-right: 10px;
+      padding-left: 10px;
 
       &__button {
         display: block;
@@ -162,12 +163,18 @@
         &:active {
           opacity: 0.5;
         }
+
+        i {
+          display: inline-block;
+          transform: rotate(90deg);
+        }
       }
     }
 
     &__actions {
       position: absolute;
-      right: -40px;
+      right: -50px;
+      padding-right: 10px;
       top: 0;
 
       &__button {
@@ -313,13 +320,13 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: space-around;
+      padding-bottom: 20px;
 
       &__score {
         margin: 10px 10px 0;
         position: relative;
         border-radius: 5px;
         width: 90px;
-        padding: 5px;
         box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
         transition: margin 0.5s;
         @include color($playerColors, background-color, -20);
@@ -329,7 +336,7 @@
 
           &:after {
             transform: translateX(10px);
-            transition: transform 0.25s ease 0.25s;
+            transition: transform 0.20s ease 0.38s;
           }
         }
 
@@ -341,7 +348,7 @@
           width: 10px;
           bottom: 5px;
           z-index: -1;
-          transition: transform 0.15s;
+          transition: transform 0.10s;
         }
 
         @each $color in $playerColors {
@@ -383,7 +390,11 @@
               color: white;
               font-size: 18px;
               display: block;
-              padding: 0 5px;
+              padding: 5px 10px 0 5px;
+
+              &:last-child {
+                padding: 0 10px 5px 5px;
+              }
 
               &:active {
                 opacity: 0.5;
@@ -434,7 +445,7 @@
           @include color($playerColors, background-color, -30);
           display: flex;
           align-items: center;
-          justify-content: center;
+          justify-content: space-between;
           flex-direction: column;
 
           .modifierOpen & {
@@ -448,7 +459,8 @@
             color: white;
             opacity: 0.8;
             line-height: 5px;
-            padding: 5px;
+            font-size: 13px;
+            padding: 5px 5px 5px 5px;
             z-index: 1;
 
             &:active {
@@ -461,8 +473,8 @@
             width: 20px;
             text-align: center;
             opacity: 0.8;
-            line-height: 8px;
-            z-index: 1;
+            line-height: 0;
+            height: 0;
 
             .zero & {
               opacity: 0.4;
