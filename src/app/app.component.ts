@@ -11,7 +11,17 @@ export class AppComponent {
     translate: TranslateService
   ) {
     translate.setDefaultLang('en');
-    let lang = window.localStorage.getItem('i18n') || window.navigator.language;
+
+    let lang;
+    try {
+      lang = window.localStorage.getItem('i18n');
+    } catch (e) {
+      console.error('This browser does not support local storage');
+    }
+
+    if (!lang) {
+      lang = window.navigator.language;
+    }
 
     if (lang !== 'en' && lang !== 'fr') {
       lang = 'en';

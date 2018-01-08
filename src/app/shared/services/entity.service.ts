@@ -25,6 +25,7 @@ export class EntityService {
     if (this.get(entity.id, entities).entity) {
       entities[this.get(entity.id, entities).index] = entity;
     }
+
     this.update(entities);
   }
 
@@ -75,7 +76,11 @@ export class EntityService {
   }
 
   protected update(entities: Entity[]): void {
-    window.localStorage.setItem(this.entity, JSON.stringify(entities));
+    try {
+      window.localStorage.setItem(this.entity, JSON.stringify(entities));
+    } catch (e) {
+      console.error('This browser does not support local storage');
+    }
     this.entitiesSubject.next(entities);
   }
 
