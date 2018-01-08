@@ -16,5 +16,6 @@
   "FORCE_CONQUEST": "Force conquest",
   "ADD_BASE": "Add base",
   "BASE_RESISTANCE": "Resistance",
-  "ON_TURN": "during the turn"
+  "ON_TURN": "during the turn",
+  "SIGNATURE": "Created with love by"
 }

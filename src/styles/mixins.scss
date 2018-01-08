@@ -21,3 +21,57 @@
     }
   }
 }
+
+@mixin button-active-hover($colorArray: null, $forcedColor: null, $type: 'simple') {
+  // type = simple, background, border
+  @if ($colorArray) {
+    @each $color in $colorArray {
+      $i: index($colorArray, $color);
+
+      .color-#{$i} &,
+      &.color-#{$i}.color-#{$i}.color-#{$i} {
+        @include button-type($color, $type);
+
+        @media (hover: hover) {
+          &:hover {
+            @include button-type(darken($color, 10), $type);
+          }
+        }
+
+        &:active {
+          @include button-type(darken($color, 30), $type);
+        }
+      }
+    }
+  } @else {
+    @include button-type($forcedColor, $type);
+
+    @media (hover: hover) {
+      &:hover {
+        @include button-type(darken($forcedColor, 10), $type);
+      }
+    }
+
+    &:active {
+      @include button-type(darken($forcedColor, 30), $type);
+    }
+  }
+
+  &[disabled] {
+    opacity: 0.3;
+  }
+}
+
+@mixin button-type($color, $type: 'simple') {
+  @if ($type == 'simple' or $type == 'border') {
+    color: $color;
+  }
+  @if ($type == 'background') {
+    color: white;
+    background-color: $color;
+  }
+  @if ($type == 'border') {
+    border: 1px solid $color;
+    background-color: transparent;
+  }
+}

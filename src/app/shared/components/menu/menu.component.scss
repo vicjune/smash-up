@@ -16,15 +16,12 @@
 
   &__button {
     position: absolute;
-    top: 20px;
-    right: -70px;
-    color: white;
+    top: 17px;
+    right: -52px;
     font-size: 30px;
-    opacity: 0.5;
+    line-height: 30px;
 
-    &:active {
-      color: rgb(148, 148, 148);
-    }
+    @include button-active-hover(null, rgba(255, 255, 255, 0.5), 'simple');
   }
 
   &__wrapper {
@@ -33,6 +30,9 @@
     background-color: hsla(0, 0, 0, 0.8);
     padding: 40px 0;
     box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 
     &__i18n {
       display: flex;
@@ -42,10 +42,10 @@
 
       &__button {
         opacity: 0.5;
-        color: white;
         padding: 0 5px;
+        @include button-active-hover(null, white, 'simple');
 
-        &.activeLang {
+        &[disabled] {
           opacity: 1;
         }
       }
@@ -68,6 +68,12 @@
         border-bottom: 1px solid white;
       }
 
+      @media (hover: hover) {
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.158);
+        }
+      }
+
       &:active {
         background-color: rgba(255, 255, 255, 0.349);
       }
@@ -80,6 +86,29 @@
 
     &__deletePlayer {
       @include color($playerColors, color, 10);
+    }
+  }
+
+  &__signature {
+    font-size: 13px;
+    text-align: center;
+    margin-top: auto;
+    user-select: none;
+
+    &__label {
+      color: rgb(136, 136, 136);
+      margin-bottom: 5px;
+    }
+
+    &__link {
+      color: white;
+      @include button-active-hover(null, white, 'simple');
+
+      @media (hover: hover) {
+        &:hover {
+          text-decoration: underline;
+        }
+      }
     }
   }
 }
