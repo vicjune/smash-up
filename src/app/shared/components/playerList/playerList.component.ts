@@ -30,11 +30,13 @@ export class PlayerListComponent implements OnInit {
     this.playerService.setPlayerPlaying(id);
   }
 
-  increaseScore(id) {
+  increaseScore(id, e) {
+    e.preventDefault();
     this.playerService.updateScore(1, id);
   }
 
-  decreaseScore(id) {
+  decreaseScore(id, e) {
+    e.preventDefault();
     this.playerService.updateScore(-1, id);
   }
 
