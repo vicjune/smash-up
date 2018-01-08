@@ -15,6 +15,9 @@
         </span>
       </div>
     </button>
+    <div class="playerList__player__playing" [ngClass]="{'display': player.playing}">
+      {{'PLAYING' | translate}}
+    </div>
     <div class="playerList__player__valueButtons">
       <button class="playerList__player__valueButton" (click)="increaseScore(player.id)"><i class="icon-plus-square"></i></button>
       <button class="playerList__player__valueButton" (click)="decreaseScore(player.id)" [disabled]="player.score === 0"><i class="icon-minus-square"></i></button>
