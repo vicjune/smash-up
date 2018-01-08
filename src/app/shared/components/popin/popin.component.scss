@@ -25,13 +25,10 @@
     position: absolute;
     top: 5px;
     right: 10px;
-    color: rgb(131, 131, 131);
     padding: 5px;
     font-size: 18px;
 
-    &:active {
-      opacity: 0.5;
-    }
+    @include button-active-hover(null, rgb(131, 131, 131), 'simple');
   }
 
   &__title {
@@ -52,14 +49,12 @@
 
   &__button {
     border-radius: 5px;
-    background-color: $primary;
-    border: 1px solid $primary;
     height: 40px;
-    color: white;
     font-size: 20px;
     padding: 0 20px;
     margin-right: 20px;
     transition: all 0.3s;
+    @include button-active-hover(null, $primary, 'background');
 
     &:last-child {
       margin-right: 0;
@@ -70,44 +65,21 @@
       background-color: rgb(175, 175, 175);
     }
 
-    &:active {
-      background-color: darken($primary, 20);
-      border-color: darken($primary, 20);
-    }
-
     &.secondary {
-      background-color: transparent;
-      color: $primary;
+      @include button-active-hover(null, $primary, 'border');
 
       &[disabled] {
         background-color: transparent;
         color: rgb(175, 175, 175);
       }
-
-      &:active {
-        background-color: transparent;
-        color: darken($primary, 20);
-      }
     }
 
     &.danger {
-      background-color: $danger;
-      border-color: $danger;
-
-      &:active {
-        background-color: darken($danger, 20);
-        border-color: darken($danger, 20);
-      }
+      @include button-active-hover(null, $danger, 'background');
     }
 
     &.secondary.danger {
-      background-color: transparent;
-      color: $danger;
-
-      &:active {
-        background-color: transparent;
-        color: darken($danger, 20);
-      }
+      @include button-active-hover(null, $danger, 'border');
     }
   }
 }

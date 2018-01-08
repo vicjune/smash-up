@@ -94,10 +94,17 @@
             right: 0;
             height: 2px;
             transition: background-color 0.5s;
-            @include color($playerColors, color);
 
-            .playing & {
+            .playing.playing & {
               background-color: white;
+            }
+          }
+
+          @each $color in $playerColors {
+            $i: index($playerColors, $color);
+
+            .color-#{$i} &:after {
+              background-color: $color;
             }
           }
         }
@@ -132,15 +139,7 @@
       font-size: 30px;
       line-height: 20px;
       padding: 0 5px;
-      @include color($playerColors, color);
-
-      &:active {
-        opacity: 0.5;
-      }
-
-      &[disabled] {
-        opacity: 0.3;
-      }
+      @include button-active-hover($playerColors, null, 'simple');
     }
   }
 
@@ -150,6 +149,16 @@
     font-size: 30px;
     line-height: 18px;
     opacity: 0.5;
+
+    @media (hover: hover) {
+      &:hover {
+        opacity: 0.4;
+      }
+    }
+
+    &:active {
+      opacity: 0.3;
+    }
 
     &__label {
       font-size: 20px;

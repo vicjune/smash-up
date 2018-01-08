@@ -3,8 +3,8 @@
 
   <div class="menu__wrapper">
     <div class="menu__wrapper__i18n">
-      <button class="menu__wrapper__i18n__button" [ngClass]="{'activeLang': language === 'en'}" (click)="setLanguage('en')">EN</button>
-      <button class="menu__wrapper__i18n__button" [ngClass]="{'activeLang': language === 'fr'}" (click)="setLanguage('fr')">FR</button>
+      <button class="menu__wrapper__i18n__button" [disabled]="language === 'en'" (click)="setLanguage('en')">EN</button>
+      <button class="menu__wrapper__i18n__button" [disabled]="language === 'fr'"  (click)="setLanguage('fr')">FR</button>
     </div>
     <button class="menu__wrapper__button menu__wrapper__resetGame" (click)="resetClicked()">
       <i class="icon-reload"></i>
@@ -18,6 +18,11 @@
       <i class="icon-plus"></i>
       <span>{{'ADD_PLAYER' | translate}}</span>
     </button>
+
+    <div class="menu__signature">
+      <div class="menu__signature__label">{{'SIGNATURE' | translate}}</div>
+      <a class="menu__signature__link" href="https://victorjouin.com">Victor Jouin</a>
+    </div>
   </div>
 </div>
 
