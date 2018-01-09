@@ -2,7 +2,6 @@
   <app-menu (addPlayer)="addPlayerClicked()"></app-menu>
   <app-player-list (addPlayer)="addPlayerClicked()"></app-player-list>
   <app-base-list></app-base-list>
-  <div class="game__background"></div>
 </div>
 
 <app-popin [(modal)]="addPopin" [title]="'NEW_PLAYER' | translate" [buttons]="[{text: 'CANCEL' | translate, secondary: true}, {text: 'ADD' | translate, disabled: newPlayerName.length === 0}]" (buttonPressed)="addPlayer($event)">
