@@ -11,9 +11,28 @@ export class PlayerService extends EntityService {
 
   constructor() {
     super();
-    const localPlayers = window.localStorage.getItem(this.entity);
-    if (localPlayers) {
-      this.entitiesSubject.next(JSON.parse(localPlayers));
+
+    let localEntities;
+    try {
+      localEntities = window.localStorage.getItem(this.entity);
+    } catch (e) {
+      console.error('This browser does not support local storage');
+    }
+    if (localEntities) {
+      let players = JSON.parse(localEntities) as Player[];
+      players = players.map(player => {
+        if (player.scoreModifier !== 0) {
+          if (player.score + player.scoreModifier >= 0) {
+            player.score = player.score + player.scoreModifier;
+          } else {
+            player.score = 0;
+          }
+          player.scoreModifier = 0;
+          player.scoreModifierDisplay = false;
+        }
+        return player;
+      });
+      this.entitiesSubject.next(players);
     }
   }
 

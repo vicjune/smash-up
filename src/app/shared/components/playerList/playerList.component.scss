@@ -124,6 +124,28 @@
       }
     }
 
+    &__playing {
+      opacity: 0;
+      transition: opacity 0.5s;
+      color: white;
+      transform: rotate(90deg);
+      position: absolute;
+      top: 45%;
+      left: -62px;
+      width: 100px;
+      height: 14px;
+      font-weight: 200;
+      font-size: 14px;
+      user-select: none;
+      white-space: nowrap;
+      text-align: center;
+      letter-spacing: 1px;
+
+      &.display {
+        opacity: 1;
+      }
+    }
+
     &__valueButtons {
       position: absolute;
       right: -50px;

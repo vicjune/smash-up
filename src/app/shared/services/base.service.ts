@@ -16,7 +16,12 @@ export class BaseService extends EntityService {
     private playerService: PlayerService
   ) {
     super();
-    const localEntities = window.localStorage.getItem(this.entity);
+    let localEntities;
+    try {
+      localEntities = window.localStorage.getItem(this.entity);
+    } catch (e) {
+      console.error('This browser does not support local storage');
+    }
     if (localEntities) {
       this.entitiesSubject.next(JSON.parse(localEntities));
     }

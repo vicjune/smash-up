@@ -65,6 +65,10 @@ export class MenuComponent implements OnInit {
 
   setLanguage(lang: string) {
     this.translate.use(lang);
-    window.localStorage.setItem('i18n', lang);
+    try {
+      window.localStorage.setItem('i18n', lang);
+    } catch (e) {
+      console.error('This browser does not support local storage');
+    }
   }
 }
