@@ -30,7 +30,7 @@ export class BaseService extends EntityService {
   bind(): Observable<Base[]> {
     return this.playerService.bind().switchMap(players => super.bind().map((bases: Base[]) => bases.map(base => {
       base.scores = this.getScoresWithoutDeletedPlayers(base, players);
-      base.resistance = this.getResistance(base, players);
+      base.resistance = this.getResistance(base);
       return base;
     })));
   }
@@ -76,8 +76,12 @@ export class BaseService extends EntityService {
     this.delete(base.id);
   }
 
-  private getResistance(base: Base, players: Player[]): number {
-    return base.maxResistance - base.scores.map(score => score.totalScore).reduce((a, b) => a + b, 0);
+  private getResistance(base: Base): number {
+    const resistance = base.maxResistance - base.scores.map(score => score.totalScore).reduce((a, b) => a + b, 0);
+    if (resistance < 0) {
+      return 0;
+    }
+    return resistance;
   }
 
   private getScoresWithoutDeletedPlayers(base: Base, players: Player[]): Score[] {
