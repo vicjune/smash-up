@@ -8,6 +8,8 @@ import { MenuComponent } from './components/menu/menu.component';
 import { PlayerService } from './services/player.service';
 import { PopinComponent } from './components/popin/popin.component';
 import { BaseService } from '@shared/services/base.service';
+import { TimerService } from '@shared/services/timer.service';
+import { TimerComponent } from '@shared/components/timer/timer.component';
 
 @NgModule({
   imports: [
@@ -19,11 +21,13 @@ import { BaseService } from '@shared/services/base.service';
     PlayerListComponent,
     MenuComponent,
     PopinComponent,
+    TimerComponent,
   ],
   exports: [
     PlayerListComponent,
     MenuComponent,
     PopinComponent,
+    TimerComponent,
     TranslateModule,
     CommonModule,
     FormsModule,
@@ -31,6 +35,7 @@ import { BaseService } from '@shared/services/base.service';
   providers: [
     PlayerService,
     BaseService,
+    TimerService,
   ]
 })
 export class SharedModule { }

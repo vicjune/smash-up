@@ -15,7 +15,7 @@ export class GameComponent implements OnInit {
   @ViewChild('input') addInput: ElementRef;
 
   constructor(
-    public playerService: PlayerService
+    public playerService: PlayerService,
   ) { }
 
   ngOnInit() {
