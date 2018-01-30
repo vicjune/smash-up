@@ -1,63 +1,81 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs/Rx';
 
-import { TIMER_DEFAULT } from './../constants';
+import { Timer } from '../models/timer';
+import { PlayerService } from './player.service';
 
 @Injectable()
 export class TimerService {
-  private timerActiveSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  private timerMaxSubject: BehaviorSubject<number> = new BehaviorSubject<number>(TIMER_DEFAULT);
-  private timerSubject: BehaviorSubject<number> = new BehaviorSubject<number>(TIMER_DEFAULT);
+  private timerSubject: BehaviorSubject<Timer> = new BehaviorSubject<Timer>(new Timer());
+  private interval;
 
-  constructor() {
+  constructor(
+    private playerService: PlayerService
+  ) {
     let localTimer;
-    let localTimerMax;
-    let localTimerActive;
     try {
       localTimer = window.localStorage.getItem('timer');
-      localTimerMax = window.localStorage.getItem('timerMax');
-      localTimerActive = window.localStorage.getItem('timerActive');
     } catch (e) {
       console.error('This browser does not support local storage');
     }
 
     if (localTimer) {
-      this.timerSubject.next(JSON.parse(localTimer) as number);
-    }
-
-    if (localTimerMax) {
-      this.timerMaxSubject.next(JSON.parse(localTimerMax) as number);
-    }
-
-    if (localTimerActive) {
-      this.timerActiveSubject.next(JSON.parse(localTimerActive) as boolean);
+      this.timerSubject.next(JSON.parse(localTimer) as Timer);
     }
   }
 
-  bindTimer(): Observable<number> {
+  bind(): Observable<Timer> {
     return this.timerSubject.asObservable();
   }
 
-  bindTimerMax(): Observable<number> {
-    return this.timerMaxSubject.asObservable();
-  }
-
-  bindTimerActive(): Observable<boolean> {
-    return this.timerActiveSubject.asObservable();
-  }
-
   bindWarningDisplay(): Observable<boolean> {
-    return this.timerSubject.map(timer => timer % 10 === 0 && timer <= 0);
+    return this.timerSubject.map(timer => timer.value % 10 === 0 && timer.value <= 0 && timer.active && timer.running);
   }
 
-  toggleTimer(): void {
-    const timerActive = this.timerActiveSubject.getValue();
-    this.timerActiveSubject.next(!timerActive);
+  toggleActive(): void {
+    const timer = this.timerSubject.getValue();
+    timer.active = !timer.active;
+    if (!timer.active) {
+      this.reset();
+    }
+    this.timerSubject.next(timer);
+  }
+
+  toggleRunning(): void {
+    const timer = this.timerSubject.getValue();
+    timer.running = !timer.running;
+    this.timerSubject.next(timer);
+
+    if (timer.running) {
+      this.interval = setInterval(() => {
+        const timerRunning = this.timerSubject.getValue();
+        timerRunning.value --;
+        this.timerSubject.next(timerRunning);
+      }, 100);
+    } else {
+      if (this.interval) {
+        clearInterval(this.interval);
+      }
+    }
+  }
+
+  setStartValue(value: number) {
+    const timer = this.timerSubject.getValue();
+    timer.startValue = value;
+    this.timerSubject.next(timer);
+  }
+
+  nextPlayer(): void {
+    const timer = this.timerSubject.getValue();
+    timer.value = timer.startValue;
+    this.timerSubject.next(timer);
+    this.playerService.nextPlayerPlaying();
   }
 
   reset(): void {
-    this.timerSubject.next(TIMER_DEFAULT);
-    this.timerMaxSubject.next(TIMER_DEFAULT);
-    this.timerActiveSubject.next(false);
+    this.timerSubject.next(new Timer());
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
   }
 }

@@ -1,3 +1,4 @@
+import { TimerService } from '@shared/services/timer.service';
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs/Rx';
@@ -25,7 +26,8 @@ export class MenuComponent implements OnInit {
   constructor(
     public playerService: PlayerService,
     public baseService: BaseService,
-    public translate: TranslateService
+    public translate: TranslateService,
+    public timerService: TimerService
   ) { }
 
   ngOnInit() {
@@ -60,7 +62,12 @@ export class MenuComponent implements OnInit {
     if (index === 1) {
       this.playerService.reset();
       this.baseService.reset();
+      this.timerService.reset();
     }
+  }
+
+  toggleTimer() {
+    this.timerService.toggleActive();
   }
 
   setLanguage(lang: string) {

@@ -6,10 +6,17 @@
       <button class="menu__wrapper__i18n__button" [disabled]="language === 'en'" (click)="setLanguage('en')">EN</button>
       <button class="menu__wrapper__i18n__button" [disabled]="language === 'fr'"  (click)="setLanguage('fr')">FR</button>
     </div>
+
     <button class="menu__wrapper__button menu__wrapper__resetGame" (click)="resetClicked()">
       <i class="icon-reload"></i>
       <span>{{'RESET_GAME' | translate}}</span>
     </button>
+
+    <button class="menu__wrapper__button menu__wrapper__timer" (click)="toggleTimer()">
+      <i [class]="(timerService.bind() | async).active ? 'icon-cross' : 'icon-reload'"></i>
+      <span>{{((timerService.bind() | async).active ? 'DISABLE_TIMER' : 'ENABLE_TIMER') | translate}}</span>
+    </button>
+
     <button [class]="'menu__wrapper__button menu__wrapper__deletePlayer color-' + player.color" *ngFor="let player of (playerService.bind() | async)" (click)="deletePlayerClicked(player)">
       <i class="icon-bin2"></i>
       <span>{{player.name}}</span>
