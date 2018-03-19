@@ -1,10 +1,12 @@
 <div class="menu" [ngClass]="{'active': menuOpen}">
-  <button class="menu__button" (click)="menuOpen = !menuOpen"><i class="icon-menu"></i></button>
+  <button class="menu__button" (click)="menuOpen = !menuOpen">
+    <i class="icon-menu"></i>
+  </button>
 
   <div class="menu__wrapper">
     <div class="menu__wrapper__i18n">
       <button class="menu__wrapper__i18n__button" [disabled]="language === 'en'" (click)="setLanguage('en')">EN</button>
-      <button class="menu__wrapper__i18n__button" [disabled]="language === 'fr'"  (click)="setLanguage('fr')">FR</button>
+      <button class="menu__wrapper__i18n__button" [disabled]="language === 'fr'" (click)="setLanguage('fr')">FR</button>
     </div>
 
     <button class="menu__wrapper__button menu__wrapper__resetGame" (click)="resetClicked()">
@@ -12,12 +14,26 @@
       <span>{{'RESET_GAME' | translate}}</span>
     </button>
 
-    <button class="menu__wrapper__button menu__wrapper__timer" (click)="toggleTimer()">
-      <i [class]="(timerService.bind() | async).active ? 'icon-cross' : 'icon-reload'"></i>
-      <span>{{((timerService.bind() | async).active ? 'DISABLE_TIMER' : 'ENABLE_TIMER') | translate}}</span>
-    </button>
+    <div class="menu__wrapper__timer">
+      <button class="menu__wrapper__button" (click)="toggleTimer()">
+        <i [class]="(timerService.bind() | async).active ? 'icon-cancel-circle' : 'icon-stopwatch'"></i>
+        <span>{{((timerService.bind() | async).active ? 'DISABLE_TIMER' : 'ENABLE_TIMER') | translate}}</span>
+      </button>
 
-    <button [class]="'menu__wrapper__button menu__wrapper__deletePlayer color-' + player.color" *ngFor="let player of (playerService.bind() | async)" (click)="deletePlayerClicked(player)">
+      <div class="menu__wrapper__timer__details" *ngIf="(timerService.bind() | async).active">
+        <button class="menu__wrapper__timer__button" (click)="timerService.decrementStartValue()" [disabled]="(timerService.bind() | async).startValue === 0">
+          <i class="icon-minus-square"></i>
+        </button>
+        <div class="menu__wrapper__timer__value">{{(timerService.bind() | async).startValue | timer}}</div>
+        <button class="menu__wrapper__timer__button" (click)="timerService.incrementStartValue()">
+          <i class="icon-plus-square"></i>
+        </button>
+      </div>
+    </div>
+
+
+    <button [class]="'menu__wrapper__button menu__wrapper__deletePlayer color-' + player.color" *ngFor="let player of (playerService.bind() | async)"
+      (click)="deletePlayerClicked(player)">
       <i class="icon-bin2"></i>
       <span>{{player.name}}</span>
     </button>
@@ -33,6 +49,8 @@
   </div>
 </div>
 
-<app-popin [(modal)]="deletePopin" [title]="removedPlayer ? ('REMOVE_PROMPT'| translate: {playerName: removedPlayer.name}) : ''" [buttons]="[{text: 'CANCEL' | translate, secondary: true}, {text: 'REMOVE' | translate, danger: true}]" (buttonPressed)="callbackDelete($event)"></app-popin>
+<app-popin [(modal)]="deletePopin" [title]="removedPlayer ? ('REMOVE_PROMPT'| translate: {playerName: removedPlayer.name}) : ''"
+  [buttons]="[{text: 'CANCEL' | translate, secondary: true}, {text: 'REMOVE' | translate, danger: true}]" (buttonPressed)="callbackDelete($event)"></app-popin>
 
-<app-popin [(modal)]="resetPopin" [title]="'RESET_PROMPT' | translate" [buttons]="[{text: 'CANCEL' | translate, secondary: true}, {text: 'RESET' | translate, danger: true}]" (buttonPressed)="callbackReset($event)"></app-popin>
+<app-popin [(modal)]="resetPopin" [title]="'RESET_PROMPT' | translate" [buttons]="[{text: 'CANCEL' | translate, secondary: true}, {text: 'RESET' | translate, danger: true}]"
+  (buttonPressed)="callbackReset($event)"></app-popin>

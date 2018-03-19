@@ -28,17 +28,12 @@ export class TimerService {
     return this.timerSubject.asObservable();
   }
 
-  bindWarningDisplay(): Observable<boolean> {
-    return this.timerSubject.map(timer => timer.value % 10 === 0 && timer.value <= 0 && timer.active && timer.running);
-  }
-
   toggleActive(): void {
     const timer = this.timerSubject.getValue();
     timer.active = !timer.active;
-    if (!timer.active) {
-      this.reset();
-    }
+    this.reset();
     this.timerSubject.next(timer);
+    this.storeInLocalStorage();
   }
 
   toggleRunning(): void {
@@ -59,10 +54,28 @@ export class TimerService {
     }
   }
 
-  setStartValue(value: number) {
+  incrementStartValue() {
     const timer = this.timerSubject.getValue();
-    timer.startValue = value;
+    timer.startValue = timer.startValue + 50;
+    if (!timer.running) {
+      timer.value = timer.startValue;
+    }
     this.timerSubject.next(timer);
+    this.storeInLocalStorage();
+  }
+
+  decrementStartValue() {
+    const timer = this.timerSubject.getValue();
+    if (timer.startValue - 50 > 0) {
+      timer.startValue = timer.startValue - 50;
+    } else {
+      timer.startValue = 0;
+    }
+    if (!timer.running) {
+      timer.value = timer.startValue;
+    }
+    this.timerSubject.next(timer);
+    this.storeInLocalStorage();
   }
 
   nextPlayer(): void {
@@ -73,9 +86,20 @@ export class TimerService {
   }
 
   reset(): void {
-    this.timerSubject.next(new Timer());
+    const timer = this.timerSubject.getValue();
+    timer.running = false;
+    timer.value = timer.startValue;
+    this.timerSubject.next(timer);
     if (this.interval) {
       clearInterval(this.interval);
+    }
+  }
+
+  private storeInLocalStorage() {
+    try {
+      window.localStorage.setItem('timer', JSON.stringify(this.timerSubject.getValue()));
+    } catch (e) {
+      console.error('This browser does not support local storage');
     }
   }
 }

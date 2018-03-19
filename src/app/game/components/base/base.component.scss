@@ -143,11 +143,6 @@
         margin-top: 10px;
         font-size: 17px;
         @include button-active-hover($playerColors, null, 'background');
-
-        i {
-          display: inline-block;
-          transform: rotate(90deg);
-        }
       }
     }
 

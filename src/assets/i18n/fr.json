@@ -18,5 +18,8 @@
   "BASE_RESISTANCE": "Résistance",
   "ON_TURN": "durant le tour",
   "SIGNATURE": "Confectionné avec soin par",
-  "PLAYING": "en train de jouer"
+  "PLAYING": "en train de jouer",
+  "ENABLE_TIMER": "Activer le chrono",
+  "DISABLE_TIMER": "Désactiver le chrono",
+  "NEXT_PLAYER": "Joueur suivant"
 }
