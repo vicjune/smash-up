@@ -13,7 +13,7 @@ import { Timer } from '@shared/models/timer';
 export class TimerComponent implements OnInit {
   timer: Observable<Timer> = this.timerService.bind();
   timerBlinking: Observable<boolean> = this.timer.map(timer => timer.running && timer.value <= 0);
-  playerColor: Observable<number> = this.playerService.bindPlayerPlaying().map(player => player.color);
+  playerColor: Observable<number> = this.playerService.bindPlayerPlaying().map(player => (player && player.color) || 1);
 
   constructor(
     public timerService: TimerService,
