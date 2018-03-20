@@ -31,7 +31,7 @@
   <div class="base__card">
     <div class="base__card__addScoreList" *ngIf="!editMode && detailsMode">
       <ng-container *ngFor="let player of (playerService.bind() | async)">
-        <button [class]="'base__card__addScoreList__button color-' + player.color" *ngIf="!getScore(player.id).score" (click)="addScore(player.id)"><i class="icon-eyedropper"></i></button>
+        <button [class]="'base__card__addScoreList__button color-' + player.color" *ngIf="!getScore(player.id).score" (click)="addScore(player.id)"><i class="icon-arrow-right2"></i></button>
       </ng-container>
     </div>
 

@@ -74,6 +74,27 @@ export class PlayerService extends EntityService {
     this.update(players);
   }
 
+  nextPlayerPlaying(): void {
+    const players = this.entitiesSubject.getValue() as Player[];
+    if (players.length > 1) {
+      let previousPlaying = false;
+      for (const player of players) {
+        if (previousPlaying) {
+          this.setPlayerPlaying(player.id);
+          previousPlaying = false;
+          break;
+        }
+        if (player.playing) {
+          previousPlaying = true;
+        }
+      }
+
+      if (previousPlaying) {
+        this.setPlayerPlaying(players[0].id);
+      }
+    }
+  }
+
   add(player: Player): void {
     const players = this.entitiesSubject.getValue() as Player[];
     if (players.length < MAX_PLAYERS) {

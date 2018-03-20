@@ -18,5 +18,8 @@
   "BASE_RESISTANCE": "Resistance",
   "ON_TURN": "during the turn",
   "SIGNATURE": "Created with love by",
-  "PLAYING": "playing"
+  "PLAYING": "playing",
+  "ENABLE_TIMER": "Enable timer",
+  "DISABLE_TIMER": "Disable timer",
+  "NEXT_PLAYER": "Next player"
 }

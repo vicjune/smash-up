@@ -132,8 +132,7 @@
       position: absolute;
       bottom: 0;
       left: -50px;
-      margin-right: 10px;
-      padding-left: 10px;
+      padding: 10px;
 
       &__button {
         display: block;
@@ -144,9 +143,8 @@
         font-size: 17px;
         @include button-active-hover($playerColors, null, 'background');
 
-        i {
-          display: inline-block;
-          transform: rotate(90deg);
+        &:first-child {
+          margin-top: 0;
         }
       }
     }
@@ -154,7 +152,7 @@
     &__actions {
       position: absolute;
       right: -50px;
-      padding-right: 10px;
+      padding: 10px;
       top: 0;
 
       &__button {

@@ -1,3 +1,4 @@
+import { TimerService } from '@shared/services/timer.service';
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs/Rx';
@@ -5,7 +6,7 @@ import { Observable } from 'rxjs/Rx';
 import { PlayerService } from '../../services/player.service';
 import { Player } from '../../models/player';
 import { BaseService } from '@shared/services/base.service';
-import { MAX_PLAYERS } from '@shared/constants';
+import { MAX_PLAYERS, TIMER_SECONDS_INTERVAL } from '@shared/constants';
 
 @Component({
   selector: 'app-menu',
@@ -19,13 +20,15 @@ export class MenuComponent implements OnInit {
   removedPlayer: Player;
   language: string;
   MAX_PLAYERS: number = MAX_PLAYERS;
+  TIMER_SECONDS_INTERVAL: number = TIMER_SECONDS_INTERVAL;
 
   @Output('addPlayer') addPlayer = new EventEmitter<void>();
 
   constructor(
     public playerService: PlayerService,
     public baseService: BaseService,
-    public translate: TranslateService
+    public translate: TranslateService,
+    public timerService: TimerService
   ) { }
 
   ngOnInit() {
@@ -60,7 +63,12 @@ export class MenuComponent implements OnInit {
     if (index === 1) {
       this.playerService.reset();
       this.baseService.reset();
+      this.timerService.reset();
     }
+  }
+
+  toggleTimer() {
+    this.timerService.toggleActive();
   }
 
   setLanguage(lang: string) {
