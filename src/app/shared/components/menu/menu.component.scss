@@ -87,6 +87,7 @@
       margin-bottom: 60px;
 
       &__details {
+        position: relative;
         height: 50px;
         color: white;
         border-bottom: 1px solid white;
@@ -105,6 +106,13 @@
       &__button {
         @include button-active-hover(null, white, 'simple');
         font-size: 22px;
+      }
+
+      &__reset {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
       }
     }
 

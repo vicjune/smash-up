@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs/Rx';
 
 import { Timer } from '../models/timer';
+import { TIMER_SECONDS_INTERVAL, TIMER_DEFAULT } from '../constants';
 import { PlayerService } from './player.service';
 
 @Injectable()
@@ -20,7 +21,10 @@ export class TimerService {
     }
 
     if (localTimer) {
-      this.timerSubject.next(JSON.parse(localTimer) as Timer);
+      const timer = JSON.parse(localTimer) as Timer;
+      timer.running = false;
+      timer.value = timer.startValue;
+      this.timerSubject.next(timer);
     }
   }
 
@@ -66,11 +70,21 @@ export class TimerService {
 
   decrementStartValue() {
     const timer = this.timerSubject.getValue();
-    if (timer.startValue - 50 > 0) {
-      timer.startValue = timer.startValue - 50;
+    if (timer.startValue - (TIMER_SECONDS_INTERVAL * 10) > (TIMER_SECONDS_INTERVAL * 10)) {
+      timer.startValue = timer.startValue - (TIMER_SECONDS_INTERVAL * 10);
     } else {
-      timer.startValue = 0;
+      timer.startValue = (TIMER_SECONDS_INTERVAL * 10);
     }
+    if (!timer.running) {
+      timer.value = timer.startValue;
+    }
+    this.timerSubject.next(timer);
+    this.storeInLocalStorage();
+  }
+
+  resetStartValue() {
+    const timer = this.timerSubject.getValue();
+    timer.startValue = TIMER_DEFAULT;
     if (!timer.running) {
       timer.value = timer.startValue;
     }

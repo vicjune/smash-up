@@ -6,7 +6,7 @@ import { Observable } from 'rxjs/Rx';
 import { PlayerService } from '../../services/player.service';
 import { Player } from '../../models/player';
 import { BaseService } from '@shared/services/base.service';
-import { MAX_PLAYERS } from '@shared/constants';
+import { MAX_PLAYERS, TIMER_SECONDS_INTERVAL } from '@shared/constants';
 
 @Component({
   selector: 'app-menu',
@@ -20,6 +20,7 @@ export class MenuComponent implements OnInit {
   removedPlayer: Player;
   language: string;
   MAX_PLAYERS: number = MAX_PLAYERS;
+  TIMER_SECONDS_INTERVAL: number = TIMER_SECONDS_INTERVAL;
 
   @Output('addPlayer') addPlayer = new EventEmitter<void>();
 

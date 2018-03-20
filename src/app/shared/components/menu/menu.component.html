@@ -21,12 +21,15 @@
       </button>
 
       <div class="menu__wrapper__timer__details" *ngIf="(timerService.bind() | async).active">
-        <button class="menu__wrapper__timer__button" (click)="timerService.decrementStartValue()" [disabled]="(timerService.bind() | async).startValue === 0">
+        <button class="menu__wrapper__timer__button" (click)="timerService.decrementStartValue()" [disabled]="(timerService.bind() | async).startValue <= TIMER_SECONDS_INTERVAL * 10">
           <i class="icon-minus-square"></i>
         </button>
         <div class="menu__wrapper__timer__value">{{(timerService.bind() | async).startValue | timer}}</div>
         <button class="menu__wrapper__timer__button" (click)="timerService.incrementStartValue()">
           <i class="icon-plus-square"></i>
+        </button>
+        <button class="menu__wrapper__timer__button menu__wrapper__timer__reset" (click)="timerService.resetStartValue()">
+          <i class="icon-reload"></i>
         </button>
       </div>
     </div>
