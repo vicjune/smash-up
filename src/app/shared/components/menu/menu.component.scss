@@ -14,6 +14,20 @@
     transform: translateX(0);
   }
 
+  &__overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9;
+
+    &.active {
+      display: block;
+    }
+  }
+
   &__button {
     position: absolute;
     top: 17px;

@@ -52,6 +52,8 @@
   </div>
 </div>
 
+<div class="menu__overlay" [ngClass]="{'active': menuOpen}" (click)="menuOpen = false"></div>
+
 <app-popin [(modal)]="deletePopin" [title]="removedPlayer ? ('REMOVE_PROMPT'| translate: {playerName: removedPlayer.name}) : ''"
   [buttons]="[{text: 'CANCEL' | translate, secondary: true}, {text: 'REMOVE' | translate, danger: true}]" (buttonPressed)="callbackDelete($event)"></app-popin>
 
