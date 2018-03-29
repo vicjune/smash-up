@@ -39,13 +39,11 @@ export class MenuComponent implements OnInit {
 
   addPlayerClicked() {
     this.addPlayer.emit();
-    this.menuOpen = false;
   }
 
   deletePlayerClicked(player: Player) {
     this.removedPlayer = player;
     this.deletePopin = true;
-    this.menuOpen = false;
   }
 
   callbackDelete(index: number) {
