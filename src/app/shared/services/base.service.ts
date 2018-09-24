@@ -78,9 +78,6 @@ export class BaseService extends EntityService {
 
   private getResistance(base: Base): number {
     const resistance = base.maxResistance - base.scores.map(score => score.totalScore).reduce((a, b) => a + b, 0);
-    if (resistance < 0) {
-      return 0;
-    }
     return resistance;
   }
 

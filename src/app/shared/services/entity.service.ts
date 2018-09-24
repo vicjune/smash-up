@@ -14,6 +14,10 @@ export class EntityService {
     return this.entitiesSubject.asObservable();
   }
 
+  bindFromId(id: string): Observable<Entity> {
+    return this.bind().map(entities => entities.find(entity => entity.id === id));
+  }
+
   add(entity: Entity): void {
     const entities = this.entitiesSubject.getValue();
     entities.push(entity);
