@@ -11,6 +11,7 @@ export class Base extends Entity {
     y: number,
     rotation: number
   };
+  creatures: string[];
 
   constructor() {
     super();
@@ -22,18 +23,11 @@ export class Base extends Entity {
       y: Math.floor(Math.random() * (60 - 30 + 1)) + 30,
       rotation: Math.random()
     };
+    this.creatures = [];
   }
 }
 
-export class Score {
+export interface Score {
   playerId: string;
   score: number;
-  scoreModifier: number;
-  totalScore: number;
-
-  constructor(playerId: string) {
-    this.playerId = playerId;
-    this.score = 0;
-    this.scoreModifier = 0;
-  }
 }

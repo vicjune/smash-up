@@ -1,19 +1,21 @@
-import { Score } from './../models/base';
 import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject } from 'rxjs/Rx';
+import { Observable } from 'rxjs/Rx';
 
 import { Player } from '@shared/models/player';
 import { EntityService } from '@shared/services/entity.service';
-import { Base } from '@shared/models/base';
+import { Base, Score } from '@shared/models/base';
 import { MAX_PLAYERS } from '@shared/constants';
 import { PlayerService } from '@shared/services/player.service';
+import { CreatureService } from '@shared/services/creature.service';
+import { Creature } from '@shared/models/creature';
 
 @Injectable()
 export class BaseService extends EntityService {
   protected entity = 'bases';
 
   constructor(
-    private playerService: PlayerService
+    private playerService: PlayerService,
+    private creatureService: CreatureService
   ) {
     super();
     let localEntities;
@@ -28,11 +30,15 @@ export class BaseService extends EntityService {
   }
 
   bind(): Observable<Base[]> {
-    return this.playerService.bind().switchMap(players => super.bind().map((bases: Base[]) => bases.map(base => {
-      base.scores = this.getScoresWithoutDeletedPlayers(base, players);
+    return Observable.combineLatest(
+      super.bind(),
+      this.playerService.bind(),
+      this.creatureService.bind()
+    ).map(([bases, players, creatures]) => bases.map((base: Base) => {
+      base.scores = this.getScores(base, players, creatures);
       base.resistance = this.getResistance(base);
       return base;
-    })));
+    }));
   }
 
   add(base: Base): void {
@@ -45,16 +51,16 @@ export class BaseService extends EntityService {
 
   conquer(base: Base): void {
     const sortedScores = base.scores.sort((scoreA, scoreB) => {
-      return scoreB.totalScore - scoreA.totalScore;
+      return scoreB.score - scoreA.score;
     }).map((score, index, array) => {
       let reward = 0;
       if (index === 0) {
         reward = base.rewards[index];
       } else if (index < 3) {
-        if (score.totalScore === array[index - 1].totalScore) {
+        if (score.score === array[index - 1].score) {
           reward = base.rewards[index - 1];
 
-          if (index === 2 && score.totalScore === array[index - 2].totalScore) {
+          if (index === 2 && score.score === array[index - 2].score) {
             reward = base.rewards[index - 2];
           }
         } else {
@@ -64,7 +70,6 @@ export class BaseService extends EntityService {
 
       return {
         id: score.playerId,
-        score: score.totalScore,
         reward: reward
       };
     });
@@ -76,34 +81,50 @@ export class BaseService extends EntityService {
     this.delete(base.id);
   }
 
+  addCreature(creatureId, baseId: string) {
+    const base = this.get(baseId, this.entitiesSubject.getValue()).entity as Base;
+    base.creatures.push(creatureId);
+    this.edit(base);
+  }
+
+  removeCreature(creatureId: string) {
+    for (const base of this.entitiesSubject.getValue() as Base[]) {
+      const creatureIndex = base.creatures.findIndex(baseCreatureId => baseCreatureId === creatureId);
+      if (creatureIndex !== -1) {
+        base.creatures.splice(creatureIndex, 1);
+        this.edit(base);
+        break;
+      }
+    }
+  }
+
+  moveCreatureToAnotherBase(creatureId: string, newBaseId: string) {
+    this.removeCreature(creatureId);
+    this.addCreature(creatureId, newBaseId);
+  }
+
   private getResistance(base: Base): number {
-    const resistance = base.maxResistance - base.scores.map(score => score.totalScore).reduce((a, b) => a + b, 0);
+    const resistance = base.maxResistance - base.scores.map(score => score.score).reduce((a, b) => a + b, 0);
     return resistance;
   }
 
-  private getScoresWithoutDeletedPlayers(base: Base, players: Player[]): Score[] {
-    const playerIds = players.map(player => player.id);
-    const basePlayerIds = base.scores.map(score => score.playerId);
-    const playerSurplusIds = this.arrayDiff(basePlayerIds, playerIds);
+  private getScores(base: Base, players: Player[], creatures: Creature[]): Score[] {
+    return players.map(player => {
+      const score = base.creatures
+        .map(creatureId => creatures.find(creature => creature.id === creatureId))
+        .filter(creature => creature && creature.ownerId === player.id)
+        .reduce((previousScore, creature) => {
+          let newScore = previousScore + creature.basicStrength + creature.bonusStrength;
+          if (player.playing) {
+            newScore += creature.modifierDuringOwnerTurn;
+          }
+          return newScore;
+        }, 0);
 
-    if (playerSurplusIds.length > 0) {
-      for (const playerSurplusId of playerSurplusIds) {
-        base.scores.splice(base.scores.map(score => score.playerId).indexOf(playerSurplusId), 1);
-      }
-    }
-
-    return base.scores.map(score => {
-      if ((this.get(score.playerId, players).entity as Player).playing) {
-        score.totalScore = score.score + score.scoreModifier;
-      } else {
-        score.totalScore = score.score;
-      }
-
-      if (score.totalScore < 0) {
-        score.totalScore = 0;
-      }
-
-      return score;
+      return {
+        playerId: player.id,
+        score
+      };
     });
   }
 }
