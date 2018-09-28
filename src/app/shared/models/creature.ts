@@ -2,6 +2,7 @@ import { Entity } from './entity';
 
 export class Creature extends Entity {
   ownerId: string;
+  strength: number;
   basicStrength: number;
   bonusStrength: number;
   modifierDuringOwnerTurn: number;

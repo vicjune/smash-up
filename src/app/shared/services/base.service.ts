@@ -27,6 +27,10 @@ export class BaseService extends EntityService {
     if (localEntities) {
       this.entitiesSubject.next(JSON.parse(localEntities));
     }
+
+    this.creatureService.addCreatureSubject.subscribe(({creatureId, baseId}) => this.addCreature(creatureId, baseId));
+    this.creatureService.moveCreatureSubject.subscribe(({creatureId, baseId}) => this.moveCreatureToAnotherBase(creatureId, baseId));
+    this.creatureService.deleteCreatureSubject.subscribe(({creatureId}) => this.removeCreature(creatureId));
   }
 
   bind(): Observable<Base[]> {
@@ -69,25 +73,25 @@ export class BaseService extends EntityService {
       }
 
       return {
-        id: score.playerId,
-        reward: reward
+        ...score,
+        reward
       };
     });
 
     sortedScores.forEach(score => {
-      this.playerService.updateScore(score.reward, score.id, true);
+      this.playerService.updateScore(score.reward, score.playerId, true);
     });
 
     this.delete(base.id);
   }
 
-  addCreature(creatureId, baseId: string) {
+  private addCreature(creatureId, baseId: string) {
     const base = this.get(baseId, this.entitiesSubject.getValue()).entity as Base;
     base.creatures.push(creatureId);
     this.edit(base);
   }
 
-  removeCreature(creatureId: string) {
+  private removeCreature(creatureId: string) {
     for (const base of this.entitiesSubject.getValue() as Base[]) {
       const creatureIndex = base.creatures.findIndex(baseCreatureId => baseCreatureId === creatureId);
       if (creatureIndex !== -1) {
@@ -98,7 +102,7 @@ export class BaseService extends EntityService {
     }
   }
 
-  moveCreatureToAnotherBase(creatureId: string, newBaseId: string) {
+  private moveCreatureToAnotherBase(creatureId: string, newBaseId: string) {
     this.removeCreature(creatureId);
     this.addCreature(creatureId, newBaseId);
   }
@@ -110,21 +114,20 @@ export class BaseService extends EntityService {
 
   private getScores(base: Base, players: Player[], creatures: Creature[]): Score[] {
     return players.map(player => {
-      const score = base.creatures
+      const creaturesOfThisPlayer = base.creatures
         .map(creatureId => creatures.find(creature => creature.id === creatureId))
-        .filter(creature => creature && creature.ownerId === player.id)
-        .reduce((previousScore, creature) => {
-          let newScore = previousScore + creature.basicStrength + creature.bonusStrength;
-          if (player.playing) {
-            newScore += creature.modifierDuringOwnerTurn;
-          }
-          return newScore;
-        }, 0);
+        .filter(creature => creature && creature.ownerId === player.id);
+
+      let score = null;
+      if (creaturesOfThisPlayer.length > 0) {
+        score = creaturesOfThisPlayer
+          .reduce((previousScore, creature) => previousScore + creature.strength, 0);
+      }
 
       return {
         playerId: player.id,
         score
       };
-    });
+    }).filter(score => score.score >= 0);
   }
 }

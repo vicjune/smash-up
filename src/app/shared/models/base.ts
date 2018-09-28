@@ -30,4 +30,5 @@ export class Base extends Entity {
 export interface Score {
   playerId: string;
   score: number;
+  reward?: number;
 }

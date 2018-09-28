@@ -18,7 +18,7 @@ export class EntityService {
     return this.bind().map(entities => entities.find(entity => entity.id === id));
   }
 
-  add(entity: Entity, bonusParam?): void {
+  add(entity: Entity): void {
     const entities = this.entitiesSubject.getValue();
     entities.push(entity);
     this.update(entities);
