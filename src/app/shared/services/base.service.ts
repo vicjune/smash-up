@@ -52,7 +52,6 @@ export class BaseService extends EntityService {
   }
 
   conquer(base: Base): void {
-    console.log(base);
     const sortedScores = base.scores.sort((scoreA, scoreB) => {
       return scoreB.score - scoreA.score;
     }).map((score, index, array) => {
