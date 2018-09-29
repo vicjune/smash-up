@@ -27,10 +27,6 @@ export class BaseService extends EntityService {
     if (localEntities) {
       this.entitiesSubject.next(JSON.parse(localEntities));
     }
-
-    this.creatureService.addCreatureSubject.subscribe(({creatureId, baseId}) => this.addCreature(creatureId, baseId));
-    this.creatureService.moveCreatureSubject.subscribe(({creatureId, baseId}) => this.moveCreatureToAnotherBase(creatureId, baseId));
-    this.creatureService.deleteCreatureSubject.subscribe(({creatureId}) => this.removeCreature(creatureId));
   }
 
   bind(): Observable<Base[]> {
@@ -85,7 +81,22 @@ export class BaseService extends EntityService {
     this.delete(base.id);
   }
 
-  private addCreature(creatureId, baseId: string) {
+  createCreture(creature: Creature, baseId: string) {
+    this.creatureService.add(creature);
+    this.addCreature(creature.id, baseId);
+  }
+
+  deleteCreature(creatureId: string) {
+    this.creatureService.delete(creatureId);
+    this.removeCreature(creatureId);
+  }
+
+  moveCreatureToAnotherBase(creatureId: string, newBaseId: string) {
+    this.removeCreature(creatureId);
+    this.addCreature(creatureId, newBaseId);
+  }
+
+  private addCreature(creatureId: string, baseId: string) {
     const base = this.get(baseId, this.entitiesSubject.getValue()).entity as Base;
     base.creatures.push(creatureId);
     this.edit(base);
@@ -100,11 +111,6 @@ export class BaseService extends EntityService {
         break;
       }
     }
-  }
-
-  private moveCreatureToAnotherBase(creatureId: string, newBaseId: string) {
-    this.removeCreature(creatureId);
-    this.addCreature(creatureId, newBaseId);
   }
 
   private getResistance(base: Base): number {

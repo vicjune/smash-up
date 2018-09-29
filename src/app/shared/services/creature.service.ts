@@ -9,9 +9,6 @@ import { Player } from '@shared/models/player';
 
 @Injectable()
 export class CreatureService extends EntityService {
-  addCreatureSubject = new Subject<{creatureId: string, baseId: string}>();
-  moveCreatureSubject = new Subject<{creatureId: string, baseId: string}>();
-  deleteCreatureSubject = new Subject<{creatureId: string}>();
   protected entity = 'creatures';
 
   constructor(
@@ -44,20 +41,6 @@ export class CreatureService extends EntityService {
   swichOwner(creature: Creature, newOwnerId: string) {
     creature.ownerId = newOwnerId;
     this.edit(creature);
-  }
-
-  addToBase(creature: Creature, baseId: string) {
-    super.add(creature);
-    this.addCreatureSubject.next({creatureId: creature.id, baseId});
-  }
-
-  moveToAnotherBase(creature: Creature, newBaseId: string) {
-    this.moveCreatureSubject.next({creatureId: creature.id, baseId: newBaseId});
-  }
-
-  delete(creatureId: string): void {
-    super.delete(creatureId);
-    this.deleteCreatureSubject.next({creatureId});
   }
 
   private getStrength(creature: Creature, players: Player[]): number {
