@@ -9,6 +9,8 @@ import { Player } from '@shared/models/player';
 
 @Injectable()
 export class CreatureService extends EntityService {
+  deleteCreatureEventSubject = new Subject<string>();
+
   protected entity = 'creatures';
 
   constructor(
@@ -28,6 +30,10 @@ export class CreatureService extends EntityService {
     playerService.bind().subscribe(players => this.removeExcessCreatures(players));
   }
 
+  get deleteCreatureEvent(): Observable<string> {
+    return this.deleteCreatureEventSubject.asObservable();
+  }
+
   bind(): Observable<Creature[]> {
     return Observable.combineLatest(
       super.bind(),
@@ -36,6 +42,11 @@ export class CreatureService extends EntityService {
       creature.strength = this.getStrength(creature, players);
       return creature;
     }));
+  }
+
+  delete(creatureId: string) {
+    this.deleteCreatureEventSubject.next(creatureId);
+    super.delete(creatureId);
   }
 
   swichOwner(creature: Creature, newOwnerId: string) {

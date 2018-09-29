@@ -27,6 +27,8 @@ export class BaseService extends EntityService {
     if (localEntities) {
       this.entitiesSubject.next(JSON.parse(localEntities));
     }
+
+    this.creatureService.deleteCreatureEvent.subscribe(creatureId => this.removeCreature(creatureId));
   }
 
   bind(): Observable<Base[]> {
