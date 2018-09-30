@@ -83,14 +83,15 @@ export class BaseService extends EntityService {
     this.delete(base.id);
   }
 
-  createCreture(creature: Creature, baseId: string) {
-    this.creatureService.add(creature);
-    this.addCreature(creature.id, baseId);
+  delete(baseId: string) {
+    const base = this.get(baseId, this.entitiesSubject.getValue()).entity as Base;
+    base.creatures.forEach(creatureId => this.creatureService.delete(creatureId));
+    super.delete(baseId);
   }
 
-  deleteCreature(creatureId: string) {
-    this.creatureService.delete(creatureId);
-    this.removeCreature(creatureId);
+  createCreature(creature: Creature, baseId: string) {
+    this.creatureService.add(creature);
+    this.addCreature(creature.id, baseId);
   }
 
   moveCreatureToAnotherBase(creatureId: string, newBaseId: string) {

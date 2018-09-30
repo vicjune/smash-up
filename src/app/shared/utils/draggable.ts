@@ -13,7 +13,7 @@ export class Draggable {
   private clickEventSubject = new Subject<void>();
   private dropEventSubject = new Subject<number[]>();
 
-  constructor(private elementRef: ElementRef) {}
+  constructor() {}
 
   get dragging(): boolean {
     return this._dragging;
@@ -84,7 +84,7 @@ export class Draggable {
 
   private convertEvent(event) {
     if ('targetTouches' in event) {
-      const bouncingRect = this.elementRef.nativeElement.getBoundingClientRect();
+      const bouncingRect = event.target.getBoundingClientRect();
       return {
         pageX: event.targetTouches[0].pageX,
         pageY: event.targetTouches[0].pageY,

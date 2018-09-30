@@ -1,8 +1,8 @@
-<div #baseRef
+<div
   *ngIf="base"
   [class]="'base color-' + base.color"
-  [ngClass]="{'detailsMode': detailsMode, 'editMode': editMode, 'conquered': base.resistance <= 0, 'dragging': draggable.dragging}"
-  [ngStyle]="{'transform': getTransform(), 'left.%': draggable.coordinates[0], 'top.%': draggable.coordinates[1]}"
+  [ngClass]="{'detailsMode': detailsMode, 'editMode': editMode, 'conquered': base.resistance <= 0, 'dragging': draggable?.dragging}"
+  [ngStyle]="{'transform': getTransform(), 'left.%': draggable?.coordinates[0], 'top.%': draggable?.coordinates[1]}"
   (mousedown)="mouseDown($event)"
   (touchstart)="mouseDown($event)"
   (window:mousemove)="mouseMove($event)"
@@ -61,12 +61,16 @@
       <button [class]="'base__colorEdit__color color-' + color" *ngFor="let color of (bindAvailableColors() | async)" (click)="chooseColor(color)"></button>
     </div>
 
-    <div class="base__playerScoresReduced" *ngIf="!editMode && !detailsMode">
+    <div class="base__playerScoresReduced" *ngIf="!editMode">
       <div [class]="'base__playerScoresReduced__score color-' + (playerService.bindPlayer(score.playerId) | async).color" *ngFor="let score of base.scores; let i = index">
         {{score.score}}
       </div>
     </div>
   </div>
+</div>
+
+<div class="base__creatureList">
+  <app-creature-list *ngIf="detailsMode && !editMode" [base]="base"></app-creature-list>
 </div>
 
 <div class="base__backdrop" [ngClass]="{'visible': detailsMode}" (click)="exitMoreDetails()"></div>

@@ -44,11 +44,6 @@ export class CreatureService extends EntityService {
     }));
   }
 
-  delete(creatureId: string) {
-    this.deleteCreatureEventSubject.next(creatureId);
-    super.delete(creatureId);
-  }
-
   swichOwner(creature: Creature, newOwnerId: string) {
     creature.ownerId = newOwnerId;
     this.edit(creature);
@@ -66,6 +61,9 @@ export class CreatureService extends EntityService {
   private removeExcessCreatures(players: Player[]) {
     (this.entitiesSubject.getValue() as Creature[])
       .filter(creature => !players.find(player => player.id === creature.ownerId))
-      .forEach(creature => this.delete(creature.id));
+      .forEach(creature => {
+        this.delete(creature.id);
+        this.deleteCreatureEventSubject.next(creature.id);
+      });
   }
 }

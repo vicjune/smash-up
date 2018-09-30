@@ -2,7 +2,6 @@ import { Component, OnInit, Input, forwardRef, EventEmitter, Output, ViewChild, 
 import { FormControl, ControlValueAccessor, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 import { Observable } from 'rxjs/Rx';
 
-import { Score } from '@shared/models/base';
 import { Base } from '@shared/models/base';
 import { BASE_REWARD_LIMITS, MAX_CARD_ROTATION_DEG, BASE_MAX_RESISTANCE, AVAILABLE_COLORS } from '@shared/constants';
 import { BaseService } from '@shared/services/base.service';
@@ -26,12 +25,12 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
   editMode = false;
   detailsMode = false;
 
-  draggable: Draggable;
+  draggable = new Draggable();
 
   BASE_REWARD_LIMITS = BASE_REWARD_LIMITS;
   BASE_MAX_RESISTANCE = BASE_MAX_RESISTANCE;
 
-  @ViewChild('baseRef') baseRef: ElementRef;
+  portraitMode = false;
 
   private _base: Base;
   get base() {
@@ -47,9 +46,7 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
   constructor(
     public baseService: BaseService,
     public playerService: PlayerService
-  ) {
-    this.draggable = new Draggable(this.baseRef);
-  }
+  ) {}
 
   ngOnInit() {
     if (this.newBase) {
@@ -64,6 +61,14 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
       base.position.y = y;
       this.base = base;
     });
+
+    this.checkOrientation();
+    window.addEventListener('orientationchange', () => {
+      this.checkOrientation();
+    }, false);
+    window.addEventListener('resize', () => {
+      this.checkOrientation();
+    }, false);
   }
 
   bindAvailableColors(): Observable<number[]> {
@@ -111,22 +116,16 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
   getTransform(): string {
     if (this.editMode || this.detailsMode) {
       if (this.detailsMode) {
-        return 'translate(-50%, -50%) rotate(0) scale(1.5)';
+        if (this.portraitMode) {
+          return 'translate(-50%, 0) rotate(0) scale(1.5)';
+        }
+        return 'translate(-100%, -50%) rotate(0) scale(1.5)';
       }
       return 'translate(0, 0) rotate(0) scale(1)';
     }
     return 'translate(0, 0) rotate(' + (Math.floor(
       this.base.position.rotation * (MAX_CARD_ROTATION_DEG + MAX_CARD_ROTATION_DEG + 1)
     ) - MAX_CARD_ROTATION_DEG) + 'deg) scale(1)';
-  }
-
-
-  getScore(playerId: string): { score: Score, index: number } {
-    const index = this.base.scores.map(score => score.playerId).indexOf(playerId);
-    if (index !== -1) {
-      return { score: this.base.scores[index], index: index };
-    }
-    return { score: null, index: -1 };
   }
 
   seeMoreDetails() {
@@ -180,5 +179,9 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
 
   mouseUp() {
     this.draggable.mouseUp();
+  }
+
+  checkOrientation() {
+    this.portraitMode = window.innerHeight > window.innerWidth;
   }
 }

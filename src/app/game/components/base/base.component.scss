@@ -11,8 +11,13 @@
     cursor: default;
     z-index: 5;
     top: 50% !important;
-    left: 50% !important;
+    left: 80% !important;
     transition: left 0.5s, top 0.5s, transform 0.5s;
+
+    @media (orientation:portrait) {
+      top: 20% !important;
+      left: 50% !important;
+    }
   }
 
   &.dragging {
@@ -285,158 +290,6 @@
     }
   }
 
-  &__playerScores {
-    &__list {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-around;
-      padding-bottom: 20px;
-
-      &__score {
-        margin: 10px 10px 0;
-        position: relative;
-        border-radius: 5px;
-        width: 90px;
-        box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-        transition: margin 0.5s;
-        @include color($playerColors, background-color, -20);
-
-        &.modifierOpen {
-          margin-right: 40px;
-
-          &:after {
-            transform: translateX(10px);
-            transition: transform 0.20s ease 0.38s;
-          }
-        }
-
-        &:after {
-          content: '';
-          position: absolute;
-          top: 5px;
-          right: 0px;
-          width: 10px;
-          bottom: 5px;
-          z-index: -1;
-          transition: transform 0.10s;
-        }
-
-        @each $color in $playerColors {
-          $i: index($playerColors, $color);
-
-          &.color-#{$i}:after {
-            background-color: darken($color, 30)
-          }
-        }
-
-        &__delete {
-          position: absolute;
-          top: 0;
-          left: 0;
-          font-size: 20px;
-          line-height: 20px;
-          padding: 1px;
-          @include button-active-hover(null, white, 'simple');
-        }
-
-        &__scoreAndButtons {
-          display: flex;
-          align-items: center;
-          justify-content: flex-end;
-
-          &__score {
-            font-size: 40px;
-            color: white;
-            margin-right: 5px;
-            padding-bottom: 3px;
-          }
-
-          &__buttons {
-            &__button {
-              font-size: 18px;
-              display: block;
-              padding: 5px 10px 0 5px;
-              @include button-active-hover(null, white, 'simple');
-
-              &:last-child {
-                padding: 0 10px 5px 5px;
-              }
-            }
-          }
-        }
-
-        &__toggle {
-          position: absolute;
-          right: -31px;
-          top: 24px;
-          transform: rotate(-90deg);
-          height: 13px;
-          width: 54px;
-          white-space: nowrap;
-          text-align: center;
-          font-size: 8px;
-          line-height: 10px;
-          font-weight: 200;
-          transition: transform 0.5s;
-          @include button-active-hover(null, rgba(255, 255, 255, 0.8), 'simple');
-
-          &[disabled] {
-            opacity: 1;
-          }
-
-          .modifierOpen & {
-            transform: translateX(30px) rotate(-90deg);
-          }
-        }
-
-        &__modifier {
-          position: absolute;
-          z-index: -1;
-          border-bottom-right-radius: 3px;
-          border-top-right-radius: 3px;
-          top: 5px;
-          bottom: 5px;
-          right: -10px;
-          padding: 0 15px 0 0;
-          transition: transform 0.5s;
-          @include color($playerColors, background-color, -30);
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          flex-direction: column;
-
-          .modifierOpen & {
-            transform: translateX(30px);
-            transition: transform 0.5s, z-index 0s ease 0.5s;
-            z-index: 0;
-          }
-
-          &__button {
-            display: block;
-            line-height: 5px;
-            font-size: 13px;
-            padding: 5px 5px 5px 5px;
-            z-index: 1;
-            @include button-active-hover(null, rgba(255, 255, 255, 0.8), 'simple');
-          }
-
-          &__value {
-            color: white;
-            width: 20px;
-            text-align: center;
-            opacity: 0.8;
-            line-height: 0;
-            height: 0;
-
-            .zero & {
-              opacity: 0.4;
-            }
-          }
-        }
-      }
-    }
-  }
-
   &__playerScoresReduced {
     margin-top: 10px;
     display: flex;
@@ -445,6 +298,21 @@
     &__score {
       @include color($playerColors, color);
       font-size: 30px;
+    }
+  }
+
+  &__creatureList {
+    position: fixed;
+    z-index: 5;
+    top: 50%;
+    left: 0;
+    bottom: 50%;
+    transform: translate(0, -50%);
+
+    @media (orientation:portrait) {
+      top: calc(20% + 523px);
+      left: 0;
+      transform: translate(0, 0);
     }
   }
 
@@ -461,7 +329,7 @@
     transition: opacity 0.5s, visibility 0s ease 0.5s;
 
     &.visible {
-      opacity: 0.5;
+      opacity: 0.6;
       visibility: visible;
       transition: opacity 0.5s;
     }

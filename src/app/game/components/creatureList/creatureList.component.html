@@ -1,0 +1,7 @@
+<div *ngFor="let player of (players | async)">
+  <button (click)="createCreature(player.id)">Add creature</button>
+  <button (click)="createCreature(player.id, 2)">2</button>
+  <button (click)="createCreature(player.id, 3)">3</button>
+  <button (click)="createCreature(player.id, 4)">4</button>
+  <button (click)="createCreature(player.id, 5)">5</button>
+</div>
