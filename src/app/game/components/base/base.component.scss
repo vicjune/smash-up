@@ -301,21 +301,6 @@
     }
   }
 
-  &__creatureList {
-    position: fixed;
-    z-index: 5;
-    top: 50%;
-    left: 0;
-    bottom: 50%;
-    transform: translate(0, -50%);
-
-    @media (orientation:portrait) {
-      top: calc(20% + 523px);
-      left: 0;
-      transform: translate(0, 0);
-    }
-  }
-
   &__backdrop {
     position: fixed;
     z-index: 4;

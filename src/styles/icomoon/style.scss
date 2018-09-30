@@ -1,19 +1,19 @@
 @import "variables";
 
 @font-face {
-  font-family: 'icomoon';
-  src:  url('#{$icomoon-font-path}/icomoon.eot?t3ihm2');
-  src:  url('#{$icomoon-font-path}/icomoon.eot?t3ihm2#iefix') format('embedded-opentype'),
-    url('#{$icomoon-font-path}/icomoon.ttf?t3ihm2') format('truetype'),
-    url('#{$icomoon-font-path}/icomoon.woff?t3ihm2') format('woff'),
-    url('#{$icomoon-font-path}/icomoon.svg?t3ihm2#icomoon') format('svg');
+  font-family: '#{$icomoon-font-family}';
+  src:  url('#{$icomoon-font-path}/#{$icomoon-font-family}.eot?wjgsgp');
+  src:  url('#{$icomoon-font-path}/#{$icomoon-font-family}.eot?wjgsgp#iefix') format('embedded-opentype'),
+    url('#{$icomoon-font-path}/#{$icomoon-font-family}.ttf?wjgsgp') format('truetype'),
+    url('#{$icomoon-font-path}/#{$icomoon-font-family}.woff?wjgsgp') format('woff'),
+    url('#{$icomoon-font-path}/#{$icomoon-font-family}.svg?wjgsgp##{$icomoon-font-family}') format('svg');
   font-weight: normal;
   font-style: normal;
 }
 
 [class^="icon-"], [class*=" icon-"] {
   /* use !important to prevent issues with browser extensions that change fonts */
-  font-family: 'icomoon' !important;
+  font-family: '#{$icomoon-font-family}' !important;
   speak: none;
   font-style: normal;
   font-weight: normal;
@@ -26,98 +26,94 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-@function unicode($str) {
-  @return unquote("\"") + $str + unquote("\"");
-}
-
 .icon-plus2 {
   &:before {
-    content: unicode($icon-plus2); 
+    content: $icon-plus2; 
   }
 }
 .icon-blocked {
   &:before {
-    content: unicode($icon-blocked); 
+    content: $icon-blocked; 
   }
 }
 .icon-reload {
   &:before {
-    content: unicode($icon-reload); 
+    content: $icon-reload; 
   }
 }
 .icon-pencil {
   &:before {
-    content: unicode($icon-pencil); 
+    content: $icon-pencil; 
   }
 }
 .icon-bin2 {
   &:before {
-    content: unicode($icon-bin2); 
+    content: $icon-bin2; 
   }
 }
 .icon-menu {
   &:before {
-    content: unicode($icon-menu); 
+    content: $icon-menu; 
   }
 }
 .icon-flag {
   &:before {
-    content: unicode($icon-flag); 
+    content: $icon-flag; 
   }
 }
 .icon-plus {
   &:before {
-    content: unicode($icon-plus); 
+    content: $icon-plus; 
   }
 }
 .icon-minus {
   &:before {
-    content: unicode($icon-minus); 
+    content: $icon-minus; 
   }
 }
 .icon-cross {
   &:before {
-    content: unicode($icon-cross); 
+    content: $icon-cross; 
   }
 }
 .icon-checkmark {
   &:before {
-    content: unicode($icon-checkmark); 
+    content: $icon-checkmark; 
   }
 }
 .icon-stopwatch {
   &:before {
-    content: unicode($icon-stopwatch); 
+    content: $icon-stopwatch; 
   }
 }
 .icon-cancel-circle {
   &:before {
-    content: unicode($icon-cancel-circle); 
+    content: $icon-cancel-circle; 
   }
 }
 .icon-play3 {
   &:before {
-    content: unicode($icon-play3); 
+    content: $icon-play3; 
   }
 }
 .icon-pause2 {
   &:before {
-    content: unicode($icon-pause2); 
+    content: $icon-pause2; 
   }
 }
-.icon-arrow-right2 {
+.icon-evil {
   &:before {
-    content: unicode($icon-arrow-right2); 
+    content: $icon-evil; 
   }
 }
 .icon-minus-square {
   &:before {
-    content: unicode($icon-minus-square); 
+    content: $icon-minus-square; 
   }
 }
 .icon-plus-square {
   &:before {
-    content: unicode($icon-plus-square); 
+    content: $icon-plus-square; 
   }
 }
 

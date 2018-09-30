@@ -39,6 +39,7 @@ export class CreatureService extends EntityService {
       super.bind(),
       this.playerService.bind(),
     ).map(([creatures, players]) => creatures.map((creature: Creature) => {
+      creature.owner = players.find(player => player.id === creature.ownerId);
       creature.strength = this.getStrength(creature, players);
       return creature;
     }));

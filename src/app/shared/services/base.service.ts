@@ -99,6 +99,24 @@ export class BaseService extends EntityService {
     this.addCreature(creatureId, newBaseId);
   }
 
+  getCreatureOrderedList(baseId: string): Observable<string[][]> {
+    return Observable.combineLatest(
+      this.bind(),
+      this.creatureService.bind(),
+      this.playerService.bind()
+    ).map(([bases, creatures, players]) => {
+      const creatureOwners = players.map(player => {
+        const baseFromId = bases.find(base => base.id === baseId);
+        const creaturesFromThisOwner = baseFromId && baseFromId.creatures.filter(creatureId => {
+          const creatureFromId = creatures.find(creature => creature.id === creatureId);
+          return creatureFromId && creatureFromId.ownerId === player.id;
+        });
+        return creaturesFromThisOwner;
+      }).filter(creatureOwner => creatureOwner && creatureOwner.length > 0);
+      return creatureOwners;
+    });
+  }
+
   private addCreature(creatureId: string, baseId: string) {
     const base = this.get(baseId, this.entitiesSubject.getValue()).entity as Base;
     base.creatures.push(creatureId);

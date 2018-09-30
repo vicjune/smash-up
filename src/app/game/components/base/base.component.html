@@ -69,8 +69,6 @@
   </div>
 </div>
 
-<div class="base__creatureList">
-  <app-creature-list *ngIf="detailsMode && !editMode" [base]="base"></app-creature-list>
-</div>
+<app-creature-list *ngIf="detailsMode && !editMode" [base]="base"></app-creature-list>
 
 <div class="base__backdrop" [ngClass]="{'visible': detailsMode}" (click)="exitMoreDetails()"></div>
