@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject } from 'rxjs/Rx';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { Entity } from '@shared/models/entity';
 
@@ -15,7 +16,7 @@ export class EntityService {
   }
 
   bindFromId(id: string): Observable<Entity> {
-    return this.bind().map(entities => entities.find(entity => entity.id === id));
+    return this.bind().pipe(map(entities => entities.find(entity => entity.id === id)));
   }
 
   add(entity: Entity): void {
@@ -55,14 +56,14 @@ export class EntityService {
   }
 
   bindAvailableColors(length: number): Observable<number[]> {
-    return this.bind().map(entities => {
+    return this.bind().pipe(map(entities => {
       const takenColors = entities.map(entity => entity.color);
       const allColors = [];
       for (let index = 1; index < length + 1; index++) {
         allColors[index] = index;
       }
       return this.arrayDiff(allColors, takenColors);
-    });
+    }));
   }
 
   protected get(id: string, entities: Entity[]): {entity: Entity, index: number} {

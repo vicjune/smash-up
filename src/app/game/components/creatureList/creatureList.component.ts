@@ -3,7 +3,7 @@ import { PlayerService } from '@shared/services/player.service';
 import { BaseService } from '@shared/services/base.service';
 import { Base } from '@shared/models/base';
 import { Creature } from '@shared/models/creature';
-import { Observable } from 'rxjs/Rx';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-creature-list',

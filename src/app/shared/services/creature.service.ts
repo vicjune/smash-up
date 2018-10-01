@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs/Rx';
+import { Observable, Subject, combineLatest } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { EntityService } from '@shared/services/entity.service';
 import { PlayerService } from '@shared/services/player.service';
 import { Creature } from '@shared/models/creature';
-import { BaseService } from '@shared/services/base.service';
 import { Player } from '@shared/models/player';
 
 @Injectable()
@@ -35,14 +35,14 @@ export class CreatureService extends EntityService {
   }
 
   bind(): Observable<Creature[]> {
-    return Observable.combineLatest(
+    return combineLatest(
       super.bind(),
       this.playerService.bind(),
-    ).map(([creatures, players]) => creatures.map((creature: Creature) => {
+    ).pipe(map(([creatures, players]) => creatures.map((creature: Creature) => {
       creature.owner = players.find(player => player.id === creature.ownerId);
       creature.strength = this.getStrength(creature, players);
       return creature;
-    }));
+    })));
   }
 
   swichOwner(creature: Creature, newOwnerId: string) {

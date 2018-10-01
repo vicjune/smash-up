@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CreatureService } from '@shared/services/creature.service';
-import { Observable } from 'rxjs/Rx';
+import { Observable } from 'rxjs';
 import { Creature } from '@shared/models/creature';
 
 @Component({

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Rx';
+import { Observable, combineLatest } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { Player } from '@shared/models/player';
 import { EntityService } from '@shared/services/entity.service';
@@ -32,15 +33,15 @@ export class BaseService extends EntityService {
   }
 
   bind(): Observable<Base[]> {
-    return Observable.combineLatest(
+    return combineLatest(
       super.bind(),
       this.playerService.bind(),
       this.creatureService.bind()
-    ).map(([bases, players, creatures]) => bases.map((base: Base) => {
+    ).pipe(map(([bases, players, creatures]) => bases.map((base: Base) => {
       base.scores = this.getScores(base, players, creatures);
       base.resistance = this.getResistance(base);
       return base;
-    }));
+    })));
   }
 
   add(base: Base): void {
@@ -100,11 +101,11 @@ export class BaseService extends EntityService {
   }
 
   getCreatureOrderedList(baseId: string): Observable<string[][]> {
-    return Observable.combineLatest(
+    return combineLatest(
       this.bind(),
       this.creatureService.bind(),
       this.playerService.bind()
-    ).map(([bases, creatures, players]) => {
+    ).pipe(map(([bases, creatures, players]) => {
       const creatureOwners = players.map(player => {
         const baseFromId = bases.find(base => base.id === baseId);
         const creaturesFromThisOwner = baseFromId && baseFromId.creatures.filter(creatureId => {
@@ -114,7 +115,7 @@ export class BaseService extends EntityService {
         return creaturesFromThisOwner;
       }).filter(creatureOwner => creatureOwner && creatureOwner.length > 0);
       return creatureOwners;
-    });
+    }));
   }
 
   private addCreature(creatureId: string, baseId: string) {

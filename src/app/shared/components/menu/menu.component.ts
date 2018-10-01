@@ -1,7 +1,7 @@
 import { TimerService } from '@shared/services/timer.service';
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs/Rx';
+import { Observable } from 'rxjs';
 
 import { PlayerService } from '../../services/player.service';
 import { Player } from '../../models/player';

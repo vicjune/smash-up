@@ -1,5 +1,5 @@
 import { ElementRef } from '@angular/core';
-import { Subject, Observable } from 'rxjs/Rx';
+import { Subject, Observable } from 'rxjs';
 
 export class Draggable {
   coordinates: number[] = [0, 0];
