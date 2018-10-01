@@ -18,6 +18,11 @@
       top: 20% !important;
       left: 50% !important;
     }
+
+    &.editMode {
+      top: 50% !important;
+      left: 50% !important;
+    }
   }
 
   &.dragging {

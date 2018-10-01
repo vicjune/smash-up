@@ -119,14 +119,14 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
   }
 
   getTransform(): string {
-    if (this.editMode || this.detailsMode) {
-      if (this.detailsMode) {
-        if (this.portraitMode) {
-          return 'translate(-50%, 0) rotate(0) scale(1.5)';
-        }
-        return 'translate(0, -50%) rotate(0) scale(1.5)';
+    if (this.detailsMode) {
+      if (this.editMode) {
+        return 'translate(-50%, -50%) rotate(0) scale(1.5)';
       }
-      return 'translate(0, 0) rotate(0) scale(1)';
+      if (this.portraitMode) {
+        return 'translate(-50%, 0) rotate(0) scale(1.5)';
+      }
+      return 'translate(0, -50%) rotate(0) scale(1.5)';
     }
     return 'translate(0, 0) rotate(' + (Math.floor(
       this.base.position.rotation * (MAX_CARD_ROTATION_DEG + MAX_CARD_ROTATION_DEG + 1)
