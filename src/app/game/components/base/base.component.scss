@@ -11,7 +11,7 @@
     cursor: default;
     z-index: 5;
     top: 50% !important;
-    left: 80% !important;
+    left: 20% !important;
     transition: left 0.5s, top 0.5s, transform 0.5s;
 
     @media (orientation:portrait) {
@@ -157,7 +157,7 @@
 
     &__actions {
       position: absolute;
-      right: -50px;
+      left: -50px;
       padding: 10px;
       top: 0;
 
@@ -171,20 +171,12 @@
         text-align: center;
 
         &.edit {
-          @include button-active-hover(null, $primary, 'border');
-
-          .editMode & {
-            @include button-active-hover(null, $primary, 'background');
-          }
+          @include button-active-hover(null, $primary, 'background');
         }
 
         &.delete {
           margin-top: 10px;
-          @include button-active-hover(null, $danger, 'border');
-
-          .editMode & {
-            @include button-active-hover(null, $danger, 'background');
-          }
+          @include button-active-hover(null, $danger, 'background');
         }
       }
     }
@@ -301,6 +293,20 @@
     }
   }
 
+  &__creatures {
+    position: absolute;
+    left: calc(100% + 20px);
+    width: calc(65vw - 400px);
+    top: 50%;
+    transform: translateY(-50%);
+
+    &__player {
+      margin: 10px 0;
+      display: flex;
+      flex-wrap: wrap;
+    }
+  }
+
   &__backdrop {
     position: fixed;
     z-index: 4;
@@ -317,6 +323,59 @@
       opacity: 0.6;
       visibility: visible;
       transition: opacity 0.5s;
+    }
+  }
+
+}
+
+.globalActions {
+  position: fixed;
+  z-index: 5;
+  bottom: 0;
+  left: 0;
+  padding: 20px 20px 0;
+
+  @media (orientation:portrait) {
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  &__player {
+    display: inline-block;
+    margin: 0 30px 0 0;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+
+  &__addCreature {
+    @include button-active-hover($playerColors, null, 'border');
+    border-radius: 5px;
+    height: 40px;
+    padding: 0 10px;
+    font-size: 18px;
+    margin: 0 10px 20px 0;
+
+    &:last-child {
+      margin-right: 0;
+    }
+
+    &--quick {
+      @include button-active-hover($playerColors, null, 'background');
+    }
+
+    .icon:first-child {
+      display: inline-block;
+      margin-right: 10px;
+    }
+
+    .strength {
+      font-size: 20px;
     }
   }
 }

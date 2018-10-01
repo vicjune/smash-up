@@ -67,8 +67,28 @@
       </div>
     </div>
   </div>
+
+  <div class="base__creatures" *ngIf="detailsMode && !editMode">
+    <div class="base__creatures__player" *ngFor="let ownerCreatureList of creatureList$ | async">
+      <app-creature *ngFor="let creatureId of ownerCreatureList" [creatureId]="creatureId"></app-creature>
+    </div>
+  </div>
 </div>
 
-<app-creature-list *ngIf="detailsMode && !editMode" [base]="base"></app-creature-list>
+<div class="globalActions" *ngIf="detailsMode && !editMode">
+  <div [class]="'globalActions__player color-' + player.color" *ngFor="let player of players$ | async">
+    <ng-container *ngIf="player.playing">
+      <button class="globalActions__addCreature globalActions__addCreature--quick" *ngFor="let strength of [2, 3, 4, 5]"
+        (click)="createCreature(player.id, strength)">
+        <i class="icon-evil icon"></i>
+        <span class="strength">{{strength}}</span>
+      </button>
+    </ng-container>
+    <button class="globalActions__addCreature" (click)="createCreature(player.id)">
+      <i class="icon-evil icon"></i>
+      <i class="icon-plus icon"></i>
+    </button>
+  </div>
+</div>
 
 <div class="base__backdrop" [ngClass]="{'visible': detailsMode}" (click)="exitMoreDetails()"></div>

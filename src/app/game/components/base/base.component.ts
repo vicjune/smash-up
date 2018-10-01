@@ -7,6 +7,7 @@ import { BASE_REWARD_LIMITS, MAX_CARD_ROTATION_DEG, BASE_MAX_RESISTANCE, AVAILAB
 import { BaseService } from '@shared/services/base.service';
 import { PlayerService } from '@shared/services/player.service';
 import { Draggable } from '@shared/utils/draggable';
+import { Creature } from '@shared/models/creature';
 
 @Component({
   selector: 'app-base',
@@ -25,6 +26,9 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
   editMode = false;
   detailsMode = false;
 
+  creatureList$: Observable<string[][]>;
+  players$ = this.playerService.bind();
+
   draggable = new Draggable();
 
   BASE_REWARD_LIMITS = BASE_REWARD_LIMITS;
@@ -39,6 +43,7 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
   set base(val) {
     this._base = val;
     this.propagateChange(val);
+    this.creatureList$ = this.baseService.getCreatureOrderedList(val.id);
   }
 
   propagateChange: Function = () => { };
@@ -119,7 +124,7 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
         if (this.portraitMode) {
           return 'translate(-50%, 0) rotate(0) scale(1.5)';
         }
-        return 'translate(-100%, -50%) rotate(0) scale(1.5)';
+        return 'translate(0, -50%) rotate(0) scale(1.5)';
       }
       return 'translate(0, 0) rotate(0) scale(1)';
     }
@@ -145,6 +150,10 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
 
   conquerBase() {
     this.conquer.emit();
+  }
+
+  createCreature(ownerId: string, strength?: number) {
+    this.baseService.createCreature(new Creature(ownerId, strength), this.base.id);
   }
 
   writeValue(value) {

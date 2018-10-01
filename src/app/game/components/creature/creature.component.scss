@@ -1,9 +1,23 @@
 @import 'styles';
 
-.wrapper {
-  display: inline-block;
-}
+.creature {
+  margin: 5px;
 
-* {
-  color: white;
+  &__card {
+    @include button-active-hover($playerColors, null, 'background');
+    height: 60px;
+    width: 40px;
+    font-size: 24px;
+    border-radius: 5px;
+    position: relative;
+    padding-bottom: 18px;
+  }
+
+  &__modifier {
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+  }
 }
