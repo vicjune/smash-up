@@ -4,20 +4,47 @@
   margin: 5px;
 
   &__card {
-    @include button-active-hover($playerColors, null, 'background');
+    @include color($playerColors, 'background');
+    color: white;
     height: 60px;
     width: 40px;
-    font-size: 24px;
     border-radius: 5px;
     position: relative;
-    padding-bottom: 18px;
   }
 
-  &__modifier {
+  &__strength {
+    font-size: 24px;
     position: absolute;
-    bottom: 4px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+
+    &--detail {
+      top: auto;
+      bottom: 6px;
+      color: $malus;
+
+      .creature__card--bonusPositive & {
+        color: $bonus;
+      }
+    }
+  }
+
+  &__strengthDetail {
+    position: absolute;
+    top: 2px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 10px;
+    font-size: 14px;
+    width: 100%;
+  }
+
+  &__strengthBonus {
+    color: $malus;
+    font-size: 12px;
+
+    .creature__card--bonusPositive & {
+      color: $bonus;
+    }
   }
 }

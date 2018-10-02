@@ -14,7 +14,8 @@ export class CreatureComponent implements OnInit {
   @Input() creatureId: string;
 
   creature$: Observable<Creature>;
-  strengthDetail$: Observable<string>;
+  strengthBonus$: Observable<string>;
+  bonusStrengthPositive = true;
 
   constructor(
     public creatureService: CreatureService
@@ -22,10 +23,11 @@ export class CreatureComponent implements OnInit {
 
   ngOnInit() {
     this.creature$ = this.creatureService.bindFromId(this.creatureId) as Observable<Creature>;
-    this.strengthDetail$ = this.creature$.pipe(map((creature: Creature) => {
+    this.strengthBonus$ = this.creature$.pipe(map((creature: Creature) => {
       if (creature && creature.strength !== creature.basicStrength) {
-        const separator = (creature.strength - creature.basicStrength) > 0 ? '+' : '-';
-        return `${creature.basicStrength} ${separator} ${creature.strength - creature.basicStrength}`;
+        this.bonusStrengthPositive = (creature.strength - creature.basicStrength) > 0;
+        const separator = this.bonusStrengthPositive ? '+' : '-';
+        return `${separator} ${Math.abs(creature.strength - creature.basicStrength)}`;
       }
       return '';
     }));

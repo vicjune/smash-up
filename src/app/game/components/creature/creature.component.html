@@ -1,6 +1,8 @@
 <div [class]="'creature color-' + (creature$ | async).owner.color">
-  <button class="creature__card">
-    <span class="creature__modifier">{{this.strengthDetail$ | async}}</span>
-    {{(creature$ | async).strength}}
-  </button>
+  <div class="creature__card" [ngClass]="{'creature__card--bonusPositive': bonusStrengthPositive}">
+    <div class="creature__strengthDetail" *ngIf="this.strengthBonus$ | async">
+      {{(creature$ | async).basicStrength}} <span class="creature__strengthBonus">{{this.strengthBonus$ | async}}</span>
+    </div>
+    <div class="creature__strength" [ngClass]="{'creature__strength--detail': this.strengthBonus$ | async}">{{(creature$ | async).strength}}</div>
+  </div>
 </div>
