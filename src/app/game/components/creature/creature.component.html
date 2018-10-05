@@ -1,5 +1,13 @@
 <div [class]="'creature color-' + (creature$ | async).owner.color">
-  <div class="creature__card" [ngClass]="{'creature__card--bonusPositive': bonusStrengthPositive}">
+  <div class="creature__card"
+  [ngClass]="{'creature__card--bonusPositive': bonusStrengthPositive}"
+  (mousedown)="mouseDown($event)"
+  (touchstart)="mouseDown($event)"
+  (window:mouseup)="mouseUp($event)"
+  (window:mouseleave)="mouseUp($event)"
+  (window:touchend)="mouseUp($event)"
+  (window:touchcancel)="mouseUp($event)">
+    <div>{{detailsMode}}</div>
     <div class="creature__strengthDetail" *ngIf="this.strengthBonus$ | async">
       {{(creature$ | async).basicStrength}} <span class="creature__strengthBonus">{{this.strengthBonus$ | async}}</span>
     </div>

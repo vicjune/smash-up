@@ -23,6 +23,8 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
   @Output() delete: EventEmitter<void> = new EventEmitter<void>();
   @Output() conquer: EventEmitter<void> = new EventEmitter<void>();
 
+  detailModeCreatureId: string = null;
+
   editMode = false;
   detailsMode = false;
 
@@ -142,6 +144,7 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
   exitMoreDetails() {
     this.detailsMode = false;
     this.editMode = false;
+    this.detailModeCreatureId = null;
   }
 
   deleteBase() {
@@ -153,25 +156,16 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
   }
 
   createCreature(ownerId: string, strength?: number) {
-    this.baseService.createCreature(new Creature(ownerId, strength), this.base.id);
-  }
+    const newCreature = new Creature(ownerId, strength);
+    this.baseService.createCreature(newCreature, this.base.id);
 
-  writeValue(value) {
-    if (value) {
-      this.base = value;
-      this.draggable.coordinates = [this.base.position.x, this.base.position.y];
+    if (!strength) {
+      this.detailModeCreatureId = newCreature.id;
     }
   }
 
-  registerOnChange(fn) {
-    this.propagateChange = fn;
-  }
-
-  registerOnTouched() { }
-
-
-  validate(c: FormControl) {
-    return null;
+  toggleCreatureDetailMode(creatureId: string) {
+    this.detailModeCreatureId = this.detailModeCreatureId === creatureId ? null : creatureId;
   }
 
   mouseDown(e: TouchEvent) {
@@ -192,5 +186,30 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
 
   checkOrientation() {
     this.portraitMode = window.innerHeight > window.innerWidth;
+  }
+
+
+
+
+
+
+
+
+
+  writeValue(value) {
+    if (value) {
+      this.base = value;
+      this.draggable.coordinates = [this.base.position.x, this.base.position.y];
+    }
+  }
+
+  registerOnChange(fn) {
+    this.propagateChange = fn;
+  }
+
+  registerOnTouched() { }
+
+  validate(c: FormControl) {
+    return null;
   }
 }

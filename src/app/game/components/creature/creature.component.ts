@@ -1,9 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { CreatureService } from '@shared/services/creature.service';
 import { Creature } from '@shared/models/creature';
+import { Draggable } from '@shared/utils/draggable';
 
 @Component({
   selector: 'app-creature',
@@ -12,10 +13,18 @@ import { Creature } from '@shared/models/creature';
 })
 export class CreatureComponent implements OnInit {
   @Input() creatureId: string;
+  @Input() detailModeCreatureId: string;
+  @Output() toggleDetailMode = new EventEmitter<void>();
 
   creature$: Observable<Creature>;
   strengthBonus$: Observable<string>;
   bonusStrengthPositive = true;
+
+  draggable = new Draggable();
+
+  get detailsMode() {
+    return this.detailModeCreatureId === this.creatureId;
+  }
 
   constructor(
     public creatureService: CreatureService
@@ -31,5 +40,19 @@ export class CreatureComponent implements OnInit {
       }
       return '';
     }));
+
+    this.draggable.clickEvent.subscribe(() => this.seeMoreDetails());
+  }
+
+  seeMoreDetails() {
+    this.toggleDetailMode.emit();
+  }
+
+  mouseDown(e) {
+    this.draggable.mouseDown(e);
+  }
+
+  mouseUp() {
+    this.draggable.mouseUp();
   }
 }
