@@ -48,10 +48,17 @@ export class AppModule {
     }
 
     if (version !== this.localStorageVersion && players !== null) {
-      localStorage.clear();
+      try {
+        window.localStorage.clear();
+      } catch (e) {
+        console.error('This browser does not support local storage');
+      }
+    }
+
+    try {
       window.localStorage.setItem('version', JSON.stringify(this.localStorageVersion));
-      location.reload();
-      throw(new Error('Local Storage is obsolete, it was cleared. Please reload.'));
+    } catch (e) {
+      console.error('This browser does not support local storage');
     }
   }
 }
