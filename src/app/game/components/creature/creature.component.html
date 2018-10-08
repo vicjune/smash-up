@@ -13,8 +13,8 @@
   </div>
 
   <div class="creature__card" [ngClass]="{'creature__card--bonusPositive': (totalBonusStrengthSeparator$ | async) === '+'}"
-    (mousedown)="mouseDown($event)" (touchstart)="mouseDown($event)" (window:mouseup)="mouseUp($event)"
-    (window:mouseleave)="mouseUp($event)" (window:touchend)="mouseUp($event)" (window:touchcancel)="mouseUp($event)">
+    (mousedown)="mouseDown($event)" (touchstart)="mouseDown($event)" (window:mouseup)="mouseUp()"
+    (window:mouseleave)="mouseUp()" (window:touchend)="mouseUp()" (window:touchcancel)="mouseUp()">
     <div class="creature__strengthDetail" *ngIf="totalBonusStrengthSeparator$ | async">
       <span>
         {{(creature$ | async).basicStrength}}
