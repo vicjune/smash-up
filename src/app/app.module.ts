@@ -38,20 +38,25 @@ export class AppModule {
 
   constructor() {
     let version = this.localStorageVersion;
-    let players = null;
 
     try {
       version = JSON.parse(window.localStorage.getItem('version'));
-      players = JSON.parse(window.localStorage.getItem('players'));
     } catch (e) {
       console.error('This browser does not support local storage');
     }
 
-    if (version !== this.localStorageVersion && players !== null) {
-      localStorage.clear();
+    if (version !== this.localStorageVersion) {
+      try {
+        window.localStorage.clear();
+      } catch (e) {
+        console.error('This browser does not support local storage');
+      }
+    }
+
+    try {
       window.localStorage.setItem('version', JSON.stringify(this.localStorageVersion));
-      location.reload();
-      throw(new Error('Local Storage is obsolete, it was cleared. Please reload.'));
+    } catch (e) {
+      console.error('This browser does not support local storage');
     }
   }
 }
