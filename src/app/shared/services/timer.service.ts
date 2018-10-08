@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject } from 'rxjs/Rx';
+import { Observable, BehaviorSubject } from 'rxjs';
 
 import { Timer } from '../models/timer';
 import { TIMER_SECONDS_INTERVAL, TIMER_DEFAULT } from '../constants';

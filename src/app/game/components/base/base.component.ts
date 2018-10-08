@@ -1,12 +1,13 @@
-import { Component, OnInit, Input, forwardRef, EventEmitter, Output, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, forwardRef, EventEmitter, Output, ViewChild, ElementRef } from '@angular/core';
 import { FormControl, ControlValueAccessor, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
-import { Observable } from 'rxjs/Rx';
+import { Observable } from 'rxjs';
 
-import { Score } from '@shared/models/base';
 import { Base } from '@shared/models/base';
 import { BASE_REWARD_LIMITS, MAX_CARD_ROTATION_DEG, BASE_MAX_RESISTANCE, AVAILABLE_COLORS } from '@shared/constants';
 import { BaseService } from '@shared/services/base.service';
 import { PlayerService } from '@shared/services/player.service';
+import { Draggable } from '@shared/utils/draggable';
+import { Creature } from '@shared/models/creature';
 
 @Component({
   selector: 'app-base',
@@ -17,26 +18,25 @@ import { PlayerService } from '@shared/services/player.service';
     { provide: NG_VALIDATORS, useExisting: forwardRef(() => BaseComponent), multi: true }
   ]
 })
-export class BaseComponent implements OnInit, OnDestroy, ControlValueAccessor {
+export class BaseComponent implements OnInit, ControlValueAccessor {
   @Input() newBase: boolean;
   @Output() delete: EventEmitter<void> = new EventEmitter<void>();
   @Output() conquer: EventEmitter<void> = new EventEmitter<void>();
 
+  detailModeCreatureId: string = null;
+
   editMode = false;
   detailsMode = false;
-  openedModifiers: boolean[] = [];
-  openedModifierTimeout: any[] = [];
-  dragging = false;
-  draggingStart = false;
-  draggingStartTimeout;
 
-  coordinates: number[] = [0, 0];
-  mouseOffset: number[] = [0, 0];
+  creatureList$: Observable<string[][]>;
+  players$ = this.playerService.bind();
+
+  draggable = new Draggable();
 
   BASE_REWARD_LIMITS = BASE_REWARD_LIMITS;
   BASE_MAX_RESISTANCE = BASE_MAX_RESISTANCE;
 
-  @ViewChild('baseRef') baseRef: ElementRef;
+  portraitMode = false;
 
   private _base: Base;
   get base() {
@@ -45,6 +45,7 @@ export class BaseComponent implements OnInit, OnDestroy, ControlValueAccessor {
   set base(val) {
     this._base = val;
     this.propagateChange(val);
+    this.creatureList$ = this.baseService.getCreatureOrderedList(val.id);
   }
 
   propagateChange: Function = () => { };
@@ -52,13 +53,29 @@ export class BaseComponent implements OnInit, OnDestroy, ControlValueAccessor {
   constructor(
     public baseService: BaseService,
     public playerService: PlayerService
-  ) { }
+  ) {}
 
   ngOnInit() {
     if (this.newBase) {
       this.editMode = true;
       this.detailsMode = true;
     }
+
+    this.draggable.clickEvent.subscribe(() => this.seeMoreDetails());
+    this.draggable.dropEvent.subscribe(([x, y]) => {
+      const base = this.base;
+      base.position.x = x;
+      base.position.y = y;
+      this.base = base;
+    });
+
+    this.checkOrientation();
+    window.addEventListener('orientationchange', () => {
+      this.checkOrientation();
+    }, false);
+    window.addEventListener('resize', () => {
+      this.checkOrientation();
+    }, false);
   }
 
   bindAvailableColors(): Observable<number[]> {
@@ -97,77 +114,6 @@ export class BaseComponent implements OnInit, OnDestroy, ControlValueAccessor {
     }
   }
 
-  increaseScore(scoreIndex: number) {
-    const base = this.base;
-    base.scores[scoreIndex].score++;
-    this.base = base;
-  }
-
-  decreaseScore(scoreIndex: number) {
-    if (this.base.scores[scoreIndex].score > 0) {
-      const base = this.base;
-      base.scores[scoreIndex].score--;
-      this.base = base;
-    }
-  }
-
-  increaseScoreModifier(scoreIndex: number) {
-    const base = this.base;
-    base.scores[scoreIndex].scoreModifier++;
-    this.base = base;
-  }
-
-  decreaseScoreModifier(scoreIndex: number) {
-    const base = this.base;
-    base.scores[scoreIndex].scoreModifier--;
-    this.base = base;
-  }
-
-  addScore(playerId: string) {
-    const base = this.base;
-    base.scores.push(new Score(playerId));
-    this.openedModifiers.push(false);
-    this.base = base;
-  }
-
-  deleteScore(scoreIndex: number) {
-    const base = this.base;
-    base.scores.splice(scoreIndex, 1);
-    this.base = base;
-    this.openedModifiers.splice(scoreIndex, 1);
-  }
-
-  openModifierClick(scoreIndex: number) {
-    if (this.openedModifiers[scoreIndex] && this.base.scores[scoreIndex].scoreModifier === 0) {
-      this.openedModifiers[scoreIndex] = false;
-    } else {
-      this.openedModifiers[scoreIndex] = true;
-    }
-
-    if (this.openedModifierTimeout[scoreIndex]) {
-      clearTimeout(this.openedModifierTimeout[scoreIndex]);
-    }
-    this.openedModifierTimeout[scoreIndex] = setTimeout(() => {
-      if (this.base.scores[scoreIndex].scoreModifier === 0) {
-        this.openedModifiers[scoreIndex] = false;
-      }
-    }, 3000);
-  }
-
-  modifierLeave(scoreIndex: number) {
-    this.openedModifierTimeout[scoreIndex] = setTimeout(() => {
-      if (this.base.scores[scoreIndex].scoreModifier === 0) {
-        this.openedModifiers[scoreIndex] = false;
-      }
-    }, 3000);
-  }
-
-  modifierEnter(scoreIndex: number) {
-    if (this.openedModifierTimeout[scoreIndex]) {
-      clearTimeout(this.openedModifierTimeout[scoreIndex]);
-    }
-  }
-
   chooseColor(color: number) {
     const base = this.base;
     base.color = color;
@@ -175,28 +121,22 @@ export class BaseComponent implements OnInit, OnDestroy, ControlValueAccessor {
   }
 
   getTransform(): string {
-    if (this.editMode || this.detailsMode) {
-      if (this.detailsMode) {
+    if (this.detailsMode) {
+      if (this.editMode) {
         return 'translate(-50%, -50%) rotate(0) scale(1.5)';
       }
-      return 'translate(0, 0) rotate(0) scale(1)';
+      if (this.portraitMode) {
+        return 'translate(-50%, 0) rotate(0) scale(1.5)';
+      }
+      return 'translate(0, -50%) rotate(0) scale(1.5)';
     }
     return 'translate(0, 0) rotate(' + (Math.floor(
       this.base.position.rotation * (MAX_CARD_ROTATION_DEG + MAX_CARD_ROTATION_DEG + 1)
     ) - MAX_CARD_ROTATION_DEG) + 'deg) scale(1)';
   }
 
-
-  getScore(playerId: string): { score: Score, index: number } {
-    const index = this.base.scores.map(score => score.playerId).indexOf(playerId);
-    if (index !== -1) {
-      return { score: this.base.scores[index], index: index };
-    }
-    return { score: null, index: -1 };
-  }
-
   seeMoreDetails() {
-    if (!this.detailsMode && !this.editMode && !this.dragging) {
+    if (!this.detailsMode && !this.editMode) {
       this.detailsMode = true;
     }
   }
@@ -204,6 +144,7 @@ export class BaseComponent implements OnInit, OnDestroy, ControlValueAccessor {
   exitMoreDetails() {
     this.detailsMode = false;
     this.editMode = false;
+    this.detailModeCreatureId = null;
   }
 
   deleteBase() {
@@ -214,18 +155,51 @@ export class BaseComponent implements OnInit, OnDestroy, ControlValueAccessor {
     this.conquer.emit();
   }
 
+  createCreature(ownerId: string, strength?: number) {
+    const newCreature = new Creature(ownerId, strength);
+    this.baseService.createCreature(newCreature, this.base.id);
+
+    if (!strength) {
+      this.detailModeCreatureId = newCreature.id;
+    }
+  }
+
+  toggleCreatureDetailMode(creatureId: string) {
+    this.detailModeCreatureId = this.detailModeCreatureId === creatureId ? null : creatureId;
+  }
+
+  mouseDown(e: TouchEvent) {
+    if (!this.detailsMode) {
+      this.draggable.mouseDown(e);
+    }
+  }
+
+  mouseMove(e: TouchEvent) {
+    if (!this.detailsMode) {
+      this.draggable.mouseMove(e);
+    }
+  }
+
+  mouseUp() {
+    this.draggable.mouseUp();
+  }
+
+  checkOrientation() {
+    this.portraitMode = window.innerHeight > window.innerWidth;
+  }
+
+
+
+
+
+
+
+
+
   writeValue(value) {
     if (value) {
       this.base = value;
-
-      this.base.scores.forEach((score, index) => {
-        this.openedModifiers[index] = false;
-        if (score.scoreModifier !== 0) {
-          this.openedModifiers[index] = true;
-        }
-      });
-
-      this.coordinates = [this.base.position.x, this.base.position.y];
+      this.draggable.coordinates = [this.base.position.x, this.base.position.y];
     }
   }
 
@@ -235,103 +209,7 @@ export class BaseComponent implements OnInit, OnDestroy, ControlValueAccessor {
 
   registerOnTouched() { }
 
-
   validate(c: FormControl) {
     return null;
-  }
-
-  mouseDown(e) {
-    if (!this.dragging && (!e.touches || e.touches.length === 1) && !this.detailsMode) {
-      e.preventDefault();
-      this.draggingStart = true;
-      this.dragging = true;
-      this.mouseOffset = [this.convertEvent(e).offsetX, this.convertEvent(e).offsetY];
-
-      this.draggingStartTimeout = setTimeout(() => {
-        this.draggingStart = false;
-      }, 200);
-    }
-  }
-
-  mouseMove(e) {
-    if (this.dragging && (!e.touches || e.touches.length === 1) && !this.detailsMode) {
-      const x = this.toPercentage(this.convertEvent(e).pageX - this.mouseOffset[0], 'x');
-      const y = this.toPercentage(this.convertEvent(e).pageY - this.mouseOffset[1], 'y');
-      let inRangeX = x;
-      let inRangeY = y;
-
-      if (x <= 0) {
-        inRangeX = 0;
-      }
-      if (x + this.toPercentage(300, 'x') >= 100) {
-        inRangeX = 100 - this.toPercentage(300, 'x');
-      }
-
-      if (y <= 0) {
-        inRangeY = 0;
-      }
-      if (y + this.toPercentage(214, 'y') >= 100) {
-        inRangeY = 100 - this.toPercentage(214, 'y');
-      }
-
-      this.coordinates = [inRangeX, inRangeY];
-    }
-  }
-
-  mouseUp(e) {
-    if (this.draggingStartTimeout) {
-      clearTimeout(this.draggingStartTimeout);
-    }
-
-    if (this.dragging) {
-      const base = this.base;
-      base.position.x = this.coordinates[0];
-      base.position.y = this.coordinates[1];
-      this.base = base;
-      this.dragging = false;
-    }
-
-    if (this.draggingStart) {
-      this.draggingStart = false;
-      this.dragging = false;
-      this.seeMoreDetails();
-    }
-  }
-
-  private convertEvent(event) {
-    if ('targetTouches' in event) {
-      const bouncingRect = this.baseRef.nativeElement.getBoundingClientRect();
-      return {
-        pageX: event.targetTouches[0].pageX,
-        pageY: event.targetTouches[0].pageY,
-        offsetX: event.targetTouches[0].pageX - bouncingRect.left - (window.pageXOffset || document.documentElement.scrollLeft),
-        offsetY: event.targetTouches[0].pageY - bouncingRect.top - (window.pageYOffset || document.documentElement.scrollTop)
-      };
-    } else {
-      return {
-        pageX: event.pageX,
-        pageY: event.pageY,
-        offsetX: event.offsetX,
-        offsetY: event.offsetY
-      };
-    }
-  }
-
-  private toPercentage(value: number, direction: string): number {
-    if (direction === 'x') {
-      return value * 100 / window.innerWidth;
-    } else if (direction === 'y') {
-      return value * 100 / window.innerHeight;
-    } else {
-      return value;
-    }
-  }
-
-  ngOnDestroy() {
-    this.openedModifierTimeout.forEach(timeout => {
-      if (timeout) {
-        clearTimeout(timeout);
-      }
-    });
   }
 }

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject } from 'rxjs/Rx';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { Player } from '../models/player';
 import { MAX_PLAYERS, PLAYER_SCORE_MODIFIER_TIMEOUT } from './../constants';
@@ -37,21 +38,21 @@ export class PlayerService extends EntityService {
   }
 
   bind(): Observable<Player[]> {
-    return super.bind().map(entities => entities.map(entity => entity as Player));
+    return super.bind().pipe(map(entities => entities.map(entity => entity as Player)));
   }
 
   bindPlayer(id: string): Observable<Player> {
-    return this.bind().map(players => {
+    return this.bind().pipe(map(players => {
       const index = players.map(player => player.id).indexOf(id);
       if (index !== -1) {
         return players[index];
       }
       return null;
-    });
+    }));
   }
 
   bindPlayerPlaying(): Observable<Player> {
-    return this.bind().map(players => {
+    return this.bind().pipe(map(players => {
       for (const player of players) {
         const play = player as Player;
         if (play.playing) {
@@ -59,7 +60,7 @@ export class PlayerService extends EntityService {
         }
       }
       return null;
-    });
+    }));
   }
 
   setPlayerPlaying(id: string): void {

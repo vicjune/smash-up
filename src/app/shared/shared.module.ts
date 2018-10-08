@@ -11,6 +11,7 @@ import { PopinComponent } from './components/popin/popin.component';
 import { BaseService } from '@shared/services/base.service';
 import { TimerService } from '@shared/services/timer.service';
 import { TimerComponent } from '@shared/components/timer/timer.component';
+import { CreatureService } from '@shared/services/creature.service';
 
 @NgModule({
   imports: [
@@ -39,6 +40,7 @@ import { TimerComponent } from '@shared/components/timer/timer.component';
     PlayerService,
     BaseService,
     TimerService,
+    CreatureService,
   ]
 })
 export class SharedModule { }

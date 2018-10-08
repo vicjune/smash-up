@@ -1,8 +1,8 @@
-<div #baseRef
+<div
   *ngIf="base"
   [class]="'base color-' + base.color"
-  [ngClass]="{'detailsMode': detailsMode, 'editMode': editMode, 'conquered': base.resistance <= 0, 'dragging': dragging}"
-  [ngStyle]="{'transform': getTransform(), 'left.%': coordinates[0], 'top.%': coordinates[1]}"
+  [ngClass]="{'detailsMode': detailsMode, 'editMode': editMode, 'conquered': base.resistance <= 0, 'dragging': draggable?.dragging}"
+  [ngStyle]="{'transform': getTransform(), 'left.%': draggable?.coordinates[0], 'top.%': draggable?.coordinates[1]}"
   (mousedown)="mouseDown($event)"
   (touchstart)="mouseDown($event)"
   (window:mousemove)="mouseMove($event)"
@@ -20,7 +20,7 @@
       <button class="base__resistanceEdit__button plus" [disabled]="base.maxResistance >= BASE_MAX_RESISTANCE" (click)="increaseResistance()"><i class="icon-plus-square"></i></button>
     </div>
 
-    <div class="base__conquestAction" [ngClass]="{'forceConquest': base.resistance > 0, 'display': base.scores.length > 0}" *ngIf="!editMode && detailsMode">
+    <div class="base__conquestAction" [ngClass]="{'forceConquest': base.resistance > 0, 'display': base.scores.length > 0}" *ngIf="!editMode && detailsMode && !detailModeCreatureId">
       <button class="base__conquestAction__button" (click)="conquerBase()">
         <i class="icon-flag base__conquestAction__button__icon"></i>
         <span>{{(base.resistance <= 0 ? 'CONQUEST' : 'FORCE_CONQUEST') | translate}}</span>
@@ -29,13 +29,7 @@
   </div>
 
   <div class="base__card">
-    <div class="base__card__addScoreList" *ngIf="!editMode && detailsMode">
-      <ng-container *ngFor="let player of (playerService.bind() | async)">
-        <button [class]="'base__card__addScoreList__button color-' + player.color" *ngIf="!getScore(player.id).score" (click)="addScore(player.id)"><i class="icon-arrow-right2"></i></button>
-      </ng-container>
-    </div>
-
-    <div class="base__card__actions" *ngIf="detailsMode">
+    <div class="base__card__actions" *ngIf="detailsMode && !detailModeCreatureId">
       <button class="base__card__actions__button edit" (click)="editMode = !editMode"><i [class]="editMode ? 'icon-checkmark' : 'icon-pencil'"></i></button>
       <button class="base__card__actions__button delete" (click)="deleteBase()" *ngIf="editMode"><i class="icon-bin2"></i></button>
     </div>
@@ -67,37 +61,37 @@
       <button [class]="'base__colorEdit__color color-' + color" *ngFor="let color of (bindAvailableColors() | async)" (click)="chooseColor(color)"></button>
     </div>
 
-    <div class="base__playerScores" *ngIf="!editMode && detailsMode">
-
-      <div class="base__playerScores__list" *ngIf="base.scores.length > 0">
-        <div [class]="'base__playerScores__list__score color-' + (playerService.bindPlayer(score.playerId) | async).color" *ngFor="let score of base.scores; let i = index" [ngClass]="{'modifierOpen': openedModifiers[i]}">
-          <div class="base__playerScores__list__score__scoreAndButtons">
-            <div class="base__playerScores__list__score__scoreAndButtons__score">{{score.score}}</div>
-            <div class="base__playerScores__list__score__scoreAndButtons__buttons">
-              <button class="base__playerScores__list__score__scoreAndButtons__buttons__button plus" (click)="increaseScore(i)"><i class="icon-plus-square"></i></button>
-              <button class="base__playerScores__list__score__scoreAndButtons__buttons__button minus" [disabled]="score.score <= 0" (click)="decreaseScore(i)"><i class="icon-minus-square"></i></button>
-            </div>
-          </div>
-
-          <div [class]="'base__playerScores__list__score__modifier color-' + (playerService.bindPlayer(score.playerId) | async).color" [ngClass]="{'zero': score.scoreModifier === 0}" (mouseleave)="modifierLeave(i)" (mouseenter)="modifierEnter(i)">
-            <button class="base__playerScores__list__score__modifier__button plus" (click)="increaseScoreModifier(i)"><i class="icon-plus-square"></i></button>
-            <div class="base__playerScores__list__score__modifier__value">{{score.scoreModifier > 0 ? '+' : ''}}{{score.scoreModifier}}</div>
-            <button class="base__playerScores__list__score__modifier__button minus" (click)="decreaseScoreModifier(i)"><i class="icon-minus-square"></i></button>
-          </div>
-
-          <button class="base__playerScores__list__score__toggle" [disabled]="score.scoreModifier !== 0" (click)="openModifierClick(i)">
-              {{'ON_TURN' | translate}}
-          </button>
-          <button class="base__playerScores__list__score__delete" (click)="deleteScore(i)"><i class="icon-blocked"></i></button>
-          </div>
-      </div>
-    </div>
-
-    <div class="base__playerScoresReduced" *ngIf="!editMode && !detailsMode">
+    <div class="base__playerScoresReduced" *ngIf="!editMode">
       <div [class]="'base__playerScoresReduced__score color-' + (playerService.bindPlayer(score.playerId) | async).color" *ngFor="let score of base.scores; let i = index">
-        {{score.totalScore}}
+        {{score.score}}
       </div>
     </div>
+  </div>
+
+  <div class="base__creaturesWrapper" *ngIf="detailsMode && !editMode">
+    <div class="base__creatures">
+      <div class="base__creatures__player" *ngFor="let ownerCreatureList of creatureList$ | async">
+        <ng-container *ngFor="let creatureId of ownerCreatureList">
+          <app-creature [creatureId]="creatureId" *ngIf="detailModeCreatureId === null || detailModeCreatureId === creatureId" (toggleDetailMode)="toggleCreatureDetailMode(creatureId)" [detailModeCreatureId]="detailModeCreatureId"></app-creature>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="globalActions" *ngIf="detailsMode && !editMode && !detailModeCreatureId">
+  <div [class]="'globalActions__player color-' + player.color" *ngFor="let player of players$ | async">
+    <ng-container *ngIf="player.playing">
+      <button class="globalActions__addCreature globalActions__addCreature--quick" *ngFor="let strength of [2, 3, 4, 5]"
+        (click)="createCreature(player.id, strength)">
+        <i class="icon-evil icon"></i>
+        <span class="strength">{{strength}}</span>
+      </button>
+    </ng-container>
+    <button class="globalActions__addCreature" (click)="createCreature(player.id)">
+      <i class="icon-evil icon"></i>
+      <i class="icon-plus icon"></i>
+    </button>
   </div>
 </div>
 

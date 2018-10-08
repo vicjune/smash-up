@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs/Rx';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { PlayerService } from '@shared/services/player.service';
 import { TimerService } from '@shared/services/timer.service';
@@ -11,9 +12,9 @@ import { Timer } from '@shared/models/timer';
   styleUrls: ['./timer.component.scss']
 })
 export class TimerComponent implements OnInit {
-  timer: Observable<Timer> = this.timerService.bind();
-  timerBlinking: Observable<boolean> = this.timer.map(timer => timer.running && timer.value < 10);
-  playerColor: Observable<number> = this.playerService.bindPlayerPlaying().map(player => (player && player.color) || 1);
+  timer$: Observable<Timer> = this.timerService.bind();
+  timerBlinking$: Observable<boolean> = this.timer$.pipe(map(timer => timer.running && timer.value < 10));
+  playerColor$: Observable<number> = this.playerService.bindPlayerPlaying().pipe(map(player => (player && player.color) || 1));
 
   constructor(
     public timerService: TimerService,
