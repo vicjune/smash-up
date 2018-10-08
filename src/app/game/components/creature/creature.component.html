@@ -1,16 +1,50 @@
-<div [class]="'creature color-' + (creature$ | async).owner.color">
-  <div class="creature__card"
-  [ngClass]="{'creature__card--bonusPositive': bonusStrengthPositive}"
-  (mousedown)="mouseDown($event)"
-  (touchstart)="mouseDown($event)"
-  (window:mouseup)="mouseUp($event)"
-  (window:mouseleave)="mouseUp($event)"
-  (window:touchend)="mouseUp($event)"
-  (window:touchcancel)="mouseUp($event)">
-    <div>{{detailsMode}}</div>
-    <div class="creature__strengthDetail" *ngIf="this.strengthBonus$ | async">
-      {{(creature$ | async).basicStrength}} <span class="creature__strengthBonus">{{this.strengthBonus$ | async}}</span>
+<div [class]="'creature color-' + ((creature$ | async).owner.color) + (detailsMode ? ' creature--detailsMode': '')">
+  <div class="creature__card" [ngClass]="{'creature__card--bonusPositive': (totalBonusStrengthSeparator$ | async) === '+'}"
+    (mousedown)="mouseDown($event)" (touchstart)="mouseDown($event)" (window:mouseup)="mouseUp($event)"
+    (window:mouseleave)="mouseUp($event)" (window:touchend)="mouseUp($event)" (window:touchcancel)="mouseUp($event)">
+    <div class="creature__strengthDetail" *ngIf="totalBonusStrengthSeparator$ | async">
+      {{(creature$ | async).basicStrength}}
+      <span class="creature__strengthBonus">
+        {{totalBonusStrengthSeparator$ | async}}{{totalBonusStrengthAbsolute$ | async}}
+      </span>
     </div>
-    <div class="creature__strength" [ngClass]="{'creature__strength--detail': this.strengthBonus$ | async}">{{(creature$ | async).strength}}</div>
+    <div class="creature__strength" [ngClass]="{'creature__strength--detail': totalBonusStrengthSeparator$ | async}">
+      {{(creature$ | async).strength}}
+    </div>
+  </div>
+
+  <div class="actions" *ngIf="detailsMode">
+    <div class="actions__row">
+      <button class="actions__button"><i class="icon-minus-square"></i></button>
+      <div class="actions__value">
+        {{(creature$ | async).basicStrength}}
+      </div>
+      <button class="actions__button"><i class="icon-plus-square"></i></button>
+      <div class="actions__label">
+        {{'BASE_STRENGTH' | translate}}
+      </div>
+    </div>
+
+    <div class="actions__row" [ngClass]="{'actions__row--positive': (creature$ | async).bonusStrength > 0, 'actions__row--negative': (creature$ | async).bonusStrength < 0}">
+      <button class="actions__button"><i class="icon-minus-square"></i></button>
+      <div class="actions__value">
+        {{(creature$ | async).bonusStrength}}
+      </div>
+      <button class="actions__button"><i class="icon-plus-square"></i></button>
+      <div class="actions__label">
+        {{'BONUS_STRENGTH' | translate}}
+      </div>
+    </div>
+
+    <div class="actions__row" [ngClass]="{'actions__row--positive': (creature$ | async).modifierDuringOwnerTurn > 0, 'actions__row--negative': (creature$ | async).modifierDuringOwnerTurn < 0}">
+      <button class="actions__button"><i class="icon-minus-square"></i></button>
+      <div class="actions__value">
+        {{(creature$ | async).modifierDuringOwnerTurn}}
+      </div>
+      <button class="actions__button"><i class="icon-plus-square"></i></button>
+      <div class="actions__label">
+        {{'BONUS_STRENGTH_DURING_TURN' | translate}}
+      </div>
+    </div>
   </div>
 </div>

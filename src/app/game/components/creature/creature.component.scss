@@ -3,6 +3,11 @@
 .creature {
   margin: 5px;
 
+  &.creature--detailsMode {
+    transform: scale(1.5);
+    margin: 5px 5px 5px 40px;
+  }
+
   &__card {
     @include color($playerColors, 'background');
     color: white;
@@ -10,6 +15,10 @@
     width: 40px;
     border-radius: 5px;
     position: relative;
+
+    .creature--detailsMode & {
+      margin-left: 16px;
+    }
   }
 
   &__strength {
@@ -46,5 +55,36 @@
     .creature__card--bonusPositive & {
       color: $bonus;
     }
+  }
+}
+
+.actions {
+  color: white;
+  margin-top: 10px;
+
+  &__row {
+    display: flex;
+    align-items: center;
+    margin-top: 4px;
+  }
+
+  &__label {
+    margin-left: 20px;
+    flex-basis: 60px;
+    padding-bottom: 2px;
+    font-size: 12px;
+  }
+
+  &__value {
+    font-size: 24px;
+    width: 40px;
+    text-align: center;
+    padding-bottom: 3px;
+  }
+
+  &__button i {
+    color: white;
+    font-size: 20px;
+    margin-top: 3px;
   }
 }

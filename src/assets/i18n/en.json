@@ -21,5 +21,8 @@
   "PLAYING": "playing",
   "ENABLE_TIMER": "Enable timer",
   "DISABLE_TIMER": "Disable timer",
-  "NEXT_PLAYER": "Next player"
+  "NEXT_PLAYER": "Next player",
+  "BASE_STRENGTH": "On card",
+  "BONUS_STRENGTH": "Bonus",
+  "BONUS_STRENGTH_DURING_TURN": "During turn"
 }

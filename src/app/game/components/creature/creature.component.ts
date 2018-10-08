@@ -17,8 +17,8 @@ export class CreatureComponent implements OnInit {
   @Output() toggleDetailMode = new EventEmitter<void>();
 
   creature$: Observable<Creature>;
-  strengthBonus$: Observable<string>;
-  bonusStrengthPositive = true;
+  totalBonusStrengthAbsolute$: Observable<number>;
+  totalBonusStrengthSeparator$: Observable<string>;
 
   draggable = new Draggable();
 
@@ -32,13 +32,14 @@ export class CreatureComponent implements OnInit {
 
   ngOnInit() {
     this.creature$ = this.creatureService.bindFromId(this.creatureId) as Observable<Creature>;
-    this.strengthBonus$ = this.creature$.pipe(map((creature: Creature) => {
+    this.totalBonusStrengthAbsolute$ = this.creature$.pipe(map((creature: Creature) => {
+      return creature && Math.abs(creature.strength - creature.basicStrength);
+    }));
+    this.totalBonusStrengthSeparator$ = this.creature$.pipe(map((creature: Creature) => {
       if (creature && creature.strength !== creature.basicStrength) {
-        this.bonusStrengthPositive = (creature.strength - creature.basicStrength) > 0;
-        const separator = this.bonusStrengthPositive ? '+' : '-';
-        return `${separator} ${Math.abs(creature.strength - creature.basicStrength)}`;
+        return creature.strength - creature.basicStrength > 0 ? '+' : '-';
       }
-      return '';
+      return null;
     }));
 
     this.draggable.clickEvent.subscribe(() => this.seeMoreDetails());

@@ -20,7 +20,7 @@
       <button class="base__resistanceEdit__button plus" [disabled]="base.maxResistance >= BASE_MAX_RESISTANCE" (click)="increaseResistance()"><i class="icon-plus-square"></i></button>
     </div>
 
-    <div class="base__conquestAction" [ngClass]="{'forceConquest': base.resistance > 0, 'display': base.scores.length > 0}" *ngIf="!editMode && detailsMode">
+    <div class="base__conquestAction" [ngClass]="{'forceConquest': base.resistance > 0, 'display': base.scores.length > 0}" *ngIf="!editMode && detailsMode && !detailModeCreatureId">
       <button class="base__conquestAction__button" (click)="conquerBase()">
         <i class="icon-flag base__conquestAction__button__icon"></i>
         <span>{{(base.resistance <= 0 ? 'CONQUEST' : 'FORCE_CONQUEST') | translate}}</span>
@@ -29,7 +29,7 @@
   </div>
 
   <div class="base__card">
-    <div class="base__card__actions" *ngIf="detailsMode">
+    <div class="base__card__actions" *ngIf="detailsMode && !detailModeCreatureId">
       <button class="base__card__actions__button edit" (click)="editMode = !editMode"><i [class]="editMode ? 'icon-checkmark' : 'icon-pencil'"></i></button>
       <button class="base__card__actions__button delete" (click)="deleteBase()" *ngIf="editMode"><i class="icon-bin2"></i></button>
     </div>
@@ -77,7 +77,7 @@
   </div>
 </div>
 
-<div class="globalActions" *ngIf="detailsMode && !editMode">
+<div class="globalActions" *ngIf="detailsMode && !editMode && !detailModeCreatureId">
   <div [class]="'globalActions__player color-' + player.color" *ngFor="let player of players$ | async">
     <ng-container *ngIf="player.playing">
       <button class="globalActions__addCreature globalActions__addCreature--quick" *ngFor="let strength of [2, 3, 4, 5]"
