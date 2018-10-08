@@ -33,7 +33,7 @@ export class CreatureComponent implements OnInit {
   ngOnInit() {
     this.creature$ = this.creatureService.bindFromId(this.creatureId) as Observable<Creature>;
     this.totalBonusStrengthAbsolute$ = this.creature$.pipe(map((creature: Creature) => {
-      return creature && Math.abs(creature.strength - creature.basicStrength);
+      return creature && Math.abs(creature.bonusStrength + (creature.owner.playing ? creature.modifierDuringOwnerTurn : 0));
     }));
     this.totalBonusStrengthSeparator$ = this.creature$.pipe(map((creature: Creature) => {
       if (creature && creature.strength !== creature.basicStrength) {
@@ -47,6 +47,55 @@ export class CreatureComponent implements OnInit {
 
   seeMoreDetails() {
     this.toggleDetailMode.emit();
+  }
+
+  increaseBaseStrength() {
+    this.creatureService.editById(this.creatureId, (creature: Creature) => {
+      creature.basicStrength ++;
+      return creature;
+    });
+  }
+
+  decreaseBaseStrength() {
+    this.creatureService.editById(this.creatureId, (creature: Creature) => {
+      if (creature.basicStrength > 0) {
+        creature.basicStrength --;
+      }
+      return creature;
+    });
+  }
+
+  increaseBonusStrength() {
+    this.creatureService.editById(this.creatureId, (creature: Creature) => {
+      creature.bonusStrength ++;
+      return creature;
+    });
+  }
+
+  decreaseBonusStrength() {
+    this.creatureService.editById(this.creatureId, (creature: Creature) => {
+      creature.bonusStrength --;
+      return creature;
+    });
+  }
+
+  increaseDuringTurnStrength() {
+    this.creatureService.editById(this.creatureId, (creature: Creature) => {
+      creature.modifierDuringOwnerTurn ++;
+      return creature;
+    });
+  }
+
+  decreaseDuringTurnStrength() {
+    this.creatureService.editById(this.creatureId, (creature: Creature) => {
+      creature.modifierDuringOwnerTurn --;
+      return creature;
+    });
+  }
+
+  delete() {
+    this.toggleDetailMode.emit();
+    this.creatureService.delete(this.creatureId);
   }
 
   mouseDown(e) {

@@ -68,11 +68,13 @@
     </div>
   </div>
 
-  <div class="base__creatures" *ngIf="detailsMode && !editMode">
-    <div class="base__creatures__player" *ngFor="let ownerCreatureList of creatureList$ | async">
-      <ng-container *ngFor="let creatureId of ownerCreatureList">
-        <app-creature [creatureId]="creatureId" *ngIf="detailModeCreatureId === null || detailModeCreatureId === creatureId" (toggleDetailMode)="toggleCreatureDetailMode(creatureId)" [detailModeCreatureId]="detailModeCreatureId"></app-creature>
-      </ng-container>
+  <div class="base__creaturesWrapper" *ngIf="detailsMode && !editMode">
+    <div class="base__creatures">
+      <div class="base__creatures__player" *ngFor="let ownerCreatureList of creatureList$ | async">
+        <ng-container *ngFor="let creatureId of ownerCreatureList">
+          <app-creature [creatureId]="creatureId" *ngIf="detailModeCreatureId === null || detailModeCreatureId === creatureId" (toggleDetailMode)="toggleCreatureDetailMode(creatureId)" [detailModeCreatureId]="detailModeCreatureId"></app-creature>
+        </ng-container>
+      </div>
     </div>
   </div>
 </div>

@@ -34,6 +34,11 @@ export class EntityService {
     this.update(entities);
   }
 
+  editById<T>(entityId: string, editFunction: Function) {
+    const entity = this.get(entityId, this.entitiesSubject.getValue()).entity;
+    this.edit(editFunction(entity));
+  }
+
   delete(id: string): void {
     const entities = this.entitiesSubject.getValue();
     if (this.get(id, entities).entity) {

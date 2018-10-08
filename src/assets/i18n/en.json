@@ -22,7 +22,7 @@
   "ENABLE_TIMER": "Enable timer",
   "DISABLE_TIMER": "Disable timer",
   "NEXT_PLAYER": "Next player",
-  "BASE_STRENGTH": "On card",
-  "BONUS_STRENGTH": "Bonus",
+  "BASE_STRENGTH": "Written on card",
+  "BONUS_STRENGTH": "Bonus / Malus",
   "BONUS_STRENGTH_DURING_TURN": "During turn"
 }

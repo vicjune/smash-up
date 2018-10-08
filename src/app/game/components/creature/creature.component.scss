@@ -2,10 +2,13 @@
 
 .creature {
   margin: 5px;
+  transition: margin 0.3s;
+  position: relative;
+  transition: all 0.3s;
 
   &.creature--detailsMode {
-    transform: scale(1.5);
-    margin: 5px 5px 5px 40px;
+    padding: 10px 0;
+    margin: 0;
   }
 
   &__card {
@@ -15,9 +18,13 @@
     width: 40px;
     border-radius: 5px;
     position: relative;
+    transition: all 0.3s;
 
     .creature--detailsMode & {
-      margin-left: 16px;
+      margin-left: 23px;
+      height: 90px;
+      width: 60px;
+      border-radius: 7.5px;
     }
   }
 
@@ -27,10 +34,15 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+    transition: all 0.3s;
+
+    .creature--detailsMode & {
+      font-size: 36px;
+    }
 
     &--detail {
       top: auto;
-      bottom: 6px;
+      bottom: 0;
       color: $malus;
 
       .creature__card--bonusPositive & {
@@ -41,50 +53,113 @@
 
   &__strengthDetail {
     position: absolute;
-    top: 2px;
+    top: 4px;
     left: 50%;
     transform: translateX(-50%);
     font-size: 14px;
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 5px;
+    transition: all 0.3s;
+
+    .creature--detailsMode & {
+      top: 6px;
+      font-size: 21px;
+      padding: 0 7.5px;
+    }
   }
 
   &__strengthBonus {
     color: $malus;
     font-size: 12px;
+    transition: all 0.3s;
+    padding-bottom: 1px;
+
+    .creature--detailsMode & {
+      font-size: 18px;
+    }
 
     .creature__card--bonusPositive & {
       color: $bonus;
     }
   }
+
+  &__deleteButton {
+    position: absolute;
+    left: 126px;
+    top: 81px;
+    @include button-active-hover(null, $danger, 'border');
+    border-radius: 7.5px;
+    height: 35px;
+    width: 35px;
+    font-size: 16px;
+  }
 }
 
 .actions {
   color: white;
-  margin-top: 10px;
+  margin-top: 15px;
+
+  &.actions--top {
+    margin: 0 0 15px;
+  }
 
   &__row {
     display: flex;
     align-items: center;
-    margin-top: 4px;
+    margin-top: 9px;
+    margin-left: 10px;
+    opacity: 0.8;
+
+    &.actions__row--bonus {
+      margin-left: 0;
+      opacity: 1;
+    }
+
+    .actions--top & {
+      margin-top: 0;
+    }
   }
 
   &__label {
-    margin-left: 20px;
-    flex-basis: 60px;
-    padding-bottom: 2px;
+    margin-left: 30px;
+    padding-bottom: 4.5px;
     font-size: 12px;
+
+    .actions__row--bonus & {
+      margin-left: 18px;
+      padding-bottom: 3px;
+      font-size: 18px;
+    }
   }
 
   &__value {
-    font-size: 24px;
-    width: 40px;
+    font-size: 27px;
+    flex-basis: 45px;
+    flex-grow: 0;
+    flex-shrink: 0;
     text-align: center;
     padding-bottom: 3px;
+
+    .actions__row--bonus & {
+      font-size: 36px;
+      flex-basis: 56px;
+      padding-bottom: 4.5px;
+    }
   }
 
-  &__button i {
-    color: white;
-    font-size: 20px;
-    margin-top: 3px;
+  &__button{
+    @include button-active-hover(null, white);
+    flex: 0;
+
+    i {
+      font-size: 24px;
+
+      .actions__row--bonus & {
+        font-size: 30px;
+      }
+    }
   }
 }

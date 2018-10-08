@@ -22,7 +22,7 @@
   "ENABLE_TIMER": "Activer le chrono",
   "DISABLE_TIMER": "Désactiver le chrono",
   "NEXT_PLAYER": "Joueur suivant",
-  "BASE_STRENGTH": "Sur la carte",
-  "BONUS_STRENGTH": "Bonus",
+  "BASE_STRENGTH": "Inscrit sur la carte",
+  "BONUS_STRENGTH": "Bonus / Malus",
   "BONUS_STRENGTH_DURING_TURN": "Durant le tour"
 }

@@ -15,7 +15,7 @@
     transition: left 0.5s, top 0.5s, transform 0.5s;
 
     @media (orientation:portrait) {
-      top: 20% !important;
+      top: 15% !important;
       left: 50% !important;
     }
 
@@ -298,13 +298,24 @@
     }
   }
 
-  &__creatures {
+  &__creaturesWrapper {
     position: absolute;
     left: calc(100% + 20px);
     width: calc(65vw - 400px);
     top: 50%;
     transform: translateY(-50%);
 
+    @media (orientation:portrait) {
+      width: calc(100% + 50px);
+      transform: translateY(0);
+      left: -25px;
+      top: calc(100% + 40px);
+      display: flex;
+      justify-content: center;
+    }
+  }
+
+  &__creatures {
     &__player {
       margin: 10px 0;
       display: flex;
