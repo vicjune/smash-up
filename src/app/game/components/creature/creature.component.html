@@ -36,7 +36,7 @@
     <div class="actions__row actions__row--bonus">
       <button class="actions__button" (click)="decreaseBonusStrength()"><i class="icon-minus-square"></i></button>
       <div class="actions__value">
-        {{(creature$ | async).bonusStrength}}
+        {{(creature$ | async).bonusStrength > 0 ? '+' : ''}}{{(creature$ | async).bonusStrength}}
       </div>
       <button class="actions__button" (click)="increaseBonusStrength()"><i class="icon-plus-square"></i></button>
       <div class="actions__label">
@@ -47,7 +47,7 @@
     <div class="actions__row">
       <button class="actions__button" (click)="decreaseDuringTurnStrength()"><i class="icon-minus-square"></i></button>
       <div class="actions__value">
-        {{(creature$ | async).modifierDuringOwnerTurn}}
+        {{(creature$ | async).modifierDuringOwnerTurn > 0 ? '+' : ''}}{{(creature$ | async).modifierDuringOwnerTurn}}
       </div>
       <button class="actions__button" (click)="increaseDuringTurnStrength()"><i class="icon-plus-square"></i></button>
       <div class="actions__label">
