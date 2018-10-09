@@ -3,16 +3,17 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Entity } from '@shared/models/entity';
+import { localStorage } from '@shared/utils/localStorage';
 
 @Injectable()
 export class EntityService {
   protected entity: string;
-  protected entitiesSubject: BehaviorSubject<Entity[]> = new BehaviorSubject<Entity[]>([]);
+  protected entities$: BehaviorSubject<Entity[]> = new BehaviorSubject<Entity[]>([]);
 
   constructor() {}
 
   bind(): Observable<Entity[]> {
-    return this.entitiesSubject.asObservable();
+    return this.entities$.asObservable();
   }
 
   bindFromId(id: string): Observable<Entity> {
@@ -20,29 +21,28 @@ export class EntityService {
   }
 
   add(entity: Entity): void {
-    const entities = this.entitiesSubject.getValue();
+    const entities = this.entities$.getValue();
     entities.push(entity);
     this.update(entities);
   }
 
   edit(entity: Entity): void {
-    const entities = this.entitiesSubject.getValue();
-    if (this.get(entity.id, entities).entity) {
-      entities[this.get(entity.id, entities).index] = entity;
+    const entities = this.entities$.getValue();
+    if (this.get(entity.id).entity) {
+      entities[this.get(entity.id).index] = entity;
     }
-
     this.update(entities);
   }
 
-  editById<T>(entityId: string, editFunction: Function) {
-    const entity = this.get(entityId, this.entitiesSubject.getValue()).entity;
+  editById(entityId: string, editFunction: (entity: Entity) => Entity) {
+    const entity = this.get(entityId).entity;
     this.edit(editFunction(entity));
   }
 
   delete(id: string): void {
-    const entities = this.entitiesSubject.getValue();
-    if (this.get(id, entities).entity) {
-      entities.splice(this.get(id, entities).index, 1);
+    const entities = this.entities$.getValue();
+    if (this.get(id).entity) {
+      entities.splice(this.get(id).index, 1);
     }
     this.update(entities);
   }
@@ -52,7 +52,7 @@ export class EntityService {
   }
 
   getNewColor(): number {
-    const existingItems = this.entitiesSubject.getValue();
+    const existingItems = this.entities$.getValue();
     for (let index = 1; index < 99; index++) {
       if (existingItems.map(item => item.color).indexOf(index) === -1) {
         return index;
@@ -71,7 +71,8 @@ export class EntityService {
     }));
   }
 
-  protected get(id: string, entities: Entity[]): {entity: Entity, index: number} {
+  protected get(id: string): {entity: Entity, index: number} {
+    const entities = this.entities$.getValue();
     const entityIndex = entities.map(ent => ent.id).indexOf(id);
     if (entityIndex !== -1) {
       return {
@@ -86,12 +87,8 @@ export class EntityService {
   }
 
   protected update(entities: Entity[]): void {
-    try {
-      window.localStorage.setItem(this.entity, JSON.stringify(entities));
-    } catch (e) {
-      console.error('This browser does not support local storage');
-    }
-    this.entitiesSubject.next(entities);
+    localStorage.set(this.entity, entities);
+    this.entities$.next(entities);
   }
 
   protected arrayDiff(longArray: any[], shortArray: any[]): any[] {

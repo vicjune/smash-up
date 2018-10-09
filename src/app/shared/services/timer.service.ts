@@ -4,6 +4,7 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { Timer } from '../models/timer';
 import { TIMER_SECONDS_INTERVAL, TIMER_DEFAULT } from '../constants';
 import { PlayerService } from './player.service';
+import { localStorage } from '@shared/utils/localStorage';
 
 @Injectable()
 export class TimerService {
@@ -13,17 +14,13 @@ export class TimerService {
   constructor(
     private playerService: PlayerService
   ) {
-    let localTimer;
-    try {
-      localTimer = window.localStorage.getItem('timer');
-    } catch (e) {
-      console.error('This browser does not support local storage');
-    }
+    const timer = localStorage.get<Timer>('timer', localTimer => {
+      localTimer.running = false;
+      localTimer.value = localTimer.startValue;
+      return localTimer;
+    });
 
-    if (localTimer) {
-      const timer = JSON.parse(localTimer) as Timer;
-      timer.running = false;
-      timer.value = timer.startValue;
+    if (timer) {
       this.timerSubject.next(timer);
     }
   }
@@ -110,10 +107,6 @@ export class TimerService {
   }
 
   private storeInLocalStorage() {
-    try {
-      window.localStorage.setItem('timer', JSON.stringify(this.timerSubject.getValue()));
-    } catch (e) {
-      console.error('This browser does not support local storage');
-    }
+    localStorage.set('timer', this.timerSubject.getValue());
   }
 }

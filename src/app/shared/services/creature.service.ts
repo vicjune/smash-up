@@ -6,10 +6,11 @@ import { EntityService } from '@shared/services/entity.service';
 import { PlayerService } from '@shared/services/player.service';
 import { Creature } from '@shared/models/creature';
 import { Player } from '@shared/models/player';
+import { localStorage } from '@shared/utils/localStorage';
 
 @Injectable()
 export class CreatureService extends EntityService {
-  deleteCreatureEventSubject = new Subject<string>();
+  deleteCreatureEvent$ = new Subject<string>();
 
   protected entity = 'creatures';
 
@@ -17,21 +18,17 @@ export class CreatureService extends EntityService {
     private playerService: PlayerService
   ) {
     super();
-    let localEntities;
-    try {
-      localEntities = window.localStorage.getItem(this.entity);
-    } catch (e) {
-      console.error('This browser does not support local storage');
-    }
-    if (localEntities) {
-      this.entitiesSubject.next(JSON.parse(localEntities));
+    const creatures = localStorage.get<Creature[]>(this.entity);
+
+    if (creatures) {
+      this.entities$.next(creatures);
     }
 
     playerService.bind().subscribe(players => this.removeExcessCreatures(players));
   }
 
   get deleteCreatureEvent(): Observable<string> {
-    return this.deleteCreatureEventSubject.asObservable();
+    return this.deleteCreatureEvent$.asObservable();
   }
 
   bind(): Observable<Creature[]> {
@@ -60,11 +57,11 @@ export class CreatureService extends EntityService {
   }
 
   private removeExcessCreatures(players: Player[]) {
-    (this.entitiesSubject.getValue() as Creature[])
+    (this.entities$.getValue() as Creature[])
       .filter(creature => !players.find(player => player.id === creature.ownerId))
       .forEach(creature => {
         this.delete(creature.id);
-        this.deleteCreatureEventSubject.next(creature.id);
+        this.deleteCreatureEvent$.next(creature.id);
       });
   }
 }

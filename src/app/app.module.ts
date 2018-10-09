@@ -8,6 +8,7 @@ import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
 import { GameModule } from './game/game.module';
 import { InitModule } from './init/init.module';
+import { localStorage } from '@shared/utils/localStorage';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -34,29 +35,12 @@ export function HttpLoaderFactory(http: HttpClient) {
   bootstrap: [AppComponent]
 })
 export class AppModule {
-  localStorageVersion = 1;
+  localStorageVersion = 2;
 
   constructor() {
-    let version = this.localStorageVersion;
-
-    try {
-      version = JSON.parse(window.localStorage.getItem('version'));
-    } catch (e) {
-      console.error('This browser does not support local storage');
+    if (localStorage.get<number>('version') !== this.localStorageVersion) {
+      localStorage.clear();
     }
-
-    if (version !== this.localStorageVersion) {
-      try {
-        window.localStorage.clear();
-      } catch (e) {
-        console.error('This browser does not support local storage');
-      }
-    }
-
-    try {
-      window.localStorage.setItem('version', JSON.stringify(this.localStorageVersion));
-    } catch (e) {
-      console.error('This browser does not support local storage');
-    }
+    localStorage.set('version', this.localStorageVersion);
   }
 }

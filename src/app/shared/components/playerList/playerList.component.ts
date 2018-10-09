@@ -4,6 +4,8 @@ import { PlayerService } from '../../services/player.service';
 import { BaseService } from '@shared/services/base.service';
 import { Player } from '../../models/player';
 import { MAX_PLAYERS } from '../../constants';
+import { Observable } from 'rxjs';
+import { ConqueringScore } from '@shared/models/conqueringScore';
 
 @Component({
   selector: 'app-player-list',
@@ -21,6 +23,10 @@ export class PlayerListComponent implements OnInit {
   ) { }
 
   ngOnInit() {}
+
+  getConqueringScores$(playerId: string): Observable<ConqueringScore[]> {
+    return this.playerService.bindConqueringScores(playerId);
+  }
 
   addPlayerClicked() {
     this.addPlayer.emit();
