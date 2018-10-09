@@ -115,16 +115,18 @@ export class PlayerService extends EntityService {
   }
 
   updateScore(modifier: number, id: string, fromConquest = false): void {
-    const player = this.get(id).entity as Player;
-    if (player) {
-      player.realScore = player.realScore + modifier >= 0 ? player.realScore + modifier : 0;
-      if (!fromConquest) {
-        player.score = player.realScore;
-        this.deleteConqueringScores(id);
-      } else {
-        this.addConqueringScore(id, modifier);
+    if (modifier !== 0) {
+      const player = this.get(id).entity as Player;
+      if (player) {
+        player.realScore = player.realScore + modifier >= 0 ? player.realScore + modifier : 0;
+        if (!fromConquest) {
+          player.score = player.realScore;
+          this.deleteConqueringScores(id);
+        } else {
+          this.addConqueringScore(id, modifier);
+        }
+        this.edit(player);
       }
-      this.edit(player);
     }
   }
 
