@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, forwardRef, EventEmitter, Output, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, forwardRef, EventEmitter, Output, OnDestroy } from '@angular/core';
 import { FormControl, ControlValueAccessor, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 import { Observable } from 'rxjs';
 
@@ -18,7 +18,7 @@ import { Creature } from '@shared/models/creature';
     { provide: NG_VALIDATORS, useExisting: forwardRef(() => BaseComponent), multi: true }
   ]
 })
-export class BaseComponent implements OnInit, ControlValueAccessor {
+export class BaseComponent implements OnInit, ControlValueAccessor, OnDestroy {
   @Input() newBase: boolean;
   @Output() delete: EventEmitter<void> = new EventEmitter<void>();
   @Output() conquer: EventEmitter<void> = new EventEmitter<void>();
@@ -37,6 +37,7 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
   BASE_MAX_RESISTANCE = BASE_MAX_RESISTANCE;
 
   portraitMode = false;
+  boundCheckOrientation = this.checkOrientation.bind(this);
 
   private _base: Base;
   get base() {
@@ -70,12 +71,8 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
     });
 
     this.checkOrientation();
-    window.addEventListener('orientationchange', () => {
-      this.checkOrientation();
-    }, false);
-    window.addEventListener('resize', () => {
-      this.checkOrientation();
-    }, false);
+    window.addEventListener('orientationchange', this.boundCheckOrientation, false);
+    window.addEventListener('resize', this.boundCheckOrientation, false);
   }
 
   bindAvailableColors(): Observable<number[]> {
@@ -211,5 +208,10 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
 
   validate(c: FormControl) {
     return null;
+  }
+
+  ngOnDestroy() {
+    window.removeEventListener('orientationchange', this.boundCheckOrientation, false);
+    window.removeEventListener('resize', this.boundCheckOrientation, false);
   }
 }
