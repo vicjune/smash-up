@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { localStorage } from '@shared/utils/localStorage';
 
 @Component({
   selector: 'app-root',
@@ -12,12 +13,7 @@ export class AppComponent {
   ) {
     translate.setDefaultLang('en');
 
-    let lang;
-    try {
-      lang = window.localStorage.getItem('i18n');
-    } catch (e) {
-      console.error('This browser does not support local storage');
-    }
+    let lang = localStorage.get<string>('i18n');
 
     if (!lang) {
       lang = window.navigator.language;

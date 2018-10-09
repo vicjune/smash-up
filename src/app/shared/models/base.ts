@@ -1,4 +1,5 @@
 import { Entity } from './entity';
+import { Score } from '@shared/interfaces/score';
 
 export class Base extends Entity {
   color: number;
@@ -25,10 +26,4 @@ export class Base extends Entity {
     };
     this.creatures = [];
   }
-}
-
-export interface Score {
-  playerId: string;
-  score: number;
-  reward?: number;
 }

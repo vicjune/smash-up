@@ -7,6 +7,7 @@ import { PlayerService } from '../../services/player.service';
 import { Player } from '../../models/player';
 import { BaseService } from '@shared/services/base.service';
 import { MAX_PLAYERS, TIMER_SECONDS_INTERVAL } from '@shared/constants';
+import { localStorage } from '@shared/utils/localStorage';
 
 @Component({
   selector: 'app-menu',
@@ -71,10 +72,6 @@ export class MenuComponent implements OnInit {
 
   setLanguage(lang: string) {
     this.translate.use(lang);
-    try {
-      window.localStorage.setItem('i18n', lang);
-    } catch (e) {
-      console.error('This browser does not support local storage');
-    }
+    localStorage.set('i18n', lang);
   }
 }
