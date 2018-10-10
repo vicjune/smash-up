@@ -37,7 +37,7 @@ export class BaseService extends EntityService {
       this.creatureService.bind()
     ).pipe(map(([bases, players, creatures]) => bases.map((base: Base) => {
       base.scores = this.getScores(base, players, creatures);
-      base.resistance = this.getResistance(base);
+      base.resistance = this.getResistance(base, creatures);
       return base;
     })));
   }
@@ -107,15 +107,22 @@ export class BaseService extends EntityService {
       this.creatureService.bind(),
       this.playerService.bind()
     ).pipe(map(([bases, creatures, players]) => {
+      const baseFromId = bases.find(base => base.id === baseId);
+
+      const monsters = baseFromId && baseFromId.creatures.filter(creatureId => {
+        const creatureFromId = creatures.find(creature => creature.id === creatureId);
+        return creatureFromId && creatureFromId.ownerId === 'monster';
+      });
+
       const creatureOwners = players.map(player => {
-        const baseFromId = bases.find(base => base.id === baseId);
         const creaturesFromThisOwner = baseFromId && baseFromId.creatures.filter(creatureId => {
           const creatureFromId = creatures.find(creature => creature.id === creatureId);
           return creatureFromId && creatureFromId.ownerId === player.id;
         });
         return creaturesFromThisOwner;
       }).filter(creatureOwner => creatureOwner && creatureOwner.length > 0);
-      return creatureOwners;
+
+      return [monsters, ...creatureOwners];
     }));
   }
 
@@ -137,8 +144,15 @@ export class BaseService extends EntityService {
     }
   }
 
-  private getResistance(base: Base): number {
-    const resistance = base.maxResistance - base.scores.map(score => score.score).reduce((a, b) => a + b, 0);
+  private getResistance(base: Base, creatures: Creature[]): number {
+    let resistance = base.maxResistance - base.scores.map(score => score.score).reduce((previous, score) => previous + score, 0);
+
+    // add monsters strength to the base resistance
+    resistance += base.creatures
+      .map(creatureId => creatures.find(creature => creature.id === creatureId))
+      .filter(creature => creature && creature.ownerId === 'monster')
+      .reduce((previous, monster) => previous + monster.strength, 0);
+
     return resistance;
   }
 

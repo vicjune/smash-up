@@ -387,9 +387,18 @@
       @include button-active-hover($playerColors, null, 'background');
     }
 
+    .globalActions__player--monsters & {
+      @include button-active-hover(null, white, 'border');
+    }
+
     .icon:first-child {
       display: inline-block;
       margin-right: 10px;
+    }
+
+    .icon-hipster,
+    .icon-hipster {
+      font-size: 20px;
     }
 
     .strength {

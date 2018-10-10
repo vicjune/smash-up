@@ -20,6 +20,11 @@
     position: relative;
     transition: all 0.3s;
 
+    .creature--monster & {
+      background-color: white;
+      color: black;
+    }
+
     .creature--detailsMode & {
       margin-left: 23px;
       height: 90px;

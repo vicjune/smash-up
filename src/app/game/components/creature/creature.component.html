@@ -1,4 +1,4 @@
-<div [class]="'creature color-' + ((creature$ | async).owner.color) + (detailsMode ? ' creature--detailsMode': '')">
+<div [class]="'creature' + ((creature$ | async).owner ? ' color-' + ((creature$ | async).owner.color) : ' creature--monster') + (detailsMode ? ' creature--detailsMode': '')">
   <div class="actions actions--top" *ngIf="detailsMode">
     <div class="actions__row">
       <button class="actions__button" (click)="decreaseBaseStrength()" [disabled]="(creature$ | async).basicStrength <= 0"><i class="icon-minus-square"></i></button>
@@ -44,7 +44,7 @@
       </div>
     </div>
 
-    <div class="actions__row">
+    <div class="actions__row" *ngIf="(creature$ | async).owner">
       <button class="actions__button" (click)="decreaseDuringTurnStrength()"><i class="icon-minus-square"></i></button>
       <div class="actions__value">
         {{(creature$ | async).modifierDuringOwnerTurn > 0 ? '+' : ''}}{{(creature$ | async).modifierDuringOwnerTurn}}

@@ -80,16 +80,22 @@
 </div>
 
 <div class="globalActions" *ngIf="(detailsMode$ | async) && !(editMode$ | async) && !detailModeCreatureId">
+  <div class="globalActions__player globalActions__player--monsters">
+    <button class="globalActions__addCreature" (click)="createCreature('monster')">
+      <i class="icon-evil2 icon"></i>
+      <i class="icon-plus icon"></i>
+    </button>
+  </div>
   <div [class]="'globalActions__player color-' + player.color" *ngFor="let player of (players$ | async)">
     <ng-container *ngIf="player.playing">
       <button class="globalActions__addCreature globalActions__addCreature--quick" *ngFor="let strength of [2, 3, 4, 5]"
         (click)="createCreature(player.id, strength)">
-        <i class="icon-evil icon"></i>
+        <i class="icon-hipster icon"></i>
         <span class="strength">{{strength}}</span>
       </button>
     </ng-container>
     <button class="globalActions__addCreature" (click)="createCreature(player.id)">
-      <i class="icon-evil icon"></i>
+      <i class="icon-hipster2 icon"></i>
       <i class="icon-plus icon"></i>
     </button>
   </div>
