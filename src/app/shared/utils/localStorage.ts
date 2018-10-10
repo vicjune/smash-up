@@ -1,5 +1,5 @@
 export const localStorage = {
-  get: function <Type>(entity: string, mappingFunction?: (entity: Type) => Type): Type {
+  get <Type>(entity: string, mappingFunction?: (entity: Type) => Type): Type {
     let localEntities;
     try {
       localEntities = JSON.parse(window.localStorage.getItem(entity));
@@ -14,7 +14,7 @@ export const localStorage = {
     return localEntities;
   },
 
-  set: function(entity: string, payload: any): void {
+  set(entity: string, payload: any): void {
     try {
       window.localStorage.setItem(entity, JSON.stringify(payload));
     } catch (e) {
@@ -22,7 +22,7 @@ export const localStorage = {
     }
   },
 
-  clear: function() {
+  clear() {
     try {
       window.localStorage.clear();
     } catch (e) {

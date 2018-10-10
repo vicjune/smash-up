@@ -84,7 +84,10 @@ export class BaseService extends EntityService {
 
   delete(baseId: string) {
     const base = this.get(baseId).entity as Base;
-    base.creatures.forEach(creatureId => this.creatureService.delete(creatureId));
+    let i = base.creatures.length;
+    while (i--) {
+      this.creatureService.delete(base.creatures[i]);
+    }
     super.delete(baseId);
   }
 

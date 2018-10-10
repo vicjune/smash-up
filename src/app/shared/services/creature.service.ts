@@ -42,9 +42,9 @@ export class CreatureService extends EntityService {
     })));
   }
 
-  swichOwner(creature: Creature, newOwnerId: string) {
-    creature.ownerId = newOwnerId;
-    this.edit(creature);
+  delete(creatureId: string) {
+    this.deleteCreatureEvent$.next(creatureId);
+    super.delete(creatureId);
   }
 
   private getStrength(creature: Creature, players: Player[]): number {
@@ -57,11 +57,12 @@ export class CreatureService extends EntityService {
   }
 
   private removeExcessCreatures(players: Player[]) {
-    (this.entities$.getValue() as Creature[])
-      .filter(creature => !players.find(player => player.id === creature.ownerId))
-      .forEach(creature => {
-        this.delete(creature.id);
-        this.deleteCreatureEvent$.next(creature.id);
-      });
+    const creatures = this.entities$.getValue() as Creature[];
+    let i = creatures.length;
+    while (i--) {
+      if (!players.find(player => player.id === creatures[i].ownerId)) {
+        this.delete(creatures[i].id);
+      }
+    }
   }
 }

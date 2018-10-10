@@ -1,54 +1,54 @@
 <div
-  *ngIf="base"
-  [class]="'base color-' + base.color"
-  [ngClass]="{'detailsMode': detailsMode, 'editMode': editMode, 'conquered': base.resistance <= 0, 'dragging': draggable?.dragging}"
-  [ngStyle]="{'transform': getTransform(), 'left.%': draggable?.coordinates[0], 'top.%': draggable?.coordinates[1]}"
+  *ngIf="(base$ | async)"
+  [class]="'base color-' + (base$ | async).color"
+  [ngClass]="{'detailsMode': detailsMode$ | async, 'editMode': editMode$ | async, 'conquered': (base$ | async).resistance <= 0, 'dragging': draggable?.dragging, 'noCreature': (base$ | async).creatures.length === 0}"
+  [ngStyle]="{'transform': transform$ | async, 'left.%': draggable?.coordinates[0], 'top.%': draggable?.coordinates[1]}"
   (mousedown)="mouseDown($event)"
   (touchstart)="mouseDown($event)"
   (window:mousemove)="mouseMove($event)"
   (window:touchmove)="mouseMove($event)"
-  (window:mouseup)="mouseUp($event)"
-  (window:mouseleave)="mouseUp($event)"
-  (window:touchend)="mouseUp($event)"
-  (window:touchcancel)="mouseUp($event)">
+  (window:mouseup)="mouseUp()"
+  (window:mouseleave)="mouseUp()"
+  (window:touchend)="mouseUp()"
+  (window:touchcancel)="mouseUp()">
 
   <div class="base__topPart">
-    <div class="base__resistanceEdit" *ngIf="editMode">
+    <div class="base__resistanceEdit" *ngIf="editMode$ | async">
       <span class="base__resistanceEdit__label">{{'BASE_RESISTANCE' | translate}}</span>
-      <button class="base__resistanceEdit__button minus" [disabled]="base.maxResistance <= 0" (click)="decreaseResistance()"><i class="icon-minus-square"></i></button>
-      <span class="base__resistanceEdit__value">{{base.maxResistance}}</span>
-      <button class="base__resistanceEdit__button plus" [disabled]="base.maxResistance >= BASE_MAX_RESISTANCE" (click)="increaseResistance()"><i class="icon-plus-square"></i></button>
+      <button class="base__resistanceEdit__button minus" [disabled]="(base$ | async).maxResistance <= 0" (click)="decreaseResistance()"><i class="icon-minus-square"></i></button>
+      <span class="base__resistanceEdit__value">{{(base$ | async).maxResistance}}</span>
+      <button class="base__resistanceEdit__button plus" [disabled]="(base$ | async).maxResistance >= BASE_MAX_RESISTANCE" (click)="increaseResistance()"><i class="icon-plus-square"></i></button>
     </div>
 
-    <div class="base__conquestAction" [ngClass]="{'forceConquest': base.resistance > 0, 'display': base.scores.length > 0}" *ngIf="!editMode && detailsMode && !detailModeCreatureId">
+    <div class="base__conquestAction" [ngClass]="{'forceConquest': (base$ | async).resistance > 0, 'display': (base$ | async).scores.length > 0}" *ngIf="!(editMode$ | async) && (detailsMode$ | async) && !detailModeCreatureId">
       <button class="base__conquestAction__button" (click)="conquerBase()">
         <i class="icon-flag base__conquestAction__button__icon"></i>
-        <span>{{(base.resistance <= 0 ? 'CONQUEST' : 'FORCE_CONQUEST') | translate}}</span>
+        <span>{{((base$ | async).resistance <= 0 ? 'CONQUEST' : 'FORCE_CONQUEST') | translate}}</span>
       </button>
     </div>
   </div>
 
   <div class="base__card">
-    <div class="base__card__actions" *ngIf="detailsMode && !detailModeCreatureId">
-      <button class="base__card__actions__button edit" (click)="editMode = !editMode"><i [class]="editMode ? 'icon-checkmark' : 'icon-pencil'"></i></button>
-      <button class="base__card__actions__button delete" (click)="deleteBase()" *ngIf="editMode"><i class="icon-bin2"></i></button>
+    <div class="base__card__actions" *ngIf="(detailsMode$ | async) && !detailModeCreatureId">
+      <button class="base__card__actions__button edit" (click)="toggleEditMode()"><i [class]="(editMode$ | async) ? 'icon-checkmark' : 'icon-pencil'"></i></button>
+      <button class="base__card__actions__button delete" (click)="deleteBase()" *ngIf="editMode$ | async"><i class="icon-bin2"></i></button>
     </div>
 
-    <ng-container *ngIf="!editMode">
+    <ng-container *ngIf="!(editMode$ | async)">
       <div class="base__card__resistance">
-        <span class="base__card__resistance__current">{{base.resistance}}</span>
-        <span class="base__card__resistance__max" [ngClass]="{'displayed': base.resistance !== base.maxResistance}">/{{base.maxResistance}}</span>
+        <span class="base__card__resistance__current">{{(base$ | async).resistance}}</span>
+        <span class="base__card__resistance__max" [ngClass]="{'displayed': (base$ | async).resistance !== (base$ | async).maxResistance}">/{{(base$ | async).maxResistance}}</span>
       </div>
       <div class="base__card__resistance upsideDown">
-        <span class="base__card__resistance__current">{{base.resistance}}</span>
-        <span class="base__card__resistance__max" [ngClass]="{'displayed': base.resistance !== base.maxResistance}">/{{base.maxResistance}}</span>
+        <span class="base__card__resistance__current">{{(base$ | async).resistance}}</span>
+        <span class="base__card__resistance__max" [ngClass]="{'displayed': (base$ | async).resistance !== (base$ | async).maxResistance}">/{{(base$ | async).maxResistance}}</span>
       </div>
     </ng-container>
 
     <div class="base__card__rewards">
-      <span class="base__card__rewards__reward" *ngFor="let reward of base.rewards; let i = index">
+      <span class="base__card__rewards__reward" *ngFor="let reward of (base$ | async).rewards; let i = index">
         {{reward}}
-        <ng-container *ngIf="editMode">
+        <ng-container *ngIf="editMode$ | async">
           <button class="base__card__rewards__reward__button plus" [disabled]="reward >= BASE_REWARD_LIMITS[1]" (click)="increaseReward(i)"><i class="icon-plus-square"></i></button>
           <button class="base__card__rewards__reward__button minus" [disabled]="reward <= BASE_REWARD_LIMITS[0]" (click)="decreaseReward(i)"><i class="icon-minus-square"></i></button>
         </ng-container>
@@ -57,18 +57,18 @@
   </div>
 
   <div class="base__bottomPart">
-    <div class="base__colorEdit" *ngIf="editMode">
+    <div class="base__colorEdit" *ngIf="editMode$ | async">
       <button [class]="'base__colorEdit__color color-' + color" *ngFor="let color of (bindAvailableColors() | async)" (click)="chooseColor(color)"></button>
     </div>
 
-    <div class="base__playerScoresReduced" *ngIf="!editMode">
-      <div [class]="'base__playerScoresReduced__score color-' + (playerService.bindPlayer(score.playerId) | async).color" *ngFor="let score of base.scores; let i = index">
+    <div class="base__playerScoresReduced" *ngIf="!(editMode$ | async)">
+      <div [class]="'base__playerScoresReduced__score color-' + (playerService.bindPlayer(score.playerId) | async).color" *ngFor="let score of (base$ | async).scores; let i = index">
         {{score.score}}
       </div>
     </div>
   </div>
 
-  <div class="base__creaturesWrapper" *ngIf="detailsMode && !editMode">
+  <div class="base__creaturesWrapper" *ngIf="(detailsMode$ | async) && !(editMode$ | async)">
     <div class="base__creatures">
       <div class="base__creatures__player" *ngFor="let ownerCreatureList of creatureList$ | async">
         <ng-container *ngFor="let creatureId of ownerCreatureList">
@@ -79,8 +79,8 @@
   </div>
 </div>
 
-<div class="globalActions" *ngIf="detailsMode && !editMode && !detailModeCreatureId">
-  <div [class]="'globalActions__player color-' + player.color" *ngFor="let player of players$ | async">
+<div class="globalActions" *ngIf="(detailsMode$ | async) && !(editMode$ | async) && !detailModeCreatureId">
+  <div [class]="'globalActions__player color-' + player.color" *ngFor="let player of (players$ | async)">
     <ng-container *ngIf="player.playing">
       <button class="globalActions__addCreature globalActions__addCreature--quick" *ngFor="let strength of [2, 3, 4, 5]"
         (click)="createCreature(player.id, strength)">
@@ -95,4 +95,4 @@
   </div>
 </div>
 
-<div class="base__backdrop" [ngClass]="{'visible': detailsMode}" (click)="exitMoreDetails()"></div>
+<div class="base__backdrop" [ngClass]="{'visible': detailsMode$ | async}" (click)="exitMoreDetails()"></div>
