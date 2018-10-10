@@ -1,6 +1,6 @@
-import { Component, OnInit, Input, forwardRef, EventEmitter, Output, ViewChild, ElementRef } from '@angular/core';
-import { FormControl, ControlValueAccessor, NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { Component, OnInit, Input, EventEmitter, Output, OnDestroy } from '@angular/core';
+import { Observable, Subscription, BehaviorSubject, combineLatest } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 
 import { Base } from '@shared/models/base';
 import { BASE_REWARD_LIMITS, MAX_CARD_ROTATION_DEG, BASE_MAX_RESISTANCE, AVAILABLE_COLORS } from '@shared/constants';
@@ -8,47 +8,34 @@ import { BaseService } from '@shared/services/base.service';
 import { PlayerService } from '@shared/services/player.service';
 import { Draggable } from '@shared/utils/draggable';
 import { Creature } from '@shared/models/creature';
+import { windowEvents } from '@shared/utils/windowEvents';
 
 @Component({
   selector: 'app-base',
   templateUrl: './base.component.html',
   styleUrls: ['./base.component.scss'],
-  providers: [
-    { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => BaseComponent), multi: true },
-    { provide: NG_VALIDATORS, useExisting: forwardRef(() => BaseComponent), multi: true }
-  ]
 })
-export class BaseComponent implements OnInit, ControlValueAccessor {
+export class BaseComponent implements OnInit, OnDestroy {
+  @Input() baseId: string;
   @Input() newBase: boolean;
   @Output() delete: EventEmitter<void> = new EventEmitter<void>();
   @Output() conquer: EventEmitter<void> = new EventEmitter<void>();
 
   detailModeCreatureId: string = null;
 
-  editMode = false;
-  detailsMode = false;
-
+  base$: Observable<Base>;
   creatureList$: Observable<string[][]>;
   players$ = this.playerService.bind();
+  editMode$ = new BehaviorSubject<boolean>(false);
+  detailsMode$ = new BehaviorSubject<boolean>(false);
+  transform$: Observable<string>;
 
   draggable = new Draggable();
 
   BASE_REWARD_LIMITS = BASE_REWARD_LIMITS;
   BASE_MAX_RESISTANCE = BASE_MAX_RESISTANCE;
 
-  portraitMode = false;
-
-  private _base: Base;
-  get base() {
-    return this._base;
-  }
-  set base(val) {
-    this._base = val;
-    this.propagateChange(val);
-    this.creatureList$ = this.baseService.getCreatureOrderedList(val.id);
-  }
-
-  propagateChange: Function = () => { };
+  subscription = new Subscription();
 
   constructor(
     public baseService: BaseService,
@@ -56,26 +43,37 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
   ) {}
 
   ngOnInit() {
+    this.base$ = this.baseService.bindFromId(this.baseId).pipe(
+      map(base => base as Base),
+      tap(base => {
+        if (base) {
+          this.draggable.coordinates = [base.position.x, base.position.y];
+        }
+      })
+    );
+    this.creatureList$ = this.baseService.getCreatureOrderedList(this.baseId);
+    this.transform$ = combineLatest(
+      this.base$,
+      windowEvents.portrait,
+      this.editMode$,
+      this.detailsMode$
+    ).pipe(map(this.getTransform));
+
     if (this.newBase) {
-      this.editMode = true;
-      this.detailsMode = true;
+      this.editMode$.next(true);
+      this.detailsMode$.next(true);
     }
 
-    this.draggable.clickEvent.subscribe(() => this.seeMoreDetails());
-    this.draggable.dropEvent.subscribe(([x, y]) => {
-      const base = this.base;
-      base.position.x = x;
-      base.position.y = y;
-      this.base = base;
-    });
-
-    this.checkOrientation();
-    window.addEventListener('orientationchange', () => {
-      this.checkOrientation();
-    }, false);
-    window.addEventListener('resize', () => {
-      this.checkOrientation();
-    }, false);
+    this.subscription.add(this.draggable.clickEvent.subscribe(() => this.seeMoreDetails()));
+    this.subscription.add(this.draggable.dropEvent.subscribe(([x, y]) => {
+      this.baseService.editById(this.baseId, (base: Base) => {
+        if (base) {
+          base.position.x = x;
+          base.position.y = y;
+        }
+        return base;
+      });
+    }));
   }
 
   bindAvailableColors(): Observable<number[]> {
@@ -83,67 +81,61 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
   }
 
   increaseReward(index: number) {
-    if (this.base.rewards[index] < BASE_REWARD_LIMITS[1]) {
-      const base = this.base;
-      base.rewards[index]++;
-      this.base = base;
-    }
+    this.baseService.editById(this.baseId, (base: Base) => {
+      if (base.rewards[index] < BASE_REWARD_LIMITS[1]) {
+        base.rewards[index] ++;
+      }
+      return base;
+    });
   }
 
   decreaseReward(index: number) {
-    if (this.base.rewards[index] > BASE_REWARD_LIMITS[0]) {
-      const base = this.base;
-      base.rewards[index]--;
-      this.base = base;
-    }
+    this.baseService.editById(this.baseId, (base: Base) => {
+      if (base.rewards[index] > BASE_REWARD_LIMITS[0]) {
+        base.rewards[index] --;
+      }
+      return base;
+    });
   }
 
   increaseResistance() {
-    if (this.base.maxResistance < BASE_MAX_RESISTANCE) {
-      const base = this.base;
-      base.maxResistance++;
-      this.base = base;
-    }
+    this.baseService.editById(this.baseId, (base: Base) => {
+      if (base.maxResistance < BASE_MAX_RESISTANCE) {
+        base.maxResistance ++;
+      }
+      return base;
+    });
   }
 
   decreaseResistance() {
-    if (this.base.maxResistance > 0) {
-      const base = this.base;
-      base.maxResistance--;
-      this.base = base;
-    }
+    this.baseService.editById(this.baseId, (base: Base) => {
+      if (base.maxResistance > 0) {
+        base.maxResistance --;
+      }
+      return base;
+    });
   }
 
   chooseColor(color: number) {
-    const base = this.base;
-    base.color = color;
-    this.base = base;
+    this.baseService.editById(this.baseId, (base: Base) => {
+      base.color = color;
+      return base;
+    });
   }
 
-  getTransform(): string {
-    if (this.detailsMode) {
-      if (this.editMode) {
-        return 'translate(-50%, -50%) rotate(0) scale(1.5)';
-      }
-      if (this.portraitMode) {
-        return 'translate(-50%, 0) rotate(0) scale(1.5)';
-      }
-      return 'translate(0, -50%) rotate(0) scale(1.5)';
-    }
-    return 'translate(0, 0) rotate(' + (Math.floor(
-      this.base.position.rotation * (MAX_CARD_ROTATION_DEG + MAX_CARD_ROTATION_DEG + 1)
-    ) - MAX_CARD_ROTATION_DEG) + 'deg) scale(1)';
+  toggleEditMode() {
+    this.editMode$.next(!this.editMode$.getValue());
   }
 
   seeMoreDetails() {
-    if (!this.detailsMode && !this.editMode) {
-      this.detailsMode = true;
+    if (!this.detailsMode$.getValue() && !this.editMode$.getValue()) {
+      this.detailsMode$.next(true);
     }
   }
 
   exitMoreDetails() {
-    this.detailsMode = false;
-    this.editMode = false;
+    this.detailsMode$.next(false);
+    this.editMode$.next(false);
     this.detailModeCreatureId = null;
   }
 
@@ -157,7 +149,7 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
 
   createCreature(ownerId: string, strength?: number) {
     const newCreature = new Creature(ownerId, strength);
-    this.baseService.createCreature(newCreature, this.base.id);
+    this.baseService.createCreature(newCreature, this.baseId);
 
     if (!strength) {
       this.detailModeCreatureId = newCreature.id;
@@ -169,13 +161,13 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
   }
 
   mouseDown(e: TouchEvent) {
-    if (!this.detailsMode) {
+    if (!this.detailsMode$.getValue()) {
       this.draggable.mouseDown(e);
     }
   }
 
   mouseMove(e: TouchEvent) {
-    if (!this.detailsMode) {
+    if (!this.detailsMode$.getValue()) {
       this.draggable.mouseMove(e);
     }
   }
@@ -184,32 +176,22 @@ export class BaseComponent implements OnInit, ControlValueAccessor {
     this.draggable.mouseUp();
   }
 
-  checkOrientation() {
-    this.portraitMode = window.innerHeight > window.innerWidth;
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
-
-
-
-
-
-
-
-
-  writeValue(value) {
-    if (value) {
-      this.base = value;
-      this.draggable.coordinates = [this.base.position.x, this.base.position.y];
+  private getTransform([base, portrait, editMode, detailsMode]): string {
+    if (detailsMode) {
+      if (editMode || (base && base.creatures.length === 0)) {
+        return 'translate(-50%, -50%) rotate(0) scale(1.5)';
+      }
+      if (portrait) {
+        return 'translate(-50%, 0) rotate(0) scale(1.5)';
+      }
+      return 'translate(0, -50%) rotate(0) scale(1.5)';
     }
-  }
-
-  registerOnChange(fn) {
-    this.propagateChange = fn;
-  }
-
-  registerOnTouched() { }
-
-  validate(c: FormControl) {
-    return null;
+    return 'translate(0, 0) rotate(' + (base ? (Math.floor(
+      base.position.rotation * (MAX_CARD_ROTATION_DEG + MAX_CARD_ROTATION_DEG + 1)
+    ) - MAX_CARD_ROTATION_DEG) : 0) + 'deg) scale(1)';
   }
 }

@@ -4,11 +4,13 @@ import { map } from 'rxjs/operators';
 
 import { Player } from '@shared/models/player';
 import { EntityService } from '@shared/services/entity.service';
-import { Base, Score } from '@shared/models/base';
+import { Base } from '@shared/models/base';
 import { MAX_PLAYERS } from '@shared/constants';
 import { PlayerService } from '@shared/services/player.service';
 import { CreatureService } from '@shared/services/creature.service';
 import { Creature } from '@shared/models/creature';
+import { Score } from '@shared/interfaces/score';
+import { localStorage } from '@shared/utils/localStorage';
 
 @Injectable()
 export class BaseService extends EntityService {
@@ -19,17 +21,13 @@ export class BaseService extends EntityService {
     private creatureService: CreatureService
   ) {
     super();
-    let localEntities;
-    try {
-      localEntities = window.localStorage.getItem(this.entity);
-    } catch (e) {
-      console.error('This browser does not support local storage');
-    }
-    if (localEntities) {
-      this.entitiesSubject.next(JSON.parse(localEntities));
+    const bases = localStorage.get<Base[]>(this.entity);
+
+    if (bases) {
+      this.entities$.next(bases);
     }
 
-    this.creatureService.deleteCreatureEvent.subscribe(creatureId => this.removeCreature(creatureId));
+    this.creatureService.deleteCreatureEvent$.subscribe(creatureId => this.removeCreature(creatureId));
   }
 
   bind(): Observable<Base[]> {
@@ -45,7 +43,7 @@ export class BaseService extends EntityService {
   }
 
   add(base: Base): void {
-    const bases = this.entitiesSubject.getValue();
+    const bases = this.entities$.getValue();
     if (bases.length < MAX_PLAYERS + 1) {
       base.color = this.getNewColor();
       super.add(base);
@@ -85,8 +83,11 @@ export class BaseService extends EntityService {
   }
 
   delete(baseId: string) {
-    const base = this.get(baseId, this.entitiesSubject.getValue()).entity as Base;
-    base.creatures.forEach(creatureId => this.creatureService.delete(creatureId));
+    const base = this.get(baseId).entity as Base;
+    let i = base.creatures.length;
+    while (i--) {
+      this.creatureService.delete(base.creatures[i]);
+    }
     super.delete(baseId);
   }
 
@@ -119,13 +120,14 @@ export class BaseService extends EntityService {
   }
 
   private addCreature(creatureId: string, baseId: string) {
-    const base = this.get(baseId, this.entitiesSubject.getValue()).entity as Base;
-    base.creatures.push(creatureId);
-    this.edit(base);
+    this.editById(baseId, (base: Base) => {
+      base.creatures.push(creatureId);
+      return base;
+    });
   }
 
   private removeCreature(creatureId: string) {
-    for (const base of this.entitiesSubject.getValue() as Base[]) {
+    for (const base of this.entities$.getValue() as Base[]) {
       const creatureIndex = base.creatures.findIndex(baseCreatureId => baseCreatureId === creatureId);
       if (creatureIndex !== -1) {
         base.creatures.splice(creatureIndex, 1);

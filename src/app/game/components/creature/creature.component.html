@@ -51,7 +51,7 @@
       </div>
       <button class="actions__button" (click)="increaseDuringTurnStrength()"><i class="icon-plus-square"></i></button>
       <div class="actions__label">
-        {{'BONUS_STRENGTH_DURING_TURN' | translate}}
+        {{'BONUS_STRENGTH_DURING_TURN' | translate:(translatePlayerParam | async)}}
       </div>
     </div>
   </div>

@@ -1,39 +1,27 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Player } from '../models/player';
 import { MAX_PLAYERS, PLAYER_SCORE_MODIFIER_TIMEOUT } from './../constants';
 import { EntityService } from '@shared/services/entity.service';
+import { localStorage } from '@shared/utils/localStorage';
+import { ConqueringScore } from '@shared/models/conqueringScore';
 
 @Injectable()
 export class PlayerService extends EntityService {
   protected entity = 'players';
+  private conqueringScores$ = new BehaviorSubject<ConqueringScore[]>([]);
 
   constructor() {
     super();
+    const players = localStorage.get<Player[]>(this.entity, localPlayers => localPlayers.map(player => {
+      player.score = player.realScore;
+      return player;
+    }));
 
-    let localEntities;
-    try {
-      localEntities = window.localStorage.getItem(this.entity);
-    } catch (e) {
-      console.error('This browser does not support local storage');
-    }
-    if (localEntities) {
-      let players = JSON.parse(localEntities) as Player[];
-      players = players.map(player => {
-        if (player.scoreModifier !== 0) {
-          if (player.score + player.scoreModifier >= 0) {
-            player.score = player.score + player.scoreModifier;
-          } else {
-            player.score = 0;
-          }
-          player.scoreModifier = 0;
-          player.scoreModifierDisplay = false;
-        }
-        return player;
-      });
-      this.entitiesSubject.next(players);
+    if (players) {
+      this.entities$.next(players);
     }
   }
 
@@ -63,8 +51,14 @@ export class PlayerService extends EntityService {
     }));
   }
 
+  bindConqueringScores(playerId: string): Observable<ConqueringScore[]> {
+    return this.conqueringScores$.pipe(map(conqueringScores => {
+      return conqueringScores.filter(conqueringScore => conqueringScore.playerId === playerId);
+    }));
+  }
+
   setPlayerPlaying(id: string): void {
-    const players = this.entitiesSubject.getValue() as Player[];
+    const players = this.entities$.getValue() as Player[];
     for (const player of players) {
       if (player.id === id) {
         player.playing = true;
@@ -76,7 +70,7 @@ export class PlayerService extends EntityService {
   }
 
   nextPlayerPlaying(): void {
-    const players = this.entitiesSubject.getValue() as Player[];
+    const players = this.entities$.getValue() as Player[];
     if (players.length > 1) {
       let previousPlaying = false;
       for (const player of players) {
@@ -97,7 +91,7 @@ export class PlayerService extends EntityService {
   }
 
   add(player: Player): void {
-    const players = this.entitiesSubject.getValue() as Player[];
+    const players = this.entities$.getValue() as Player[];
     if (players.length < MAX_PLAYERS) {
       player.color = this.getNewColor();
       if (players.length === 0) {
@@ -108,9 +102,10 @@ export class PlayerService extends EntityService {
   }
 
   delete(id: string): void {
-    const players = this.entitiesSubject.getValue() as Player[];
-    if (this.get(id, players).entity) {
-      const playing = (this.get(id, players).entity as Player).playing;
+    const players = this.entities$.getValue() as Player[];
+    this.deleteConqueringScores(id);
+    if (this.get(id).entity) {
+      const playing = (this.get(id).entity as Player).playing;
       super.delete(id);
       if (players[0] && !players[0].playing) {
         players[0].playing = playing;
@@ -120,41 +115,64 @@ export class PlayerService extends EntityService {
   }
 
   updateScore(modifier: number, id: string, fromConquest = false): void {
-    const players = this.entitiesSubject.getValue() as Player[];
-    const player = this.get(id, players).entity as Player;
-    if (player) {
-      if (!fromConquest) {
-        if (player.score + modifier >= 0) {
-          players[this.get(id, players).index].score = player.score + modifier;
+    if (modifier !== 0) {
+      const player = this.get(id).entity as Player;
+      if (player) {
+        player.realScore = player.realScore + modifier >= 0 ? player.realScore + modifier : 0;
+        if (!fromConquest) {
+          player.score = player.realScore;
+          this.deleteConqueringScores(id);
         } else {
-          players[this.get(id, players).index].score = 0;
+          this.addConqueringScore(id, modifier);
         }
-      } else {
-        players[this.get(id, players).index].scoreModifier = modifier;
-        players[this.get(id, players).index].scoreModifierDisplay = true;
-        setTimeout(() => {
-          players[this.get(id, players).index].scoreModifierDisplay = false;
-          this.update(players);
-        }, PLAYER_SCORE_MODIFIER_TIMEOUT - 300);
-        setTimeout(() => {
-          players[this.get(id, players).index].scoreModifier = 0;
-          if (player.score + modifier >= 0) {
-            players[this.get(id, players).index].score = player.score + modifier;
-          } else {
-            players[this.get(id, players).index].score = 0;
-          }
-          this.update(players);
-        }, PLAYER_SCORE_MODIFIER_TIMEOUT);
+        this.edit(player);
       }
     }
-    this.update(players);
   }
 
   reset(): void {
-    const players = this.entitiesSubject.getValue() as Player[];
+    const players = this.entities$.getValue() as Player[];
     this.update(players.map(player => {
+      this.deleteConqueringScores(player.id);
+      player.realScore = 0;
       player.score = 0;
       return player;
     }));
+  }
+
+  private addConqueringScore(playerId: string, score: number) {
+    const conqueringScores = this.conqueringScores$.getValue();
+    const newConqueringScore = new ConqueringScore(playerId, score);
+    newConqueringScore.timeout = setTimeout(() => {
+      this.triggerConqueringScore(newConqueringScore, true);
+    }, PLAYER_SCORE_MODIFIER_TIMEOUT);
+    conqueringScores.push(newConqueringScore);
+    this.conqueringScores$.next(conqueringScores);
+  }
+
+  private deleteConqueringScores(playerId: string) {
+    const conqueringScores = this.conqueringScores$.getValue();
+    let i = conqueringScores.length;
+    while (i--) {
+      if (conqueringScores[i].playerId === playerId) {
+        this.triggerConqueringScore(conqueringScores[i], false);
+      }
+    }
+  }
+
+  private triggerConqueringScore(score: ConqueringScore, updateScore) {
+    const conqueringScores = this.conqueringScores$.getValue();
+    if (updateScore) {
+      this.editById(score.playerId, (player: Player) => {
+        player.score = player.score + score.score >= 0 ? player.score + score.score : 0;
+        return player;
+      });
+    }
+    if (score.timeout) {
+      clearTimeout(score.timeout);
+    }
+    const index = conqueringScores.findIndex(conqueringScore => conqueringScore.id === score.id);
+    conqueringScores.splice(index, 1);
+    this.conqueringScores$.next(conqueringScores);
   }
 }

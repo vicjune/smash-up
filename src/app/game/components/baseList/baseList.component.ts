@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 
 import { BaseService } from '@shared/services/base.service';
 import { PlayerService } from '@shared/services/player.service';
@@ -16,6 +17,7 @@ export class BaseListComponent implements OnInit {
   newBase = false;
   conqueringBase: Base;
   deletingBase: Base;
+  bases$: Observable<Base[]>;
   MAX_BASES: number = MAX_PLAYERS + 1;
 
   constructor(
@@ -24,6 +26,7 @@ export class BaseListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.bases$ = this.baseService.bind();
   }
 
   deleteClicked(base: Base) {
@@ -36,7 +39,7 @@ export class BaseListComponent implements OnInit {
     if (base.resistance > 0) {
       this.conquerPopin = true;
     } else {
-      this.baseService.conquer(base);
+      this.conquerBase(1);
     }
   }
 
@@ -45,18 +48,14 @@ export class BaseListComponent implements OnInit {
     this.baseService.add(new Base());
   }
 
-  editBase(base) {
-    this.baseService.edit(base);
-  }
-
-  deleteBase(index) {
-    if (index === 1) {
+  deleteBase(popinButtonIndex: number) {
+    if (popinButtonIndex === 1) {
       this.baseService.delete(this.deletingBase.id);
     }
   }
 
-  conquerBase(index) {
-    if (index === 1) {
+  conquerBase(popinButtonIndex: number) {
+    if (popinButtonIndex === 1) {
       this.baseService.conquer(this.conqueringBase);
     }
   }

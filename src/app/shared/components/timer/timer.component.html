@@ -16,7 +16,7 @@
         <i class="icon-reload"></i>
       </button>
     </ng-container>
-    <button class="timer__button timer__button--next" (click)="nextPlayer()">
+    <button class="timer__button timer__button--next" (click)="nextPlayer()" *ngIf="(playerService.bind() | async).length > 1">
       {{'NEXT_PLAYER' | translate}}
     </button>
   </div>

@@ -4,14 +4,14 @@
       <div class="playerList__player__name">{{player.name}}</div>
       <div class="playerList__player__score">
         <span class="playerList__player__score__score" [ngClass]="{'underscore': player.score === 6 || player.score === 9}">{{player.score}}</span>
-        <span class="playerList__player__score__modifier" *ngIf="player.scoreModifier !== 0" [ngClass]="{'displayed': player.scoreModifierDisplay}">
-          <span *ngIf="player.scoreModifier > 0">+</span>{{player.scoreModifier}}
+        <span class="playerList__player__score__modifier" *ngFor="let conqueringScore of (getConqueringScores$(player.id) | async)">
+          {{conqueringScore.score > 0 ? '+' : ''}}{{conqueringScore.score}}
         </span>
       </div>
       <div class="playerList__player__score upsideDown">
         <span class="playerList__player__score__score" [ngClass]="{'underscore': player.score === 6 || player.score === 9}">{{player.score}}</span>
-        <span class="playerList__player__score__modifier" *ngIf="player.scoreModifier !== 0" [ngClass]="{'displayed': player.scoreModifierDisplay}">
-          <span *ngIf="player.scoreModifier > 0">+</span>{{player.scoreModifier}}
+        <span class="playerList__player__score__modifier" *ngFor="let conqueringScore of (getConqueringScores$(player.id) | async)">
+          {{conqueringScore.score > 0 ? '+' : ''}}{{conqueringScore.score}}
         </span>
       </div>
     </button>
@@ -20,7 +20,7 @@
     </div>
     <div class="playerList__player__valueButtons">
       <button class="playerList__player__valueButton" (click)="increaseScore(player.id, $event)"><i class="icon-plus-square"></i></button>
-      <button class="playerList__player__valueButton" (click)="decreaseScore(player.id, $event)" [disabled]="player.score === 0"><i class="icon-minus-square"></i></button>
+      <button class="playerList__player__valueButton" (click)="decreaseScore(player.id, $event)" [disabled]="player.realScore === 0"><i class="icon-minus-square"></i></button>
     </div>
   </div>
   <button class="playerList__button playerList__element" (click)="addPlayerClicked()" *ngIf="(playerService.bind() | async).length < MAX_PLAYERS && ((baseService.bind() | async).length === 0 || (playerService.bind() | async).length < 2)">

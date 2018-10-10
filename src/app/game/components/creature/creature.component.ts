@@ -1,5 +1,5 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Component, Input, OnInit, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { CreatureService } from '@shared/services/creature.service';
@@ -11,7 +11,7 @@ import { Draggable } from '@shared/utils/draggable';
   templateUrl: './creature.component.html',
   styleUrls: ['./creature.component.scss'],
 })
-export class CreatureComponent implements OnInit {
+export class CreatureComponent implements OnInit, OnDestroy {
   @Input() creatureId: string;
   @Input() detailModeCreatureId: string;
   @Output() toggleDetailMode = new EventEmitter<void>();
@@ -20,7 +20,11 @@ export class CreatureComponent implements OnInit {
   totalBonusStrengthAbsolute$: Observable<number>;
   totalBonusStrengthSeparator$: Observable<string>;
 
+  translatePlayerParam: Observable<{playerName: string}>;
+
   draggable = new Draggable();
+
+  subscription = new Subscription();
 
   get detailsMode() {
     return this.detailModeCreatureId === this.creatureId;
@@ -41,8 +45,11 @@ export class CreatureComponent implements OnInit {
       }
       return null;
     }));
+    this.translatePlayerParam = this.creature$.pipe(map((creature: Creature) => {
+      return {playerName: creature ? creature.owner.name : ''};
+    }));
 
-    this.draggable.clickEvent.subscribe(() => this.seeMoreDetails());
+    this.subscription.add(this.draggable.clickEvent.subscribe(() => this.seeMoreDetails()));
   }
 
   seeMoreDetails() {
@@ -104,5 +111,9 @@ export class CreatureComponent implements OnInit {
 
   mouseUp() {
     this.draggable.mouseUp();
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 }
