@@ -53,27 +53,25 @@ export class BaseService extends EntityService {
   conquer(base: Base): void {
     const sortedScores = base.scores.sort((scoreA, scoreB) => {
       return scoreB.score - scoreA.score;
-    }).map((score, index, array) => {
-      let reward = 0;
-      if (index === 0) {
-        reward = base.rewards[index];
-      } else if (index < 3) {
-        if (score.score === array[index - 1].score) {
-          reward = base.rewards[index - 1];
+    });
 
-          if (index === 2 && score.score === array[index - 2].score) {
-            reward = base.rewards[index - 2];
-          }
+    let rewardIndex = 0;
+    let scoreIndex = 0;
+    while (rewardIndex < base.rewards.length && scoreIndex < sortedScores.length) {
+      const basisScore = sortedScores[scoreIndex];
+      basisScore.reward = base.rewards[rewardIndex];
+      scoreIndex ++;
+
+      while (scoreIndex < sortedScores.length) {
+        if (sortedScores[scoreIndex].score === basisScore.score) {
+          sortedScores[scoreIndex].reward = base.rewards[rewardIndex];
+          scoreIndex ++;
         } else {
-          reward = base.rewards[index];
+          rewardIndex = scoreIndex;
+          break;
         }
       }
-
-      return {
-        ...score,
-        reward
-      };
-    });
+    }
 
     sortedScores.forEach(score => {
       this.playerService.updateScore(score.reward, score.playerId, true);

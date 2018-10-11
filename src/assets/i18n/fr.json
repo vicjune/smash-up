@@ -23,6 +23,7 @@
   "DISABLE_TIMER": "Désactiver le chrono",
   "NEXT_PLAYER": "Joueur suivant",
   "BASE_STRENGTH": "Force de la créature (inscrite sur la carte)",
+  "BASE_STRENGTH_MONSTER": "Force du monstre (inscrite sur la carte)",
   "BONUS_STRENGTH": "Effets bonus/malus",
   "BONUS_STRENGTH_DURING_TURN": "Effets durant le tour de {{playerName}}"
 }

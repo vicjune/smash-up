@@ -23,6 +23,7 @@
   "DISABLE_TIMER": "Disable timer",
   "NEXT_PLAYER": "Next player",
   "BASE_STRENGTH": "Strength of the creature (written on card)",
+  "BASE_STRENGTH_MONSTER": "Strength of the monster (written on card)",
   "BONUS_STRENGTH": "Bonus/Malus effects",
   "BONUS_STRENGTH_DURING_TURN": "Effects during {{playerName}}'s turn"
 }

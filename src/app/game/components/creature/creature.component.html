@@ -7,7 +7,7 @@
       </div>
       <button class="actions__button" (click)="increaseBaseStrength()"><i class="icon-plus-square"></i></button>
       <div class="actions__label">
-        {{'BASE_STRENGTH' | translate}}
+        {{((creature$ | async).owner ? 'BASE_STRENGTH' : 'BASE_STRENGTH_MONSTER') | translate}}
       </div>
     </div>
   </div>
