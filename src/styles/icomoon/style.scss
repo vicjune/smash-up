@@ -2,11 +2,11 @@
 
 @font-face {
   font-family: '#{$icomoon-font-family}';
-  src:  url('#{$icomoon-font-path}/#{$icomoon-font-family}.eot?wjgsgp');
-  src:  url('#{$icomoon-font-path}/#{$icomoon-font-family}.eot?wjgsgp#iefix') format('embedded-opentype'),
-    url('#{$icomoon-font-path}/#{$icomoon-font-family}.ttf?wjgsgp') format('truetype'),
-    url('#{$icomoon-font-path}/#{$icomoon-font-family}.woff?wjgsgp') format('woff'),
-    url('#{$icomoon-font-path}/#{$icomoon-font-family}.svg?wjgsgp##{$icomoon-font-family}') format('svg');
+  src:  url('#{$icomoon-font-path}/#{$icomoon-font-family}.eot?s777lu');
+  src:  url('#{$icomoon-font-path}/#{$icomoon-font-family}.eot?s777lu#iefix') format('embedded-opentype'),
+    url('#{$icomoon-font-path}/#{$icomoon-font-family}.ttf?s777lu') format('truetype'),
+    url('#{$icomoon-font-path}/#{$icomoon-font-family}.woff?s777lu') format('woff'),
+    url('#{$icomoon-font-path}/#{$icomoon-font-family}.svg?s777lu##{$icomoon-font-family}') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -26,14 +26,19 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-plus2 {
+.icon-evil2 {
   &:before {
-    content: $icon-plus2; 
+    content: $icon-evil2; 
   }
 }
-.icon-blocked {
+.icon-hipster {
   &:before {
-    content: $icon-blocked; 
+    content: $icon-hipster; 
+  }
+}
+.icon-hipster2 {
+  &:before {
+    content: $icon-hipster2; 
   }
 }
 .icon-reload {
@@ -104,6 +109,16 @@
 .icon-evil {
   &:before {
     content: $icon-evil; 
+  }
+}
+.icon-plus2 {
+  &:before {
+    content: $icon-plus2; 
+  }
+}
+.icon-blocked {
+  &:before {
+    content: $icon-blocked; 
   }
 }
 .icon-minus-square {

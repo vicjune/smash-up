@@ -60,7 +60,7 @@ export class CreatureService extends EntityService {
     const creatures = this.entities$.getValue() as Creature[];
     let i = creatures.length;
     while (i--) {
-      if (!players.find(player => player.id === creatures[i].ownerId)) {
+      if (creatures[i].ownerId !== 'monster' && !players.find(player => player.id === creatures[i].ownerId)) {
         this.delete(creatures[i].id);
       }
     }

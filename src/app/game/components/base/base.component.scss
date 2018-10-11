@@ -378,6 +378,7 @@
     padding: 0 10px;
     font-size: 18px;
     margin: 0 10px 20px 0;
+    white-space: nowrap;
 
     &:last-child {
       margin-right: 0;
@@ -387,9 +388,18 @@
       @include button-active-hover($playerColors, null, 'background');
     }
 
+    .globalActions__player--monsters & {
+      @include button-active-hover(null, white, 'border');
+    }
+
     .icon:first-child {
       display: inline-block;
       margin-right: 10px;
+    }
+
+    .icon-hipster,
+    .icon-hipster {
+      font-size: 20px;
     }
 
     .strength {

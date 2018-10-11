@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?wjgsgp');
-  src:  url('fonts/icomoon.eot?wjgsgp#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?wjgsgp') format('truetype'),
-    url('fonts/icomoon.woff?wjgsgp') format('woff'),
-    url('fonts/icomoon.svg?wjgsgp#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?s777lu');
+  src:  url('fonts/icomoon.eot?s777lu#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?s777lu') format('truetype'),
+    url('fonts/icomoon.woff?s777lu') format('woff'),
+    url('fonts/icomoon.svg?s777lu#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -24,11 +24,14 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-plus2:before {
-  content: "\e901";
+.icon-evil2:before {
+  content: "\e9f0";
 }
-.icon-blocked:before {
-  content: "\e902";
+.icon-hipster:before {
+  content: "\e9f9";
+}
+.icon-hipster2:before {
+  content: "\e9fa";
 }
 .icon-reload:before {
   content: "\e900";
@@ -71,6 +74,12 @@
 }
 .icon-evil:before {
   content: "\e9ef";
+}
+.icon-plus2:before {
+  content: "\e901";
+}
+.icon-blocked:before {
+  content: "\e902";
 }
 .icon-minus-square:before {
   content: "\e904";
