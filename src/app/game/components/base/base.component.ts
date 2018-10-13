@@ -142,9 +142,12 @@ export class BaseComponent implements OnInit, OnDestroy {
   }
 
   exitMoreDetails() {
-    this.detailsMode$.next(false);
-    this.editMode$.next(false);
-    this.detailModeCreatureId = null;
+    if (this.detailModeCreatureId) {
+      this.detailModeCreatureId = null;
+    } else {
+      this.detailsMode$.next(false);
+      this.editMode$.next(false);
+    }
   }
 
   deleteBase() {
