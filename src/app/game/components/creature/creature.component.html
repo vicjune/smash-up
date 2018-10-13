@@ -12,25 +12,27 @@
     </div>
   </div>
 
-  <div class="creature__card" [ngClass]="{'creature__card--bonusPositive': (totalBonusStrengthSeparator$ | async) === '+'}"
-    (mousedown)="mouseDown($event)" (touchstart)="mouseDown($event)" (window:mouseup)="mouseUp()"
-    (window:mouseleave)="mouseUp()" (window:touchend)="mouseUp()" (window:touchcancel)="mouseUp()">
-    <div class="creature__strengthDetail" *ngIf="totalBonusStrengthSeparator$ | async">
-      <span>
-        {{(creature$ | async).basicStrength}}
-      </span>
-      <span class="creature__strengthBonus">
-        {{totalBonusStrengthSeparator$ | async}}{{totalBonusStrengthAbsolute$ | async}}
-      </span>
+  <div class="creature__cardWrapper">
+    <div class="creature__card" [ngClass]="{'creature__card--bonusPositive': (totalBonusStrengthSeparator$ | async) === '+'}"
+      (mousedown)="mouseDown($event)" (touchstart)="mouseDown($event)" (window:mouseup)="mouseUp()"
+      (window:mouseleave)="mouseUp()" (window:touchend)="mouseUp()" (window:touchcancel)="mouseUp()">
+      <div class="creature__strengthDetail" *ngIf="totalBonusStrengthSeparator$ | async">
+        <span>
+          {{(creature$ | async).basicStrength}}
+        </span>
+        <span class="creature__strengthBonus">
+          {{totalBonusStrengthSeparator$ | async}}{{totalBonusStrengthAbsolute$ | async}}
+        </span>
+      </div>
+      <div class="creature__strength" [ngClass]="{'creature__strength--detail': totalBonusStrengthSeparator$ | async}">
+        {{(creature$ | async).strength}}
+      </div>
     </div>
-    <div class="creature__strength" [ngClass]="{'creature__strength--detail': totalBonusStrengthSeparator$ | async}">
-      {{(creature$ | async).strength}}
-    </div>
-  </div>
 
-  <button class="creature__deleteButton" *ngIf="detailsMode" (click)="delete()">
-    <i class="icon icon-bin2"></i>
-  </button>
+    <button class="creature__deleteButton" *ngIf="detailsMode" (click)="delete()">
+      <i class="icon icon-bin2"></i>
+    </button>
+  </div>
 
   <div class="actions" *ngIf="detailsMode">
     <div class="actions__row actions__row--bonus">

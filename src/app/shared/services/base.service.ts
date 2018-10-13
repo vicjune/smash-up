@@ -120,7 +120,7 @@ export class BaseService extends EntityService {
         return creaturesFromThisOwner;
       }).filter(creatureOwner => creatureOwner && creatureOwner.length > 0);
 
-      return [monsters, ...creatureOwners];
+      return monsters.length > 0 ? [monsters, ...creatureOwners] : creatureOwners;
     }));
   }
 

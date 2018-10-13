@@ -11,7 +11,7 @@ import { Timer } from '@shared/models/timer';
   templateUrl: './timer.component.html',
   styleUrls: ['./timer.component.scss']
 })
-export class TimerComponent implements OnInit {
+export class TimerComponent {
   timer$: Observable<Timer> = this.timerService.bind();
   timerBlinking$: Observable<boolean> = this.timer$.pipe(map(timer => timer.running && timer.value < 10));
   playerColor$: Observable<number> = this.playerService.bindPlayerPlaying().pipe(map(player => (player && player.color) || 1));
@@ -20,9 +20,6 @@ export class TimerComponent implements OnInit {
     public timerService: TimerService,
     public playerService: PlayerService,
   ) { }
-
-  ngOnInit() {
-  }
 
   playToggle() {
     this.timerService.toggleRunning();

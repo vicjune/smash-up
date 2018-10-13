@@ -2,7 +2,7 @@
   *ngIf="(base$ | async)"
   [class]="'base color-' + (base$ | async).color"
   [ngClass]="{'detailsMode': detailsMode$ | async, 'editMode': editMode$ | async, 'conquered': (base$ | async).resistance <= 0, 'dragging': draggable?.dragging, 'noCreature': (base$ | async).creatures.length === 0}"
-  [ngStyle]="{'transform': transform$ | async, 'left.%': draggable?.coordinates[0], 'top.%': draggable?.coordinates[1]}"
+  [ngStyle]="{'transform': transform, 'left.%': draggable?.coordinates[0], 'top.%': draggable?.coordinates[1]}"
   (mousedown)="mouseDown($event)"
   (touchstart)="mouseDown($event)"
   (window:mousemove)="mouseMove($event)"
@@ -20,7 +20,7 @@
       <button class="base__resistanceEdit__button plus" [disabled]="(base$ | async).maxResistance >= BASE_MAX_RESISTANCE" (click)="increaseResistance()"><i class="icon-plus-square"></i></button>
     </div>
 
-    <div class="base__conquestAction" [ngClass]="{'forceConquest': (base$ | async).resistance > 0, 'display': (base$ | async).scores.length > 0}" *ngIf="!(editMode$ | async) && (detailsMode$ | async) && !detailModeCreatureId">
+    <div class="base__conquestAction" [ngClass]="{'forceConquest': (base$ | async).resistance > 0}" *ngIf="!(editMode$ | async) && (detailsMode$ | async) && ((base$ | async).scores.length > 0) && !detailModeCreatureId">
       <button class="base__conquestAction__button" (click)="conquerBase()">
         <i class="icon-flag base__conquestAction__button__icon"></i>
         <span>{{((base$ | async).resistance <= 0 ? 'CONQUEST' : 'FORCE_CONQUEST') | translate}}</span>
@@ -28,7 +28,7 @@
     </div>
   </div>
 
-  <div class="base__card">
+  <div class="base__card" (click)="exitCreatureDetailMode()">
     <div class="base__card__actions" *ngIf="(detailsMode$ | async) && !detailModeCreatureId">
       <button class="base__card__actions__button edit" (click)="toggleEditMode()"><i [class]="(editMode$ | async) ? 'icon-checkmark' : 'icon-pencil'"></i></button>
       <button class="base__card__actions__button delete" (click)="deleteBase()" *ngIf="editMode$ | async"><i class="icon-bin2"></i></button>
@@ -68,9 +68,9 @@
     </div>
   </div>
 
-  <div class="base__creaturesWrapper" *ngIf="(detailsMode$ | async) && !(editMode$ | async)">
+  <div class="base__creaturesWrapper" [ngClass]="{'base__creaturesWrapper--creatureDetails': detailModeCreatureId}" *ngIf="(detailsMode$ | async) && !(editMode$ | async)">
     <div class="base__creatures">
-      <div class="base__creatures__player" *ngFor="let ownerCreatureList of creatureList$ | async">
+      <div class="base__creatures__player" *ngFor="let ownerCreatureList of creatureList$ | async" [ngStyle]="{'width.px': ownerCreatureList.length * 50 + 33}">
         <ng-container *ngFor="let creatureId of ownerCreatureList">
           <app-creature [creatureId]="creatureId" *ngIf="detailModeCreatureId === null || detailModeCreatureId === creatureId" (toggleDetailMode)="toggleCreatureDetailMode(creatureId)" [detailModeCreatureId]="detailModeCreatureId"></app-creature>
         </ng-container>
@@ -92,7 +92,7 @@
       <i class="icon-hipster2 icon"></i>
     </button>
     <ng-container *ngIf="player.playing">
-      <button class="globalActions__addCreature globalActions__addCreature--quick" *ngFor="let strength of [2, 3, 4, 5]"
+      <button class="globalActions__addCreature globalActions__addCreature--quick" *ngFor="let strength of [1, 2, 3, 4, 5]"
         (click)="createCreature(player.id, strength)">
         <i class="icon-hipster icon"></i>
         <span class="strength">{{strength}}</span>

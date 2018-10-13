@@ -11,6 +11,11 @@
     margin: 0;
   }
 
+  &__cardWrapper {
+    display: flex;
+    align-items: center;
+  }
+
   &__card {
     @include color($playerColors, 'background');
     color: white;
@@ -92,10 +97,8 @@
   }
 
   &__deleteButton {
-    position: absolute;
-    left: 126px;
-    top: 81px;
-    @include button-active-hover(null, $danger, 'border');
+    margin-left: 44px;
+    @include button-active-hover(null, $danger, 'background');
     border-radius: 7.5px;
     height: 35px;
     width: 35px;

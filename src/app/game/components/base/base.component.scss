@@ -36,8 +36,7 @@
     position: absolute;
     height: 0;
     top: 0;
-    left: 0;
-    right: 0;
+    left: -10px;
     transform: translateY(-100%);
     z-index: -1;
 
@@ -48,9 +47,18 @@
     }
   }
 
+  &__topPart {
+    .editMode & {
+      right: 0;
+      left: 0;
+    }
+  }
+
   &__bottomPart {
     top: auto;
     bottom: 0;
+    left: 0;
+    right: 0;
     transform: translateY(100%);
   }
 
@@ -82,17 +90,7 @@
   }
 
   &__conquestAction {
-    margin: 10px 0;
-    opacity: 0;
-    transition: opacity 0.5s, visibility 0s ease 0.5s;
-    pointer-events: none;
-
-    &.display {
-      pointer-events: auto;
-      visibility: visible;
-      opacity: 1;
-      transition: opacity 0.5s;
-    }
+    margin: 10px;
 
     &__button {
       padding: 5px 10px;
@@ -301,16 +299,18 @@
 
   &__creaturesWrapper {
     position: absolute;
-    left: calc(100% + 20px);
-    width: calc(65vw - 400px);
+    left: 100%;
     top: 50%;
     transform: translateY(-50%);
+    padding-left: 20px;
 
     @media (orientation:portrait) {
       width: calc(100% + 50px);
       transform: translateY(0);
       left: -25px;
       top: calc(100% + 40px);
+      padding-left: 0;
+      padding-top: 10px;
       display: flex;
       justify-content: center;
     }
@@ -320,7 +320,14 @@
     &__player {
       margin: 10px 0;
       display: flex;
+      align-items: center;
       flex-wrap: wrap;
+      max-width: calc(65vw - 400px);
+
+      .base__creaturesWrapper--creatureDetails & {
+        margin: 0;
+        width: 250px !important;
+      }
     }
   }
 

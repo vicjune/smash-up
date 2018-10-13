@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, EventEmitter, Output, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { Observable, Subscription, BehaviorSubject, combineLatest } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 
@@ -29,6 +29,7 @@ export class BaseComponent implements OnInit, OnDestroy {
   editMode$ = new BehaviorSubject<boolean>(false);
   detailsMode$ = new BehaviorSubject<boolean>(false);
   transform$: Observable<string>;
+  transform: string;
 
   draggable = new Draggable();
 
@@ -39,7 +40,8 @@ export class BaseComponent implements OnInit, OnDestroy {
 
   constructor(
     public baseService: BaseService,
-    public playerService: PlayerService
+    public playerService: PlayerService,
+    public changeDetectorRef: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
@@ -73,6 +75,12 @@ export class BaseComponent implements OnInit, OnDestroy {
         }
         return base;
       });
+    }));
+
+    // Workaround angular change detect bug
+    this.subscription.add(this.transform$.subscribe(transform => {
+      this.transform = transform;
+      this.changeDetectorRef.detectChanges();
     }));
   }
 
@@ -158,6 +166,10 @@ export class BaseComponent implements OnInit, OnDestroy {
 
   toggleCreatureDetailMode(creatureId: string) {
     this.detailModeCreatureId = this.detailModeCreatureId === creatureId ? null : creatureId;
+  }
+
+  exitCreatureDetailMode() {
+    this.detailModeCreatureId = null;
   }
 
   mouseDown(e: TouchEvent) {

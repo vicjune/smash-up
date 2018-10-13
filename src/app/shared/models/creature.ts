@@ -12,7 +12,7 @@ export class Creature extends Entity {
   constructor(ownerId: string, strength?: number) {
     super();
     this.ownerId = ownerId;
-    this.basicStrength = strength || 2;
+    this.basicStrength = strength || 0;
     this.bonusStrength = 0;
     this.modifierDuringOwnerTurn = 0;
   }
