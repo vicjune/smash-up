@@ -9,6 +9,10 @@
   &.creature--detailsMode {
     padding: 10px 0;
     margin: 0;
+
+    @media (orientation:portrait) {
+      padding: 20px 0 10px;
+    }
   }
 
   &__cardWrapper {
