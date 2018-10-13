@@ -11,6 +11,7 @@ import { CreatureService } from '@shared/services/creature.service';
 import { Creature } from '@shared/models/creature';
 import { Score } from '@shared/interfaces/score';
 import { localStorage } from '@shared/utils/localStorage';
+import { CreatureOrderedList } from '@shared/interfaces/creatureOrderedList';
 
 @Injectable()
 export class BaseService extends EntityService {
@@ -99,7 +100,7 @@ export class BaseService extends EntityService {
     this.addCreature(creatureId, newBaseId);
   }
 
-  getCreatureOrderedList(baseId: string): Observable<string[][]> {
+  getCreatureOrderedList(baseId: string): Observable<CreatureOrderedList> {
     return combineLatest(
       this.bind(),
       this.creatureService.bind(),
@@ -107,7 +108,8 @@ export class BaseService extends EntityService {
     ).pipe(map(([bases, creatures, players]) => {
       const baseFromId = bases.find(base => base.id === baseId);
 
-      const monsters = baseFromId && baseFromId.creatures.filter(creatureId => {
+      const monsters = baseFromId && baseFromId.creatures
+      .filter(creatureId => {
         const creatureFromId = creatures.find(creature => creature.id === creatureId);
         return creatureFromId && creatureFromId.ownerId === 'monster';
       });
@@ -120,7 +122,7 @@ export class BaseService extends EntityService {
         return creaturesFromThisOwner;
       }).filter(creatureOwner => creatureOwner && creatureOwner.length > 0);
 
-      return monsters.length > 0 ? [monsters, ...creatureOwners] : creatureOwners;
+      return {players: creatureOwners, monsters};
     }));
   }
 

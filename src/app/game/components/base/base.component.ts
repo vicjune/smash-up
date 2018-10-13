@@ -9,6 +9,7 @@ import { PlayerService } from '@shared/services/player.service';
 import { Draggable } from '@shared/utils/draggable';
 import { Creature } from '@shared/models/creature';
 import { windowEvents } from '@shared/utils/windowEvents';
+import { CreatureOrderedList } from '@shared/interfaces/creatureOrderedList';
 
 @Component({
   selector: 'app-base',
@@ -24,7 +25,7 @@ export class BaseComponent implements OnInit, OnDestroy {
   detailModeCreatureId: string = null;
 
   base$: Observable<Base>;
-  creatureList$: Observable<string[][]>;
+  creatureList$: Observable<CreatureOrderedList>;
   players$ = this.playerService.bind();
   editMode$ = new BehaviorSubject<boolean>(false);
   detailsMode$ = new BehaviorSubject<boolean>(false);

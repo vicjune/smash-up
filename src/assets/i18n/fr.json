@@ -22,6 +22,8 @@
   "ENABLE_TIMER": "Activer le chrono",
   "DISABLE_TIMER": "Désactiver le chrono",
   "NEXT_PLAYER": "Joueur suivant",
+  "CREATURES": "Créatures",
+  "MONSTERS": "Monstres",
   "BASE_STRENGTH": "Force de la créature (inscrite sur la carte)",
   "BASE_STRENGTH_MONSTER": "Force du monstre (inscrite sur la carte)",
   "BONUS_STRENGTH": "Effets bonus/malus",
