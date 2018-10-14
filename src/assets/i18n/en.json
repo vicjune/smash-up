@@ -24,8 +24,8 @@
   "NEXT_PLAYER": "Next player",
   "CREATURES": "Creatures",
   "MONSTERS": "Monsters",
-  "BASE_STRENGTH": "Strength of the creature (written on card)",
-  "BASE_STRENGTH_MONSTER": "Strength of the monster (written on card)",
+  "BASE_STRENGTH": "Strength of the creature",
+  "BASE_STRENGTH_MONSTER": "Strength of the monster",
   "BONUS_STRENGTH": "Bonus/Malus effects",
   "BONUS_STRENGTH_DURING_TURN": "Effects during {{playerName}}'s turn"
 }

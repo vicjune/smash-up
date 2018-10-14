@@ -1,17 +1,4 @@
 <div [class]="'creature' + ((creature$ | async).owner ? ' color-' + ((creature$ | async).owner.color) : ' creature--monster') + (detailsMode ? ' creature--detailsMode': '')">
-  <div class="actions actions--top" *ngIf="detailsMode">
-    <div class="actions__row">
-      <button class="actions__button" (click)="decreaseBaseStrength()" [disabled]="(creature$ | async).basicStrength <= 0"><i class="icon-minus-square"></i></button>
-      <div class="actions__value">
-        {{(creature$ | async).basicStrength}}
-      </div>
-      <button class="actions__button" (click)="increaseBaseStrength()"><i class="icon-plus-square"></i></button>
-      <div class="actions__label">
-        {{((creature$ | async).owner ? 'BASE_STRENGTH' : 'BASE_STRENGTH_MONSTER') | translate}}
-      </div>
-    </div>
-  </div>
-
   <div class="creature__cardWrapper">
     <div class="creature__card" [ngClass]="{'creature__card--bonusPositive': (totalBonusStrengthSeparator$ | async) === '+'}"
       (mousedown)="mouseDown($event)" (touchstart)="mouseDown($event)" (window:mouseup)="mouseUp()"
@@ -36,13 +23,13 @@
 
   <div class="actions" *ngIf="detailsMode">
     <div class="actions__row actions__row--bonus">
-      <button class="actions__button" (click)="decreaseBonusStrength()"><i class="icon-minus-square"></i></button>
+      <button class="actions__button" (click)="decreaseBaseStrength()" [disabled]="(creature$ | async).basicStrength <= 0"><i class="icon-minus-square"></i></button>
       <div class="actions__value">
-        {{(creature$ | async).bonusStrength > 0 ? '+' : ''}}{{(creature$ | async).bonusStrength}}
+        {{(creature$ | async).basicStrength}}
       </div>
-      <button class="actions__button" (click)="increaseBonusStrength()"><i class="icon-plus-square"></i></button>
+      <button class="actions__button" (click)="increaseBaseStrength()"><i class="icon-plus-square"></i></button>
       <div class="actions__label">
-        {{'BONUS_STRENGTH' | translate}}
+        {{((creature$ | async).owner ? 'BASE_STRENGTH' : 'BASE_STRENGTH_MONSTER') | translate}}
       </div>
     </div>
 

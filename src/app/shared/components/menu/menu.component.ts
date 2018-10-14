@@ -8,6 +8,7 @@ import { Player } from '../../models/player';
 import { BaseService } from '@shared/services/base.service';
 import { MAX_PLAYERS, TIMER_SECONDS_INTERVAL } from '@shared/constants';
 import { localStorage } from '@shared/utils/localStorage';
+import { CreatureService } from '@shared/services/creature.service';
 
 @Component({
   selector: 'app-menu',
@@ -29,7 +30,8 @@ export class MenuComponent implements OnInit {
     public playerService: PlayerService,
     public baseService: BaseService,
     public translate: TranslateService,
-    public timerService: TimerService
+    public timerService: TimerService,
+    public creatureService: CreatureService
   ) { }
 
   ngOnInit() {
@@ -63,6 +65,7 @@ export class MenuComponent implements OnInit {
       this.playerService.reset();
       this.baseService.reset();
       this.timerService.reset();
+      this.creatureService.reset();
     }
   }
 
