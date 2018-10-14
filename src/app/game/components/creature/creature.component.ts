@@ -38,7 +38,7 @@ export class CreatureComponent implements OnInit, OnDestroy {
     this.creature$ = this.creatureService.bindFromId(this.creatureId) as Observable<Creature>;
     this.totalBonusStrengthAbsolute$ = this.creature$.pipe(map((creature: Creature) => {
       return creature && Math.abs(
-        creature.bonusStrength +(creature.owner && creature.owner.playing ? creature.modifierDuringOwnerTurn : 0)
+        creature.bonusStrength + (creature.owner && creature.owner.playing ? creature.modifierDuringOwnerTurn : 0)
       );
     }));
     this.totalBonusStrengthSeparator$ = this.creature$.pipe(map((creature: Creature) => {

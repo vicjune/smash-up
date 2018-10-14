@@ -119,8 +119,11 @@ export class BaseService extends EntityService {
           const creatureFromId = creatures.find(creature => creature.id === creatureId);
           return creatureFromId && creatureFromId.ownerId === player.id;
         });
-        return creaturesFromThisOwner;
-      }).filter(creatureOwner => creatureOwner && creatureOwner.length > 0);
+        return {
+          creatures: creaturesFromThisOwner,
+          player: player
+        };
+      }).filter(creatureOwner => creatureOwner && creatureOwner.creatures.length > 0);
 
       return {players: creatureOwners, monsters};
     }));

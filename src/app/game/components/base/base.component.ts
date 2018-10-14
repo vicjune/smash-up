@@ -10,6 +10,7 @@ import { Draggable } from '@shared/utils/draggable';
 import { Creature } from '@shared/models/creature';
 import { windowEvents } from '@shared/utils/windowEvents';
 import { CreatureOrderedList } from '@shared/interfaces/creatureOrderedList';
+import { CreatureService } from '@shared/services/creature.service';
 
 @Component({
   selector: 'app-base',
@@ -42,6 +43,7 @@ export class BaseComponent implements OnInit, OnDestroy {
   constructor(
     public baseService: BaseService,
     public playerService: PlayerService,
+    public creatureService: CreatureService,
     public changeDetectorRef: ChangeDetectorRef,
   ) {}
 
@@ -174,6 +176,26 @@ export class BaseComponent implements OnInit, OnDestroy {
 
   exitCreatureDetailMode() {
     this.detailModeCreatureId = null;
+  }
+
+  increaseEachCreatureStrength(creatureIds: string[]) {
+    creatureIds.forEach(creatureId => {
+      this.creatureService.editById(creatureId, (creature: Creature) => {
+        creature.basicStrength ++;
+        return creature;
+      });
+    });
+  }
+
+  decreaseEachCreatureStrength(creatureIds: string[]) {
+    creatureIds.forEach(creatureId => {
+      this.creatureService.editById(creatureId, (creature: Creature) => {
+        if (creature.basicStrength > 0) {
+          creature.basicStrength --;
+        }
+        return creature;
+      });
+    });
   }
 
   mouseDown(e: TouchEvent) {

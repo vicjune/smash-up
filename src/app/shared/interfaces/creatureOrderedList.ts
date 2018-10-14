@@ -1,4 +1,9 @@
+import { Player } from '@shared/models/player';
+
 export interface CreatureOrderedList {
-  players: string[][];
+  players: {
+    creatures: string[],
+    player: Player
+  }[];
   monsters: string[];
 }

@@ -329,6 +329,7 @@
       align-items: center;
       flex-wrap: wrap;
       max-width: calc(65vw - 400px);
+      transition: width 0s ease 0.3s;
 
       @media (orientation:portrait) {
         width: auto !important;
@@ -338,6 +339,21 @@
       .base__creaturesWrapper--creatureDetails & {
         margin: 0;
         width: 250px !important;
+        transition: none;
+      }
+    }
+
+    &__actionsEach {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      margin-left: 5px;
+      height: 60px;
+
+      button {
+        @include button-active-hover($playerColors, null, 'simple');
+        font-size: 22px;
+        padding: 0 5px;
       }
     }
   }
