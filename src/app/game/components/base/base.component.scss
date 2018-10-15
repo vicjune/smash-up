@@ -329,7 +329,6 @@
       align-items: center;
       flex-wrap: wrap;
       max-width: calc(65vw - 400px);
-      transition: width 0s ease 0.3s;
 
       @media (orientation:portrait) {
         width: auto !important;
@@ -338,7 +337,7 @@
 
       .base__creaturesWrapper--creatureDetails & {
         margin: 0;
-        width: 250px !important;
+        width: 230px !important;
         transition: none;
       }
     }
@@ -349,6 +348,13 @@
       justify-content: space-between;
       margin-left: 5px;
       height: 60px;
+      overflow: hidden;
+      transition: height 0.1s ease 0.3s;
+
+      .base__creaturesWrapper--creatureDetails & {
+        height: 0;
+        transition: none;
+      }
 
       button {
         @include button-active-hover($playerColors, null, 'simple');
@@ -406,20 +412,36 @@
   }
 
   &__addCreature {
-    @include button-active-hover($playerColors, null, 'border');
+    @include button-active-hover($playerColors, null, 'background');
     border-radius: 5px;
     height: 40px;
     padding: 0 10px;
     font-size: 18px;
-    margin: 0 10px 20px 0;
+    margin: 0 3px 20px 0;
     white-space: nowrap;
+
+    .globalActions__player--playing & {
+      border-radius: 0;
+    }
+
+    &:first-child {
+      .globalActions__player--playing & {
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+      }
+    }
 
     &:last-child {
       margin-right: 0;
+
+      .globalActions__player--playing & {
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+      }
     }
 
     &--quick {
-      @include button-active-hover($playerColors, null, 'background');
+      width: 55px;
     }
 
     .globalActions__player--monsters & {
@@ -437,7 +459,8 @@
     }
 
     .strength {
-      font-size: 20px;
+      font-size: 24px;
+      line-height: 26px;
     }
   }
 }

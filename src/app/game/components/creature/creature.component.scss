@@ -35,9 +35,11 @@
     }
 
     .creature--detailsMode & {
-      margin-left: 23px;
+      margin-left: 25px;
       height: 90px;
       width: 60px;
+      flex-basis: 60px;
+      flex-shrink: 0;
       border-radius: 7.5px;
     }
   }
@@ -99,80 +101,76 @@
       color: $bonus;
     }
   }
+}
+
+.strengthActions {
+  display: flex;
+  align-items: center;
+  color: white;
+  flex-grow: 1;
+  flex-basis: auto;
+
+  &.strengthActions--secondary {
+    opacity: 0.7;
+  }
+
+  &__buttonWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 10px;
+    flex-basis: 36px;
+    flex-shrink: 0;
+  }
+
+  &__button {
+    @include button-active-hover(null, white);
+    font-size: 30px;
+    padding: 0 5px;
+
+    .strengthActions--secondary & {
+      font-size: 20px;
+    }
+  }
+
+  &__value {
+    font-size: 24px;
+
+    .strengthActions--secondary & {
+      font-size: 16px;
+    }
+  }
+
+  &__label {
+    font-size: 18px;
+    opacity: 0.7;
+    flex-grow: 1;
+
+    .strengthActions--secondary & {
+      font-size: 14px;
+    }
+  }
+}
+
+.actions {
+  margin-top: 15px;
+  display: flex;
+
+  &__buttonWrapper {
+    flex-basis: 60px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 25px;
+  }
 
   &__deleteButton {
-    margin-left: 44px;
     @include button-active-hover(null, $danger, 'background');
     border-radius: 7.5px;
     height: 35px;
     width: 35px;
     font-size: 16px;
-  }
-}
-
-.actions {
-  color: white;
-  margin-top: 15px;
-
-  &.actions--top {
-    margin: 0 0 15px;
-  }
-
-  &__row {
-    display: flex;
-    align-items: center;
-    margin-top: 9px;
-    margin-left: 11px;
-    opacity: 0.8;
-
-    &.actions__row--bonus {
-      margin-left: 0;
-      opacity: 1;
-    }
-
-    .actions--top & {
-      margin-top: 0;
-    }
-  }
-
-  &__label {
-    margin-left: 30px;
-    padding-bottom: 4.5px;
-    font-size: 12px;
-    opacity: 0.7;
-
-    .actions__row--bonus & {
-      margin-left: 18px;
-      padding-bottom: 3px;
-      font-size: 18px;
-    }
-  }
-
-  &__value {
-    font-size: 27px;
-    flex-basis: 45px;
-    flex-grow: 0;
-    flex-shrink: 0;
-    text-align: center;
-    padding-bottom: 3px;
-
-    .actions__row--bonus & {
-      font-size: 36px;
-      flex-basis: 56px;
-      padding-bottom: 4.5px;
-    }
-  }
-
-  &__button{
-    @include button-active-hover(null, white);
-    flex: 0;
-
-    i {
-      font-size: 24px;
-
-      .actions__row--bonus & {
-        font-size: 30px;
-      }
-    }
   }
 }

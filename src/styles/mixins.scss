@@ -67,8 +67,12 @@
     color: $color;
   }
   @if ($type == 'background') {
-    color: white;
     background-color: $color;
+    @if ($color == white) {
+      color: black;
+    } @else {
+      color: white;
+    }
   }
   @if ($type == 'border') {
     border: 1px solid $color;

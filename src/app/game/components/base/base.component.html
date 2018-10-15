@@ -70,18 +70,20 @@
 
   <div class="base__creaturesWrapper" [ngClass]="{'base__creaturesWrapper--creatureDetails': detailModeCreatureId}" *ngIf="(detailsMode$ | async) && !(editMode$ | async)">
     <div class="base__creatures">
-      <div class="base__creatures__title" *ngIf="(creatureList$ | async).monsters.length > 0 && detailModeCreatureId === null">{{'MONSTERS' | translate}}</div>
-      <div class="base__creatures__player" [ngStyle]="{'width.px': (creatureList$ | async).monsters.length * 50 + 33}">
-        <ng-container *ngFor="let monsterId of (creatureList$ | async).monsters">
-          <app-creature [creatureId]="monsterId" *ngIf="detailModeCreatureId === null || detailModeCreatureId === monsterId" (toggleDetailMode)="toggleCreatureDetailMode(monsterId)" [detailModeCreatureId]="detailModeCreatureId"></app-creature>
-        </ng-container>
-      </div>
+      <ng-container *ngIf="(creatureList$ | async).monsters.length > 0">
+        <div class="base__creatures__title" *ngIf="detailModeCreatureId === null">{{'MONSTERS' | translate}}</div>
+        <div class="base__creatures__player" [ngStyle]="{'width.px': (creatureList$ | async).monsters.length * 50 + 33}">
+          <ng-container *ngFor="let monsterId of (creatureList$ | async).monsters">
+            <app-creature [creatureId]="monsterId" *ngIf="detailModeCreatureId === null || detailModeCreatureId === monsterId" (toggleDetailMode)="toggleCreatureDetailMode(monsterId)" [detailModeCreatureId]="detailModeCreatureId"></app-creature>
+          </ng-container>
+        </div>
+      </ng-container>
       <div class="base__creatures__title" *ngIf="(creatureList$ | async).players.length > 0 && detailModeCreatureId === null">{{'CREATURES' | translate}}</div>
       <div [class]="'base__creatures__player color-' + creatureOwner.player.color" *ngFor="let creatureOwner of (creatureList$ | async).players" [ngStyle]="{'width.px': creatureOwner.creatures.length * 50 + 40}">
         <ng-container *ngFor="let creatureId of creatureOwner.creatures">
           <app-creature [creatureId]="creatureId" *ngIf="detailModeCreatureId === null || detailModeCreatureId === creatureId" (toggleDetailMode)="toggleCreatureDetailMode(creatureId)" [detailModeCreatureId]="detailModeCreatureId"></app-creature>
         </ng-container>
-        <div class="base__creatures__actionsEach" *ngIf="creatureOwner.creatures.length > 1 && detailModeCreatureId === null">
+        <div class="base__creatures__actionsEach" *ngIf="creatureOwner.creatures.length > 1">
           <button (click)="increaseEachCreatureStrength(creatureOwner.creatures)"><i class="icon-plus-square"></i></button>
           <button (click)="decreaseEachCreatureStrength(creatureOwner.creatures)"><i class="icon-minus-square"></i></button>
         </div>
@@ -97,7 +99,7 @@
       <i class="icon-evil2 icon"></i>
     </button>
   </div>
-  <div [class]="'globalActions__player color-' + player.color" *ngFor="let player of (players$ | async)">
+  <div [class]="'globalActions__player color-' + player.color" [ngClass]="{'globalActions__player--playing': player.playing}" *ngFor="let player of (players$ | async)">
     <button class="globalActions__addCreature" (click)="createCreature(player.id)">
       <i class="icon-plus icon"></i>
       <i class="icon-hipster2 icon"></i>
@@ -105,7 +107,7 @@
     <ng-container *ngIf="player.playing">
       <button class="globalActions__addCreature globalActions__addCreature--quick" *ngFor="let strength of [1, 2, 3, 4, 5]"
         (click)="createCreature(player.id, strength)">
-        <i class="icon-hipster icon"></i>
+        <!-- <i class="icon-hipster icon"></i> -->
         <span class="strength">{{strength}}</span>
       </button>
     </ng-container>
