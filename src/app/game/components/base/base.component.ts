@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, EventEmitter, Output, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { Observable, Subscription, BehaviorSubject, combineLatest } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map, tap, first } from 'rxjs/operators';
 
 import { Base } from '@shared/models/base';
 import { BASE_REWARD_LIMITS, MAX_CARD_ROTATION_DEG, BASE_MAX_RESISTANCE, AVAILABLE_COLORS } from '@shared/constants';
@@ -50,11 +50,6 @@ export class BaseComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.base$ = this.baseService.bindFromId(this.baseId).pipe(
       map(base => base as Base),
-      tap(base => {
-        if (base) {
-          this.draggable.coordinates = [base.position.x, base.position.y];
-        }
-      })
     );
     this.creatureList$ = this.baseService.getCreatureOrderedList(this.baseId);
     this.transform$ = combineLatest(
@@ -69,6 +64,11 @@ export class BaseComponent implements OnInit, OnDestroy {
       this.detailsMode$.next(true);
     }
 
+    this.subscription.add(this.base$.pipe(first()).subscribe(base => {
+      if (base) {
+        this.draggable.coordinates = [base.position.x, base.position.y];
+      }
+    }));
     this.subscription.add(this.draggable.clickEvent.subscribe(() => this.seeMoreDetails()));
     this.subscription.add(this.draggable.dropEvent.subscribe(([x, y]) => {
       this.baseService.editById(this.baseId, (base: Base) => {

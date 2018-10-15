@@ -1,4 +1,4 @@
-<div [class]="'timer color-' + (playerColor$ | async)">
+<div [class]="'timer timer-player-' + (playerColor$ | async)">
   <ng-container *ngIf="(timer$ | async).active">
     <div class="timer__value" [ngClass]="{'timer__value--blinking': (timerBlinking$ | async)}">
       {{(timer$ | async).value | timer}}

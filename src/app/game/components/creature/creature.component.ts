@@ -52,10 +52,15 @@ export class CreatureComponent implements OnInit, OnDestroy {
     }));
 
     this.subscription.add(this.draggable.clickEvent.subscribe(() => this.seeMoreDetails()));
+    this.subscription.add(this.draggable.dragEvent.subscribe(dragging => this.toggleDragMode(dragging)));
   }
 
   seeMoreDetails() {
     this.toggleDetailMode.emit();
+  }
+
+  toggleDragMode(dragging: boolean) {
+    this.creatureService.toggleDragMode(this.creatureId, dragging);
   }
 
   increaseBaseStrength() {

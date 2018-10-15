@@ -1,4 +1,4 @@
-<div [class]="'creature' + ((creature$ | async).owner ? ' color-' + ((creature$ | async).owner.color) : ' creature--monster') + (detailsMode ? ' creature--detailsMode': '')">
+<div [class]="'creature' + ((creature$ | async).owner ? ' creature-card-player-color-' + ((creature$ | async).owner.color) : ' creature--monster') + (detailsMode ? ' creature--detailsMode': '')">
   <div class="creature__cardWrapper">
     <div class="creature__card" [ngClass]="{'creature__card--bonusPositive': (totalBonusStrengthSeparator$ | async) === '+'}"
       (mousedown)="mouseDown($event)" (touchstart)="mouseDown($event)" (window:mouseup)="mouseUp()"

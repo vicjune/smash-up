@@ -21,7 +21,8 @@
   }
 
   &__card {
-    @include color($playerColors, 'background');
+    cursor: pointer;
+    @include color('creature-card-player-color-', $playerColors, 'background');
     color: white;
     height: 60px;
     width: 40px;
@@ -125,7 +126,7 @@
   }
 
   &__button {
-    @include button-active-hover(null, white);
+    @include button-active-hover('', null, white);
     font-size: 30px;
     padding: 0 5px;
 
@@ -167,7 +168,7 @@
   }
 
   &__deleteButton {
-    @include button-active-hover(null, $danger, 'background');
+    @include button-active-hover('', null, $danger, 'background');
     border-radius: 7.5px;
     height: 35px;
     width: 35px;

@@ -34,8 +34,7 @@
       </div>
     </div>
 
-
-    <button [class]="'menu__wrapper__button menu__wrapper__deletePlayer color-' + player.color" *ngFor="let player of (playerService.bind() | async)"
+    <button [class]="'menu__wrapper__button menu__wrapper__deletePlayer menu-player-color-' + player.color" *ngFor="let player of (playerService.bind() | async)"
       (click)="deletePlayerClicked(player)">
       <i class="icon-bin2"></i>
       <span>{{player.name}}</span>

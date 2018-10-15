@@ -1,17 +1,18 @@
-import { ElementRef } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
 
 export class Draggable {
   coordinates: number[] = [0, 0];
 
+  private previousCoordinates: number[] = [0, 0];
   private _dragging = false;
   private draggingStart = false;
   private draggingStartTimeout;
 
   private mouseOffset: number[] = [0, 0];
 
-  private clickEventSubject = new Subject<void>();
-  private dropEventSubject = new Subject<number[]>();
+  private clickEvent$ = new Subject<void>();
+  private dragEvent$ = new Subject<boolean>();
+  private dropEvent$ = new Subject<number[]>();
 
   constructor() {}
 
@@ -20,18 +21,24 @@ export class Draggable {
   }
 
   get clickEvent(): Observable<void> {
-    return this.clickEventSubject.asObservable();
+    return this.clickEvent$.asObservable();
+  }
+
+  get dragEvent(): Observable<boolean> {
+    return this.dragEvent$.asObservable();
   }
 
   get dropEvent(): Observable<number[]> {
-    return this.dropEventSubject.asObservable();
+    return this.dropEvent$.asObservable();
   }
 
   mouseDown(e: TouchEvent): void {
     if (!this._dragging && (!e.touches || e.touches.length === 1)) {
       e.preventDefault();
+      this.previousCoordinates = this.coordinates;
       this.draggingStart = true;
       this._dragging = true;
+      this.dragEvent$.next(true);
       this.mouseOffset = [this.convertEvent(e).offsetX, this.convertEvent(e).offsetY];
 
       this.draggingStartTimeout = setTimeout(() => {
@@ -66,19 +73,21 @@ export class Draggable {
   }
 
   mouseUp() {
-    if (this.draggingStartTimeout) {
-      clearTimeout(this.draggingStartTimeout);
-    }
-
     if (this._dragging) {
-      this._dragging = false;
-      this.dropEventSubject.next(this.coordinates);
-    }
+      if (this.draggingStart) {
+        this.clickEvent$.next();
+        this.coordinates = this.previousCoordinates;
+      } else {
+        this.dropEvent$.next(this.coordinates);
+      }
 
-    if (this.draggingStart) {
-      this.draggingStart = false;
+      if (this.draggingStartTimeout) {
+        clearTimeout(this.draggingStartTimeout);
+      }
+
       this._dragging = false;
-      this.clickEventSubject.next();
+      this.draggingStart = false;
+      this.dragEvent$.next(false);
     }
   }
 

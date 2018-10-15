@@ -85,7 +85,7 @@
     &__button {
       font-size: 30px;
       padding: 0 5px;
-      @include button-active-hover(null, white, 'simple');
+      @include button-active-hover('', null, white, 'simple');
     }
   }
 
@@ -96,10 +96,10 @@
       padding: 5px 10px;
       border-radius: 5px;
       font-size: 18px;
-      @include button-active-hover(null, $danger, 'background');
+      @include button-active-hover('', null, $danger, 'background');
 
       .forceConquest & {
-        @include button-active-hover(null, $danger, 'border');
+        @include button-active-hover('', null, $danger, 'border');
       }
 
       &__icon {
@@ -111,7 +111,7 @@
   &__card {
     position: relative;
     background-color: rgb(70, 20, 20);
-    @include color($baseColors, 'background-gradient');
+    @include color('base-color-', $baseColors, 'background-gradient');
     border-radius: 15px;
     height: 214px;
     width: 300px;
@@ -138,27 +138,6 @@
       }
     }
 
-    &__addScoreList {
-      position: absolute;
-      bottom: 0;
-      left: -50px;
-      padding: 10px;
-
-      &__button {
-        display: block;
-        height: 30px;
-        width: 30px;
-        border-radius: 5px;
-        margin-top: 10px;
-        font-size: 17px;
-        @include button-active-hover($playerColors, null, 'background');
-
-        &:first-child {
-          margin-top: 0;
-        }
-      }
-    }
-
     &__actions {
       position: absolute;
       left: -50px;
@@ -175,12 +154,12 @@
         text-align: center;
 
         &.edit {
-          @include button-active-hover(null, $primary, 'background');
+          @include button-active-hover('', null, $primary, 'background');
         }
 
         &.delete {
           margin-top: 10px;
-          @include button-active-hover(null, $danger, 'background');
+          @include button-active-hover('', null, $danger, 'background');
         }
       }
     }
@@ -192,7 +171,7 @@
       font-size: 40px;
       line-height: 40px;
       color: white;
-      @include color($baseColors, color);
+      @include color('base-color-', $baseColors, color);
 
       &.upsideDown {
         top: auto;
@@ -222,7 +201,7 @@
         position: relative;
         font-size: 100px;
         line-height: 100px;
-        @include color($baseColors, color);
+        @include color('base-color-', $baseColors, color);
         padding-bottom: 8px;
         flex-basis: 55px;
         flex-grow: 1;
@@ -230,7 +209,7 @@
         text-align: center;
 
         &:nth-child(2) {
-          @include color($baseColors, color, 20);
+          @include color('base-color-', $baseColors, color, 20);
         }
 
         &:last-child:last-child {
@@ -282,7 +261,7 @@
       width: 30px;
       border-radius: 5px;
       margin: 0 5px 10px;
-      @include button-active-hover($baseColors, null, 'background');
+      @include button-active-hover('base-color-picker-color-', $baseColors, null, 'background');
     }
   }
 
@@ -292,7 +271,7 @@
     justify-content: space-around;
 
     &__score {
-      @include color($playerColors, color);
+      @include color('score-player-color-', $playerColors, color);
       font-size: 30px;
     }
   }
@@ -357,7 +336,7 @@
       }
 
       button {
-        @include button-active-hover($playerColors, null, 'simple');
+        @include button-active-hover('creature-each-player-color-', $playerColors, null, 'simple');
         font-size: 22px;
         padding: 0 5px;
       }
@@ -412,7 +391,7 @@
   }
 
   &__addCreature {
-    @include button-active-hover($playerColors, null, 'background');
+    @include button-active-hover('add-creature-player-color-', $playerColors, null, 'background');
     border-radius: 5px;
     height: 40px;
     padding: 0 10px;
@@ -445,7 +424,7 @@
     }
 
     .globalActions__player--monsters & {
-      @include button-active-hover(null, white, 'border');
+      @include button-active-hover('', null, white, 'border');
     }
 
     .icon:first-child {
@@ -453,7 +432,6 @@
       margin-right: 10px;
     }
 
-    .icon-hipster,
     .icon-hipster {
       font-size: 20px;
     }

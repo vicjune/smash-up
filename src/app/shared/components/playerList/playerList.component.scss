@@ -27,14 +27,14 @@
     position: relative;
     box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
     transition: all 0.5s;
-    @include color($playerColors, border-color);
+    @include color('player-color-', $playerColors, border-color);
     background-color: rgba(0, 0, 0, 0.4);
 
-    &.playing.playing.playing {
+    &.playing {
       box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
       border-color: white;
       background-color: transparent;
-      @include color($playerColors, background-color, -10);
+      @include color('player-color-', $playerColors, background-color, -10);
     }
 
     &__button {
@@ -68,7 +68,7 @@
       font-size: 40px;
       transition: color 0.5s;
       line-height: 40px;
-      @include color($playerColors, color);
+      @include color('player-color-', $playerColors, color);
 
       &.upsideDown {
         left: auto;
@@ -103,7 +103,7 @@
           @each $color in $playerColors {
             $i: index($playerColors, $color);
 
-            .color-#{$i} &:after {
+            .player-color-#{$i} &:after {
               background-color: $color;
             }
           }
@@ -155,7 +155,7 @@
       font-size: 30px;
       line-height: 20px;
       padding: 0 5px;
-      @include button-active-hover($playerColors, null, 'simple');
+      @include button-active-hover('player-color-', $playerColors, null, 'simple');
     }
   }
 

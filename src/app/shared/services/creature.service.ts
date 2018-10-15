@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject, combineLatest } from 'rxjs';
+import { Observable, Subject, combineLatest, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { EntityService } from '@shared/services/entity.service';
@@ -11,6 +11,7 @@ import { localStorage } from '@shared/utils/localStorage';
 @Injectable()
 export class CreatureService extends EntityService {
   deleteCreatureEvent$ = new Subject<string>();
+  creatureDragging$ = new BehaviorSubject<string>(null);
 
   protected entity = 'creatures';
 
@@ -42,9 +43,17 @@ export class CreatureService extends EntityService {
     })));
   }
 
+  bindCreatureDragging(): Observable<string> {
+    return this.creatureDragging$.asObservable();
+  }
+
   delete(creatureId: string) {
     this.deleteCreatureEvent$.next(creatureId);
     super.delete(creatureId);
+  }
+
+  toggleDragMode(creatureId: string, dragging: boolean) {
+    this.creatureDragging$.next(dragging ? creatureId : null);
   }
 
   private getStrength(creature: Creature, players: Player[]): number {
