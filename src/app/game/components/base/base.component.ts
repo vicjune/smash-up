@@ -32,7 +32,7 @@ export class BaseComponent implements OnInit, OnDestroy {
   detailsMode$ = new BehaviorSubject<boolean>(false);
   transform$: Observable<string>;
   transform: string;
-  creatureDragging$ = this.creatureService.bindCreatureDragging();
+  creatureDragging$ = this.creatureService.bindDragging();
 
   draggable = new Draggable();
 

@@ -13,6 +13,7 @@ export class Draggable {
 
   private clickEvent$ = new Subject<void>();
   private dragEvent$ = new Subject<boolean>();
+  private draggingEvent$ = new Subject<number[]>();
   private dropEvent$ = new Subject<number[]>();
 
   constructor() {}
@@ -27,6 +28,10 @@ export class Draggable {
 
   get dragEvent(): Observable<boolean> {
     return this.dragEvent$.asObservable();
+  }
+
+  get draggingEvent(): Observable<number[]> {
+    return this.draggingEvent$.asObservable();
   }
 
   get dropEvent(): Observable<number[]> {
@@ -46,6 +51,8 @@ export class Draggable {
         this.draggingStart = false;
         this.dragEvent$.next(true);
       }, 200);
+
+      this.mouseMove(e);
     }
   }
 
@@ -71,6 +78,7 @@ export class Draggable {
       }
 
       this.coordinates = [inRangeX, inRangeY];
+      this.draggingEvent$.next(this.coordinates);
     }
   }
 

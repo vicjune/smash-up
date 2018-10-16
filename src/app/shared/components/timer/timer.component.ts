@@ -16,7 +16,7 @@ export class TimerComponent {
   timer$: Observable<Timer> = this.timerService.bind();
   timerBlinking$: Observable<boolean> = this.timer$.pipe(map(timer => timer.running && timer.value < 10));
   playerColor$: Observable<number> = this.playerService.bindPlayerPlaying().pipe(map(player => (player && player.color) || 1));
-  creatureDragging$ = this.creatureService.bindCreatureDragging();
+  creatureDragging$ = this.creatureService.bindDragging();
 
   constructor(
     public timerService: TimerService,

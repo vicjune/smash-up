@@ -12,7 +12,7 @@ import { CreatureService } from '@shared/services/creature.service';
 export class GameComponent implements OnInit {
   addPopin = false;
   newPlayerName = '';
-  creatureDragging$ = this.creatureService.bindCreatureDragging();
+  creatureDragging$ = this.creatureService.bindDragging();
 
   @ViewChild('input') addInput: ElementRef;
 

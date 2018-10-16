@@ -20,7 +20,7 @@ export class BaseListComponent implements OnInit {
   deletingBase: Base;
   bases$: Observable<Base[]>;
   MAX_BASES: number = MAX_PLAYERS + 1;
-  creatureDragging$ = this.creatureService.bindCreatureDragging();
+  creatureDragging$ = this.creatureService.bindDragging();
 
   constructor(
     public baseService: BaseService,

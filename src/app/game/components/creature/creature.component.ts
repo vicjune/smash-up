@@ -57,6 +57,8 @@ export class CreatureComponent implements OnInit, OnDestroy {
 
     this.subscription.add(this.draggable.clickEvent.subscribe(() => this.seeMoreDetails()));
     this.subscription.add(this.draggable.dragEvent.subscribe(dragging => this.toggleDragMode(dragging)));
+    this.subscription.add(this.draggable.draggingEvent.subscribe(coordinates => this.sendDraggingCoordinates(coordinates)));
+    this.subscription.add(this.draggable.dropEvent.subscribe(coordinates => this.triggerDrop(coordinates)));
   }
 
   seeMoreDetails() {
@@ -66,6 +68,14 @@ export class CreatureComponent implements OnInit, OnDestroy {
   toggleDragMode(dragging: boolean) {
     this.creatureService.creatureDraggable = this.draggable;
     this.creatureService.toggleDragMode(this.creatureId, dragging);
+  }
+
+  sendDraggingCoordinates(coordinates: number[]) {
+    this.creatureService.setDraggingCoordinates(coordinates);
+  }
+
+  triggerDrop(coordinates: number[]) {
+    this.creatureService.triggerDrop(coordinates, this.creatureId);
   }
 
   increaseBaseStrength() {

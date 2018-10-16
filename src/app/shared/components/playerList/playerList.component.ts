@@ -15,7 +15,7 @@ import { CreatureService } from '@shared/services/creature.service';
 })
 export class PlayerListComponent implements OnInit {
   MAX_PLAYERS: number = MAX_PLAYERS;
-  creatureDragging$ = this.creatureService.bindCreatureDragging();
+  creatureDragging$ = this.creatureService.bindDragging();
 
   @Output('addPlayer') addPlayer = new EventEmitter<void>();
 

@@ -8,7 +8,7 @@
 
   &.creature--detailsMode:not(.creature--dragging) {
     padding: 10px 0;
-    margin: 0;
+    margin: 0 0 0 15px;
 
     @media (orientation:portrait) {
       padding: 20px 0 10px;
@@ -35,6 +35,7 @@
     border-radius: 5px;
     position: relative;
     transition: height 0.3s, width 0.3s, border-radius 0.3s, margin 0.3s;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 
     .creature--monster & {
       background-color: white;
@@ -43,7 +44,6 @@
 
     .creature--detailsMode &,
     .creature--dragging & {
-      margin-left: 25px;
       height: 90px;
       width: 60px;
       flex-basis: 60px;
@@ -184,7 +184,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-left: 25px;
   }
 
   &__deleteButton {

@@ -12,9 +12,10 @@ import { Draggable } from '@shared/utils/draggable';
 @Injectable()
 export class CreatureService extends EntityService {
   deleteCreatureEvent$ = new Subject<string>();
-  creatureDraggable: Draggable;
 
-  private creatureDragging$ = new BehaviorSubject<string>(null);
+  creatureDraggable: Draggable;
+  private dragging$ = new BehaviorSubject<string>(null);
+  private draggingCoordinates$ = new BehaviorSubject<number[]>(null);
 
   protected entity = 'creatures';
 
@@ -46,8 +47,15 @@ export class CreatureService extends EntityService {
     })));
   }
 
-  bindCreatureDragging(): Observable<string> {
-    return this.creatureDragging$.asObservable();
+  bindDragging(): Observable<string> {
+    return this.dragging$.asObservable();
+  }
+
+  bindDraggingHover(itemCoordinates$: Observable<number[]>): Observable<boolean> {
+    return combineLatest(
+      this.draggingCoordinates$,
+      itemCoordinates$
+    ).pipe(map(([creatureCoordinates, itemCoordinates]) => this.isSupperposing(creatureCoordinates, itemCoordinates)));
   }
 
   delete(creatureId: string) {
@@ -56,7 +64,22 @@ export class CreatureService extends EntityService {
   }
 
   toggleDragMode(creatureId: string, dragging: boolean) {
-    this.creatureDragging$.next(dragging ? creatureId : null);
+    this.dragging$.next(dragging ? creatureId : null);
+    if (!dragging) {
+      this.draggingCoordinates$.next(null);
+    }
+  }
+
+  setDraggingCoordinates(coordinates: number[]) {
+    this.draggingCoordinates$.next(coordinates);
+  }
+
+  triggerDrop(coordinates: number[], creatureId: string) {
+
+  }
+
+  private isSupperposing(creatureCoordinates: number[], itemCoordinates: number[]): boolean {
+    return true;
   }
 
   private getStrength(creature: Creature, players: Player[]): number {
