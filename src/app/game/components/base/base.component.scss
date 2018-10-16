@@ -7,7 +7,7 @@
   cursor: pointer;
   z-index: 1;
 
-  &.detailsMode {
+  &.detailsMode:not(.creatureDragging) {
     cursor: default;
     z-index: 5;
     top: 50% !important;
@@ -283,6 +283,12 @@
     transform: translateY(-50%);
     padding-left: 20px;
 
+    .creatureDragging & {
+      width: 0;
+      height: 0;
+      overflow: hidden;
+    }
+
     @media (orientation:portrait) {
       width: calc(100% + 50px);
       transform: translateY(0);
@@ -342,26 +348,6 @@
       }
     }
   }
-
-  &__backdrop {
-    position: fixed;
-    z-index: 4;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: black;
-    visibility: hidden;
-    opacity: 0;
-    transition: opacity 0.5s, visibility 0s ease 0.5s;
-
-    &.visible {
-      opacity: 0.6;
-      visibility: visible;
-      transition: opacity 0.5s;
-    }
-  }
-
 }
 
 .globalActions {
@@ -440,5 +426,24 @@
       font-size: 24px;
       line-height: 26px;
     }
+  }
+}
+
+.backdrop {
+  position: fixed;
+  z-index: 4;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: black;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.5s, visibility 0s ease 0.5s;
+
+  &.visible {
+    opacity: 0.6;
+    visibility: visible;
+    transition: opacity 0.5s;
   }
 }

@@ -6,13 +6,19 @@
   position: relative;
   transition: all 0.3s;
 
-  &.creature--detailsMode {
+  &.creature--detailsMode:not(.creature--dragging) {
     padding: 10px 0;
     margin: 0;
 
     @media (orientation:portrait) {
       padding: 20px 0 10px;
     }
+  }
+
+  &.creature--dragging {
+    margin: 0;
+    padding: 0;
+    z-index: 6;
   }
 
   &__cardWrapper {
@@ -28,20 +34,31 @@
     width: 40px;
     border-radius: 5px;
     position: relative;
-    transition: all 0.3s;
+    transition: height 0.3s, width 0.3s, border-radius 0.3s, margin 0.3s;
 
     .creature--monster & {
       background-color: white;
       color: black;
     }
 
-    .creature--detailsMode & {
+    .creature--detailsMode &,
+    .creature--dragging & {
       margin-left: 25px;
       height: 90px;
       width: 60px;
       flex-basis: 60px;
       flex-shrink: 0;
       border-radius: 7.5px;
+    }
+
+    .creature--dragging & {
+      position: fixed;
+      margin: 0;
+    }
+
+    .creature:not(.creature--dragging) & {
+      top: 0 !important;
+      left: 0 !important;
     }
   }
 
@@ -52,8 +69,10 @@
     top: 50%;
     transform: translate(-50%, -50%);
     transition: all 0.3s;
+    pointer-events: none;
 
-    .creature--detailsMode & {
+    .creature--detailsMode &,
+    .creature--dragging & {
       font-size: 36px;
     }
 
@@ -80,6 +99,7 @@
     justify-content: space-between;
     padding: 0 5px;
     transition: all 0.3s;
+    pointer-events: none;
 
     .creature--detailsMode & {
       top: 6px;

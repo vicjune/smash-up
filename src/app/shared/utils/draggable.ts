@@ -7,6 +7,7 @@ export class Draggable {
   private _dragging = false;
   private draggingStart = false;
   private draggingStartTimeout;
+  private target: HTMLElement;
 
   private mouseOffset: number[] = [0, 0];
 
@@ -35,14 +36,15 @@ export class Draggable {
   mouseDown(e: TouchEvent): void {
     if (!this._dragging && (!e.touches || e.touches.length === 1)) {
       e.preventDefault();
+      this.target = e.target as HTMLElement;
       this.previousCoordinates = this.coordinates;
       this.draggingStart = true;
       this._dragging = true;
-      this.dragEvent$.next(true);
       this.mouseOffset = [this.convertEvent(e).offsetX, this.convertEvent(e).offsetY];
 
       this.draggingStartTimeout = setTimeout(() => {
         this.draggingStart = false;
+        this.dragEvent$.next(true);
       }, 200);
     }
   }
@@ -57,15 +59,15 @@ export class Draggable {
       if (x <= 0) {
         inRangeX = 0;
       }
-      if (x + this.toPercentage(300, 'x') >= 100) {
-        inRangeX = 100 - this.toPercentage(300, 'x');
+      if (x + this.toPercentage(this.target.clientWidth, 'x') >= 100) {
+        inRangeX = 100 - this.toPercentage(this.target.clientWidth, 'x');
       }
 
       if (y <= 0) {
         inRangeY = 0;
       }
-      if (y + this.toPercentage(214, 'y') >= 100) {
-        inRangeY = 100 - this.toPercentage(214, 'y');
+      if (y + this.toPercentage(this.target.clientHeight, 'y') >= 100) {
+        inRangeY = 100 - this.toPercentage(this.target.clientHeight, 'y');
       }
 
       this.coordinates = [inRangeX, inRangeY];
@@ -93,7 +95,7 @@ export class Draggable {
 
   private convertEvent(event) {
     if ('targetTouches' in event) {
-      const bouncingRect = event.target.getBoundingClientRect();
+      const bouncingRect = this.target.getBoundingClientRect();
       return {
         pageX: event.targetTouches[0].pageX,
         pageY: event.targetTouches[0].pageY,

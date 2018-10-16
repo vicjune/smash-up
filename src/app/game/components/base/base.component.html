@@ -1,7 +1,7 @@
 <div
   *ngIf="(base$ | async)"
   [class]="'base base-color-' + (base$ | async).color"
-  [ngClass]="{'detailsMode': detailsMode$ | async, 'editMode': editMode$ | async, 'conquered': (base$ | async).resistance <= 0, 'dragging': draggable?.dragging, 'noCreature': (base$ | async).creatures.length === 0}"
+  [ngClass]="{'detailsMode': detailsMode$ | async, 'editMode': editMode$ | async, 'conquered': (base$ | async).resistance <= 0, 'dragging': draggable?.dragging, 'noCreature': (base$ | async).creatures.length === 0, 'creatureDragging': creatureDragging$ | async}"
   [ngStyle]="{'transform': transform, 'left.%': draggable?.coordinates[0], 'top.%': draggable?.coordinates[1]}"
   (mousedown)="mouseDown($event)"
   (touchstart)="mouseDown($event)"
@@ -12,7 +12,7 @@
   (window:touchend)="mouseUp()"
   (window:touchcancel)="mouseUp()">
 
-  <div class="base__topPart">
+  <div class="base__topPart" *ngIf="(detailsMode$ | async) && !detailModeCreatureId && !(creatureDragging$ | async)">
     <div class="base__resistanceEdit" *ngIf="editMode$ | async">
       <span class="base__resistanceEdit__label">{{'BASE_RESISTANCE' | translate}}</span>
       <button class="base__resistanceEdit__button minus" [disabled]="(base$ | async).maxResistance <= 0" (click)="decreaseResistance()"><i class="icon-minus-square"></i></button>
@@ -20,7 +20,7 @@
       <button class="base__resistanceEdit__button plus" [disabled]="(base$ | async).maxResistance >= BASE_MAX_RESISTANCE" (click)="increaseResistance()"><i class="icon-plus-square"></i></button>
     </div>
 
-    <div class="base__conquestAction" [ngClass]="{'forceConquest': (base$ | async).resistance > 0}" *ngIf="!(editMode$ | async) && (detailsMode$ | async) && ((base$ | async).scores.length > 0) && !detailModeCreatureId">
+    <div class="base__conquestAction" [ngClass]="{'forceConquest': (base$ | async).resistance > 0}" *ngIf="!(editMode$ | async) && ((base$ | async).scores.length > 0)">
       <button class="base__conquestAction__button" (click)="conquerBase()">
         <i class="icon-flag base__conquestAction__button__icon"></i>
         <span>{{((base$ | async).resistance <= 0 ? 'CONQUEST' : 'FORCE_CONQUEST') | translate}}</span>
@@ -29,7 +29,7 @@
   </div>
 
   <div class="base__card" (click)="exitCreatureDetailMode()">
-    <div class="base__card__actions" *ngIf="(detailsMode$ | async) && !detailModeCreatureId">
+    <div class="base__card__actions" *ngIf="(detailsMode$ | async) && !detailModeCreatureId && !(creatureDragging$ | async)">
       <button class="base__card__actions__button edit" (click)="toggleEditMode()"><i [class]="(editMode$ | async) ? 'icon-checkmark' : 'icon-pencil'"></i></button>
       <button class="base__card__actions__button delete" (click)="deleteBase()" *ngIf="editMode$ | async"><i class="icon-bin2"></i></button>
     </div>
@@ -71,17 +71,17 @@
   <div class="base__creaturesWrapper" [ngClass]="{'base__creaturesWrapper--creatureDetails': detailModeCreatureId}" *ngIf="(detailsMode$ | async) && !(editMode$ | async)">
     <div class="base__creatures">
       <ng-container *ngIf="(creatureList$ | async).monsters.length > 0">
-        <div class="base__creatures__title" *ngIf="detailModeCreatureId === null">{{'MONSTERS' | translate}}</div>
+        <div class="base__creatures__title" *ngIf="!detailModeCreatureId">{{'MONSTERS' | translate}}</div>
         <div class="base__creatures__player" [ngStyle]="{'width.px': (creatureList$ | async).monsters.length * 50 + 33}">
           <ng-container *ngFor="let monsterId of (creatureList$ | async).monsters">
-            <app-creature [creatureId]="monsterId" *ngIf="detailModeCreatureId === null || detailModeCreatureId === monsterId" (toggleDetailMode)="toggleCreatureDetailMode(monsterId)" [detailModeCreatureId]="detailModeCreatureId"></app-creature>
+            <app-creature [creatureId]="monsterId" *ngIf="(!detailModeCreatureId || detailModeCreatureId === monsterId)" (toggleDetailMode)="toggleCreatureDetailMode(monsterId)" [detailModeCreatureId]="detailModeCreatureId"></app-creature>
           </ng-container>
         </div>
       </ng-container>
-      <div class="base__creatures__title" *ngIf="(creatureList$ | async).players.length > 0 && detailModeCreatureId === null">{{'CREATURES' | translate}}</div>
+      <div class="base__creatures__title" *ngIf="(creatureList$ | async).players.length > 0 && !detailModeCreatureId">{{'CREATURES' | translate}}</div>
       <div [class]="'base__creatures__player creature-each-player-color-' + creatureOwner.player.color" *ngFor="let creatureOwner of (creatureList$ | async).players" [ngStyle]="{'width.px': creatureOwner.creatures.length * 50 + 40}">
         <ng-container *ngFor="let creatureId of creatureOwner.creatures">
-          <app-creature [creatureId]="creatureId" *ngIf="detailModeCreatureId === null || detailModeCreatureId === creatureId" (toggleDetailMode)="toggleCreatureDetailMode(creatureId)" [detailModeCreatureId]="detailModeCreatureId"></app-creature>
+          <app-creature [creatureId]="creatureId" *ngIf="(!detailModeCreatureId || detailModeCreatureId === creatureId)" (toggleDetailMode)="toggleCreatureDetailMode(creatureId)" [detailModeCreatureId]="detailModeCreatureId"></app-creature>
         </ng-container>
         <div class="base__creatures__actionsEach" *ngIf="creatureOwner.creatures.length > 1">
           <button (click)="increaseEachCreatureStrength(creatureOwner.creatures)"><i class="icon-plus-square"></i></button>
@@ -92,7 +92,7 @@
   </div>
 </div>
 
-<div class="globalActions" *ngIf="(detailsMode$ | async) && !(editMode$ | async) && !detailModeCreatureId">
+<div class="globalActions" *ngIf="(detailsMode$ | async) && !(editMode$ | async) && !detailModeCreatureId && !(creatureDragging$ | async)">
   <div class="globalActions__player globalActions__player--monsters">
     <button class="globalActions__addCreature" (click)="createCreature('monster')">
       <i class="icon-plus icon"></i>
@@ -107,11 +107,10 @@
     <ng-container *ngIf="player.playing">
       <button class="globalActions__addCreature globalActions__addCreature--quick" *ngFor="let strength of [1, 2, 3, 4, 5]"
         (click)="createCreature(player.id, strength)">
-        <!-- <i class="icon-hipster icon"></i> -->
         <span class="strength">{{strength}}</span>
       </button>
     </ng-container>
   </div>
 </div>
 
-<div class="base__backdrop" [ngClass]="{'visible': detailsMode$ | async}" (click)="exitMoreDetails()"></div>
+<div class="backdrop" [ngClass]="{'visible': (detailsMode$ | async) && !(creatureDragging$ | async)}" (click)="exitMoreDetails()"></div>

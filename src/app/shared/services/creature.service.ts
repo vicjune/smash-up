@@ -7,11 +7,14 @@ import { PlayerService } from '@shared/services/player.service';
 import { Creature } from '@shared/models/creature';
 import { Player } from '@shared/models/player';
 import { localStorage } from '@shared/utils/localStorage';
+import { Draggable } from '@shared/utils/draggable';
 
 @Injectable()
 export class CreatureService extends EntityService {
   deleteCreatureEvent$ = new Subject<string>();
-  creatureDragging$ = new BehaviorSubject<string>(null);
+  creatureDraggable: Draggable;
+
+  private creatureDragging$ = new BehaviorSubject<string>(null);
 
   protected entity = 'creatures';
 

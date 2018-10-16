@@ -1,5 +1,5 @@
 <div class="playerList">
-  <div *ngFor="let player of (playerService.bind() | async)" [class]="'playerList__player playerList__element player-color-' + player.color" [ngClass]="{'playing': player.playing}">
+  <div *ngFor="let player of (playerService.bind() | async)" [class]="'playerList__player playerList__element player-color-' + player.color" [ngClass]="{'playing': player.playing && !(creatureDragging$ | async)}">
     <button class="playerList__player__button" (click)="selectPlayer(player.id)">
       <div class="playerList__player__name">{{player.name}}</div>
       <div class="playerList__player__score">
@@ -15,15 +15,15 @@
         </span>
       </div>
     </button>
-    <div class="playerList__player__playing" [ngClass]="{'display': player.playing}">
+    <div class="playerList__player__playing" [ngClass]="{'display': player.playing && !(creatureDragging$ | async)}">
       {{'PLAYING' | translate}}
     </div>
-    <div class="playerList__player__valueButtons">
+    <div class="playerList__player__valueButtons" *ngIf="!(creatureDragging$ | async)">
       <button class="playerList__player__valueButton" (click)="increaseScore(player.id, $event)"><i class="icon-plus-square"></i></button>
       <button class="playerList__player__valueButton" (click)="decreaseScore(player.id, $event)" [disabled]="player.realScore === 0"><i class="icon-minus-square"></i></button>
     </div>
   </div>
-  <button class="playerList__button playerList__element" (click)="addPlayerClicked()" *ngIf="(playerService.bind() | async).length < MAX_PLAYERS && ((baseService.bind() | async).length === 0 || (playerService.bind() | async).length < 2)">
+  <button class="playerList__button playerList__element" (click)="addPlayerClicked()" *ngIf="((playerService.bind() | async).length < MAX_PLAYERS && ((baseService.bind() | async).length === 0 || (playerService.bind() | async).length < 2)) && !(creatureDragging$ | async)">
     <i class="icon-plus"></i>
     <span class="playerList__button__label">{{'ADD_PLAYER' | translate}}</span>
   </button>

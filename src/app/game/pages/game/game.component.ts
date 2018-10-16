@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 
 import { Player } from '@shared/models/player';
 import { PlayerService } from '@shared/services/player.service';
+import { CreatureService } from '@shared/services/creature.service';
 
 @Component({
   selector: 'app-game',
@@ -11,11 +12,13 @@ import { PlayerService } from '@shared/services/player.service';
 export class GameComponent implements OnInit {
   addPopin = false;
   newPlayerName = '';
+  creatureDragging$ = this.creatureService.bindCreatureDragging();
 
   @ViewChild('input') addInput: ElementRef;
 
   constructor(
     public playerService: PlayerService,
+    public creatureService: CreatureService
   ) { }
 
   ngOnInit() {

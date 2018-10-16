@@ -7,7 +7,7 @@
       {{(timer$ | async).value | timer}}
     </div>
   </ng-container>
-  <div class="timer__buttons">
+  <div class="timer__buttons" *ngIf="!(creatureDragging$ | async)">
     <ng-container *ngIf="(timer$ | async).active">
       <button class="timer__button timer__button--playPause" (click)="playToggle()">
         <i [class]="(timer$ | async).running ? 'icon-pause2' : 'icon-play3'"></i>

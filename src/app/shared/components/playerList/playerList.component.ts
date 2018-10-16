@@ -6,6 +6,7 @@ import { Player } from '../../models/player';
 import { MAX_PLAYERS } from '../../constants';
 import { Observable } from 'rxjs';
 import { ConqueringScore } from '@shared/models/conqueringScore';
+import { CreatureService } from '@shared/services/creature.service';
 
 @Component({
   selector: 'app-player-list',
@@ -14,12 +15,14 @@ import { ConqueringScore } from '@shared/models/conqueringScore';
 })
 export class PlayerListComponent implements OnInit {
   MAX_PLAYERS: number = MAX_PLAYERS;
+  creatureDragging$ = this.creatureService.bindCreatureDragging();
 
   @Output('addPlayer') addPlayer = new EventEmitter<void>();
 
   constructor(
     public playerService: PlayerService,
     public baseService: BaseService,
+    public creatureService: CreatureService,
   ) { }
 
   ngOnInit() {}

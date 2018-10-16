@@ -1,8 +1,9 @@
 <div class="game">
-  <app-menu (addPlayer)="addPlayerClicked()"></app-menu>
+  <app-menu (addPlayer)="addPlayerClicked()" *ngIf="!(creatureDragging$ | async)"></app-menu>
   <app-player-list (addPlayer)="addPlayerClicked()"></app-player-list>
   <app-timer></app-timer>
   <app-base-list></app-base-list>
+  <app-creature *ngIf="(creatureDragging$ | async)" [creatureId]="creatureDragging$ | async" [creatureDragging]="true" [otherDraggable]="creatureService.creatureDraggable"></app-creature>
 </div>
 
 <app-popin [(modal)]="addPopin" [title]="'NEW_PLAYER' | translate" [buttons]="[{text: 'CANCEL' | translate, secondary: true}, {text: 'ADD' | translate, disabled: newPlayerName.length === 0}]" (buttonPressed)="addPlayer($event)">

@@ -14,6 +14,8 @@ import { Draggable } from '@shared/utils/draggable';
 export class CreatureComponent implements OnInit, OnDestroy {
   @Input() creatureId: string;
   @Input() detailModeCreatureId: string;
+  @Input() creatureDragging = false;
+  @Input() otherDraggable: Draggable = null;
   @Output() toggleDetailMode = new EventEmitter<void>();
 
   creature$: Observable<Creature>;
@@ -35,6 +37,8 @@ export class CreatureComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.draggable = this.otherDraggable || new Draggable();
+
     this.creature$ = this.creatureService.bindFromId(this.creatureId) as Observable<Creature>;
     this.totalBonusStrengthAbsolute$ = this.creature$.pipe(map((creature: Creature) => {
       return creature && Math.abs(
@@ -60,6 +64,7 @@ export class CreatureComponent implements OnInit, OnDestroy {
   }
 
   toggleDragMode(dragging: boolean) {
+    this.creatureService.creatureDraggable = this.draggable;
     this.creatureService.toggleDragMode(this.creatureId, dragging);
   }
 
@@ -114,6 +119,10 @@ export class CreatureComponent implements OnInit, OnDestroy {
 
   mouseDown(e) {
     this.draggable.mouseDown(e);
+  }
+
+  mouseMove(e) {
+    this.draggable.mouseMove(e);
   }
 
   mouseUp() {

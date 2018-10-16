@@ -1,8 +1,15 @@
-<div [class]="'creature' + ((creature$ | async).owner ? ' creature-card-player-color-' + ((creature$ | async).owner.color) : ' creature--monster') + (detailsMode ? ' creature--detailsMode': '')">
+<div [class]="'creature ' + ((creature$ | async).owner ? 'creature-card-player-color-' + ((creature$ | async).owner.color) : 'creature--monster')" [ngClass]="{'creature--detailsMode': detailsMode, 'creature--dragging': otherDraggable, 'creature__card--bonusPositive': (totalBonusStrengthSeparator$ | async) === '+'}">
   <div class="creature__cardWrapper">
-    <div class="creature__card" [ngClass]="{'creature__card--bonusPositive': (totalBonusStrengthSeparator$ | async) === '+'}"
-      (mousedown)="mouseDown($event)" (touchstart)="mouseDown($event)" (window:mouseup)="mouseUp()"
-      (window:mouseleave)="mouseUp()" (window:touchend)="mouseUp()" (window:touchcancel)="mouseUp()">
+    <div class="creature__card"
+    [ngStyle]="{'left.%': draggable?.coordinates[0], 'top.%': draggable?.coordinates[1]}"
+    (mousedown)="mouseDown($event)"
+    (touchstart)="mouseDown($event)"
+    (window:mousemove)="mouseMove($event)"
+    (window:touchmove)="mouseMove($event)"
+    (window:mouseleave)="mouseUp()"
+    (window:mouseup)="mouseUp()"
+    (window:touchend)="mouseUp()"
+    (window:touchcancel)="mouseUp()">
       <div class="creature__strengthDetail" *ngIf="totalBonusStrengthSeparator$ | async">
         <span>
           {{(creature$ | async).basicStrength}}
@@ -16,7 +23,7 @@
       </div>
     </div>
 
-    <div *ngIf="detailsMode" class="strengthActions">
+    <div *ngIf="detailsMode && !otherDraggable" class="strengthActions">
       <div class="strengthActions__buttonWrapper">
         <button class="strengthActions__button" (click)="increaseBaseStrength()"><i class="icon-plus-square"></i></button>
         <button class="strengthActions__button" (click)="decreaseBaseStrength()" [disabled]="(creature$ | async).basicStrength <= 0"><i class="icon-minus-square"></i></button>
@@ -27,9 +34,9 @@
     </div>
   </div>
 
-  <div class="actions" *ngIf="detailsMode">
+  <div class="actions" *ngIf="detailsMode && !otherDraggable">
     <div class="actions__buttonWrapper">
-      <button class="actions__deleteButton" *ngIf="detailsMode" (click)="delete()">
+      <button class="actions__deleteButton" (click)="delete()">
         <i class="icon icon-bin2"></i>
       </button>
     </div>

@@ -32,6 +32,7 @@ export class BaseComponent implements OnInit, OnDestroy {
   detailsMode$ = new BehaviorSubject<boolean>(false);
   transform$: Observable<string>;
   transform: string;
+  creatureDragging$ = this.creatureService.bindCreatureDragging();
 
   draggable = new Draggable();
 
@@ -56,7 +57,8 @@ export class BaseComponent implements OnInit, OnDestroy {
       this.base$,
       windowEvents.portrait,
       this.editMode$,
-      this.detailsMode$
+      this.detailsMode$,
+      this.creatureDragging$
     ).pipe(map(this.getTransform));
 
     if (this.newBase) {
@@ -218,8 +220,8 @@ export class BaseComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  private getTransform([base, portrait, editMode, detailsMode]): string {
-    if (detailsMode) {
+  private getTransform([base, portrait, editMode, detailsMode, creatureDragging]): string {
+    if (detailsMode && !creatureDragging) {
       if (editMode || (base && base.creatures.length === 0)) {
         return 'translate(-50%, -50%) rotate(0) scale(1.5)';
       }
