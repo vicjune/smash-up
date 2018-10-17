@@ -12,6 +12,12 @@ export const position = {
   },
 
   isSuperposing(itemACoordinates: ItemCoordinates, itemBCoordinates: ItemCoordinates, itemBList: ItemCoordinates[]) {
-    return true;
+    const isSupperposingX =
+    (itemACoordinates.x + this.pxToPercent(itemACoordinates.width, 'x') / 2) <= (itemBCoordinates.x + this.pxToPercent(itemBCoordinates.width, 'x')) &&
+    (itemACoordinates.x + this.pxToPercent(itemACoordinates.width, 'x') / 2) >= itemBCoordinates.x;
+    const isSupperposingY =
+    (itemACoordinates.y + this.pxToPercent(itemACoordinates.height, 'y') / 2) <= (itemBCoordinates.y + this.pxToPercent(itemBCoordinates.height, 'y')) &&
+    (itemACoordinates.y + this.pxToPercent(itemACoordinates.height, 'y') / 2) >= itemBCoordinates.y;
+    return isSupperposingX && isSupperposingY;
   }
 };

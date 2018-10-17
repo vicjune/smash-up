@@ -33,6 +33,7 @@ export class BaseComponent implements OnInit, OnDestroy {
   transform$: Observable<string>;
   transform: string;
   creatureDragging$ = this.creatureService.bindDragging();
+  isHovered$: Observable<boolean>;
 
   draggable = new Draggable();
 
@@ -52,7 +53,9 @@ export class BaseComponent implements OnInit, OnDestroy {
     this.base$ = this.baseService.bindFromId(this.baseId).pipe(
       map(base => base as Base),
     );
+
     this.creatureList$ = this.baseService.getCreatureOrderedList(this.baseId);
+
     this.transform$ = combineLatest(
       this.base$,
       windowEvents.portrait,
@@ -60,6 +63,8 @@ export class BaseComponent implements OnInit, OnDestroy {
       this.detailsMode$,
       this.creatureDragging$
     ).pipe(map(this.getTransform));
+
+    this.isHovered$ = this.baseService.bindIsHovered(this.baseId);
 
     if (this.newBase) {
       this.editMode$.next(true);

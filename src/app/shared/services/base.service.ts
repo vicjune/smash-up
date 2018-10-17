@@ -49,13 +49,13 @@ export class BaseService extends EntityService {
       this.creatureService.bindDragging(),
       this.creatureService.bindDraggingCoordinates(),
       this.bind()
-    ).pipe(map(([creatureDraggingId, [draggingX, draggingY], bases]) => {
-      if (!creatureDraggingId) {
+    ).pipe(map(([creatureDraggingId, draggingCoordinates, bases]) => {
+      if (!creatureDraggingId || !draggingCoordinates) {
         return false;
       }
       const selectedBase = this.get(baseId).entity as Base;
       return position.isSuperposing(
-        {itemId: creatureDraggingId, x: draggingX, y: draggingY, width: CREATURE_CARD_SIZE[0], height: CREATURE_CARD_SIZE[1]},
+        {itemId: creatureDraggingId, x: draggingCoordinates[0], y: draggingCoordinates[1], width: CREATURE_CARD_SIZE[0], height: CREATURE_CARD_SIZE[1]},
         {itemId: selectedBase.id, x: selectedBase.position.x, y: selectedBase.position.y, width: BASE_CARD_SIZE[0], height: BASE_CARD_SIZE[1]},
         bases.map(base => ({itemId: base.id, x: base.position.x, y: base.position.y, width: BASE_CARD_SIZE[0], height: BASE_CARD_SIZE[1]}))
       );

@@ -125,7 +125,8 @@
       pointer-events: auto;
     }
 
-    .conquered:not(.editMode) & {
+    .conquered:not(.editMode) &,
+    .isHovered:not(.editMode) & {
       &:before {
         content: '';
         position: absolute;
@@ -135,6 +136,12 @@
         right: -5px;
         border-radius: 15px;
         border: 5px solid $danger;
+      }
+    }
+
+    .isHovered:not(.editMode) & {
+      &:before {
+        border-color: white;
       }
     }
 
