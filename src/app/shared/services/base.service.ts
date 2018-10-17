@@ -5,13 +5,14 @@ import { map } from 'rxjs/operators';
 import { Player } from '@shared/models/player';
 import { EntityService } from '@shared/services/entity.service';
 import { Base } from '@shared/models/base';
-import { MAX_PLAYERS } from '@shared/constants';
+import { MAX_PLAYERS, CREATURE_CARD_SIZE, BASE_CARD_SIZE } from '@shared/constants';
 import { PlayerService } from '@shared/services/player.service';
 import { CreatureService } from '@shared/services/creature.service';
 import { Creature } from '@shared/models/creature';
 import { Score } from '@shared/interfaces/score';
 import { localStorage } from '@shared/utils/localStorage';
 import { CreatureOrderedList } from '@shared/interfaces/creatureOrderedList';
+import { position } from '@shared/utils/position';
 
 @Injectable()
 export class BaseService extends EntityService {
@@ -41,6 +42,24 @@ export class BaseService extends EntityService {
       base.resistance = this.getResistance(base, creatures);
       return base;
     })));
+  }
+
+  bindIsHovered(baseId: string): Observable<boolean> {
+    return combineLatest(
+      this.creatureService.bindDragging(),
+      this.creatureService.bindDraggingCoordinates(),
+      this.bind()
+    ).pipe(map(([creatureDraggingId, [draggingX, draggingY], bases]) => {
+      if (!creatureDraggingId) {
+        return false;
+      }
+      const selectedBase = this.get(baseId).entity as Base;
+      return position.isSuperposing(
+        {itemId: creatureDraggingId, x: draggingX, y: draggingY, width: CREATURE_CARD_SIZE[0], height: CREATURE_CARD_SIZE[1]},
+        {itemId: selectedBase.id, x: selectedBase.position.x, y: selectedBase.position.y, width: BASE_CARD_SIZE[0], height: BASE_CARD_SIZE[1]},
+        bases.map(base => ({itemId: base.id, x: base.position.x, y: base.position.y, width: BASE_CARD_SIZE[0], height: BASE_CARD_SIZE[1]}))
+      );
+    }));
   }
 
   add(base: Base): void {

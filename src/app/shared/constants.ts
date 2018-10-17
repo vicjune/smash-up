@@ -6,3 +6,5 @@ export const PLAYER_SCORE_MODIFIER_TIMEOUT = 5000;
 export const MAX_CARD_ROTATION_DEG = 5;
 export const TIMER_DEFAULT = 900;
 export const TIMER_SECONDS_INTERVAL = 5;
+export const BASE_CARD_SIZE = [300, 214];
+export const CREATURE_CARD_SIZE = [60, 90];

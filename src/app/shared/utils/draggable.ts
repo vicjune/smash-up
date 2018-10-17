@@ -1,5 +1,7 @@
 import { Subject, Observable } from 'rxjs';
 
+import { position } from './position';
+
 export class Draggable {
   coordinates: number[] = [0, 0];
 
@@ -58,23 +60,23 @@ export class Draggable {
 
   mouseMove(e: TouchEvent): void {
     if (this._dragging && (!e.touches || e.touches.length === 1)) {
-      const x = this.toPercentage(this.convertEvent(e).pageX - this.mouseOffset[0], 'x');
-      const y = this.toPercentage(this.convertEvent(e).pageY - this.mouseOffset[1], 'y');
+      const x = position.pxToPercent(this.convertEvent(e).pageX - this.mouseOffset[0], 'x');
+      const y = position.pxToPercent(this.convertEvent(e).pageY - this.mouseOffset[1], 'y');
       let inRangeX = x;
       let inRangeY = y;
 
       if (x <= 0) {
         inRangeX = 0;
       }
-      if (x + this.toPercentage(this.target.clientWidth, 'x') >= 100) {
-        inRangeX = 100 - this.toPercentage(this.target.clientWidth, 'x');
+      if (x + position.pxToPercent(this.target.clientWidth, 'x') >= 100) {
+        inRangeX = 100 - position.pxToPercent(this.target.clientWidth, 'x');
       }
 
       if (y <= 0) {
         inRangeY = 0;
       }
-      if (y + this.toPercentage(this.target.clientHeight, 'y') >= 100) {
-        inRangeY = 100 - this.toPercentage(this.target.clientHeight, 'y');
+      if (y + position.pxToPercent(this.target.clientHeight, 'y') >= 100) {
+        inRangeY = 100 - position.pxToPercent(this.target.clientHeight, 'y');
       }
 
       this.coordinates = [inRangeX, inRangeY];
@@ -117,16 +119,6 @@ export class Draggable {
         offsetX: event.offsetX,
         offsetY: event.offsetY
       };
-    }
-  }
-
-  private toPercentage(value: number, direction: string): number {
-    if (direction === 'x') {
-      return value * 100 / window.innerWidth;
-    } else if (direction === 'y') {
-      return value * 100 / window.innerHeight;
-    } else {
-      return value;
     }
   }
 }

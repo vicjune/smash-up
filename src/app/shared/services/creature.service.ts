@@ -51,11 +51,8 @@ export class CreatureService extends EntityService {
     return this.dragging$.asObservable();
   }
 
-  bindDraggingHover(itemCoordinates$: Observable<number[]>): Observable<boolean> {
-    return combineLatest(
-      this.draggingCoordinates$,
-      itemCoordinates$
-    ).pipe(map(([creatureCoordinates, itemCoordinates]) => this.isSupperposing(creatureCoordinates, itemCoordinates)));
+  bindDraggingCoordinates(): Observable<number[]> {
+    return this.draggingCoordinates$.asObservable();
   }
 
   delete(creatureId: string) {
@@ -76,10 +73,6 @@ export class CreatureService extends EntityService {
 
   triggerDrop(coordinates: number[], creatureId: string) {
 
-  }
-
-  private isSupperposing(creatureCoordinates: number[], itemCoordinates: number[]): boolean {
-    return true;
   }
 
   private getStrength(creature: Creature, players: Player[]): number {
