@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, EventEmitter, Output, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { Observable, Subscription, BehaviorSubject, combineLatest } from 'rxjs';
-import { map, tap, first } from 'rxjs/operators';
+import { map, first } from 'rxjs/operators';
 
 import { Base } from '@shared/models/base';
 import { BASE_REWARD_LIMITS, MAX_CARD_ROTATION_DEG, BASE_MAX_RESISTANCE, AVAILABLE_COLORS } from '@shared/constants';
@@ -11,6 +11,7 @@ import { Creature } from '@shared/models/creature';
 import { windowEvents } from '@shared/utils/windowEvents';
 import { CreatureOrderedList } from '@shared/interfaces/creatureOrderedList';
 import { CreatureService } from '@shared/services/creature.service';
+import { DraggingService } from '@shared/services/dragging.service';
 
 @Component({
   selector: 'app-base',
@@ -32,7 +33,7 @@ export class BaseComponent implements OnInit, OnDestroy {
   detailsMode$ = new BehaviorSubject<boolean>(false);
   transform$: Observable<string>;
   transform: string;
-  creatureDragging$ = this.creatureService.bindDragging();
+  creatureDragging$ = this.draggingService.bindCreatureDragging();
   isHovered$: Observable<boolean>;
 
   draggable = new Draggable();
@@ -47,6 +48,7 @@ export class BaseComponent implements OnInit, OnDestroy {
     public playerService: PlayerService,
     public creatureService: CreatureService,
     public changeDetectorRef: ChangeDetectorRef,
+    public draggingService: DraggingService,
   ) {}
 
   ngOnInit() {
@@ -64,7 +66,7 @@ export class BaseComponent implements OnInit, OnDestroy {
       this.creatureDragging$
     ).pipe(map(this.getTransform));
 
-    this.isHovered$ = this.baseService.bindIsHovered(this.baseId);
+    this.isHovered$ = this.draggingService.bindIsHovered(this.baseId, 'base');
 
     if (this.newBase) {
       this.editMode$.next(true);

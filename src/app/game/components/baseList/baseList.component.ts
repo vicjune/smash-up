@@ -5,7 +5,7 @@ import { BaseService } from '@shared/services/base.service';
 import { PlayerService } from '@shared/services/player.service';
 import { Base } from '@shared/models/base';
 import { MAX_PLAYERS } from '@shared/constants';
-import { CreatureService } from '@shared/services/creature.service';
+import { DraggingService } from '@shared/services/dragging.service';
 
 @Component({
   selector: 'app-base-list',
@@ -20,12 +20,12 @@ export class BaseListComponent implements OnInit {
   deletingBase: Base;
   bases$: Observable<Base[]>;
   MAX_BASES: number = MAX_PLAYERS + 1;
-  creatureDragging$ = this.creatureService.bindDragging();
+  creatureDragging$ = this.draggingService.bindCreatureDragging();
 
   constructor(
     public baseService: BaseService,
     public playerService: PlayerService,
-    public creatureService: CreatureService
+    public draggingService: DraggingService
   ) { }
 
   ngOnInit() {

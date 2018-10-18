@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject, combineLatest, BehaviorSubject } from 'rxjs';
+import { Observable, Subject, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { EntityService } from '@shared/services/entity.service';
@@ -7,18 +7,12 @@ import { PlayerService } from '@shared/services/player.service';
 import { Creature } from '@shared/models/creature';
 import { Player } from '@shared/models/player';
 import { localStorage } from '@shared/utils/localStorage';
-import { Draggable } from '@shared/utils/draggable';
 
 @Injectable()
 export class CreatureService extends EntityService {
-  deleteCreatureEvent$ = new Subject<string>();
-  dropCreatureEvent$ = new Subject<{coordinates: number[]; creatureId: string}>();
-
-  creatureDraggable: Draggable;
-  private dragging$ = new BehaviorSubject<string>(null);
-  private draggingCoordinates$ = new BehaviorSubject<number[]>(null);
-
   protected entity = 'creatures';
+
+  deleteCreatureEvent$ = new Subject<string>();
 
   constructor(
     private playerService: PlayerService
@@ -48,35 +42,9 @@ export class CreatureService extends EntityService {
     })));
   }
 
-  bindDragging(): Observable<string> {
-    return this.dragging$.asObservable();
-  }
-
-  bindDraggingCoordinates(): Observable<number[]> {
-    return this.draggingCoordinates$.asObservable();
-  }
-
   delete(creatureId: string) {
     this.deleteCreatureEvent$.next(creatureId);
     super.delete(creatureId);
-  }
-
-  toggleDragMode(creatureId: string, dragging: boolean) {
-    this.dragging$.next(dragging ? creatureId : null);
-    if (!dragging) {
-      this.draggingCoordinates$.next(null);
-    }
-  }
-
-  setDraggingCoordinates(coordinates: number[]) {
-    this.draggingCoordinates$.next(coordinates);
-  }
-
-  triggerDrop(coordinates: number[], creatureId: string) {
-    this.dropCreatureEvent$.next({
-      coordinates,
-      creatureId
-    });
   }
 
   private getStrength(creature: Creature, players: Player[]): number {

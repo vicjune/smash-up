@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { CreatureService } from '@shared/services/creature.service';
 import { Creature } from '@shared/models/creature';
 import { Draggable } from '@shared/utils/draggable';
+import { DraggingService } from '@shared/services/dragging.service';
 
 @Component({
   selector: 'app-creature',
@@ -33,7 +34,8 @@ export class CreatureComponent implements OnInit, OnDestroy {
   }
 
   constructor(
-    public creatureService: CreatureService
+    public creatureService: CreatureService,
+    public draggingService: DraggingService
   ) {}
 
   ngOnInit() {
@@ -58,7 +60,7 @@ export class CreatureComponent implements OnInit, OnDestroy {
     this.subscription.add(this.draggable.clickEvent.subscribe(() => this.seeMoreDetails()));
     this.subscription.add(this.draggable.dragEvent.subscribe(dragging => this.toggleDragMode(dragging)));
     this.subscription.add(this.draggable.draggingEvent.subscribe(coordinates => this.sendDraggingCoordinates(coordinates)));
-    this.subscription.add(this.draggable.dropEvent.subscribe(coordinates => this.triggerDrop(coordinates)));
+    this.subscription.add(this.draggable.dropEvent.subscribe(() => this.triggerDrop()));
   }
 
   seeMoreDetails() {
@@ -66,16 +68,16 @@ export class CreatureComponent implements OnInit, OnDestroy {
   }
 
   toggleDragMode(dragging: boolean) {
-    this.creatureService.creatureDraggable = this.draggable;
-    this.creatureService.toggleDragMode(this.creatureId, dragging);
+    this.draggingService.creatureDraggable = this.draggable;
+    this.draggingService.toggleCreatureDragMode(this.creatureId, dragging);
   }
 
   sendDraggingCoordinates(coordinates: number[]) {
-    this.creatureService.setDraggingCoordinates(coordinates);
+    this.draggingService.setCreatureDraggingCoordinates(coordinates);
   }
 
-  triggerDrop(coordinates: number[]) {
-    this.creatureService.triggerDrop(coordinates, this.creatureId);
+  triggerDrop() {
+    this.draggingService.triggerCreatureDrop(this.creatureId);
   }
 
   increaseBaseStrength() {
