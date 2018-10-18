@@ -17,6 +17,7 @@ import { position } from '@shared/utils/position';
 @Injectable()
 export class BaseService extends EntityService {
   protected entity = 'bases';
+  private baseHoveredId: string;
 
   constructor(
     private playerService: PlayerService,
@@ -30,6 +31,7 @@ export class BaseService extends EntityService {
     }
 
     this.creatureService.deleteCreatureEvent$.subscribe(creatureId => this.removeCreature(creatureId));
+    this.creatureService.dropCreatureEvent$.subscribe(({coordinates, creatureId}) => this.moveCreatureToAnotherBase(creatureId, coordinates));
   }
 
   bind(): Observable<Base[]> {
@@ -49,17 +51,7 @@ export class BaseService extends EntityService {
       this.creatureService.bindDragging(),
       this.creatureService.bindDraggingCoordinates(),
       this.bind()
-    ).pipe(map(([creatureDraggingId, draggingCoordinates, bases]) => {
-      if (!creatureDraggingId || !draggingCoordinates) {
-        return false;
-      }
-      const selectedBase = this.get(baseId).entity as Base;
-      return position.isSuperposing(
-        {itemId: creatureDraggingId, x: draggingCoordinates[0], y: draggingCoordinates[1], width: CREATURE_CARD_SIZE[0], height: CREATURE_CARD_SIZE[1]},
-        {itemId: selectedBase.id, x: selectedBase.position.x, y: selectedBase.position.y, width: BASE_CARD_SIZE[0], height: BASE_CARD_SIZE[1]},
-        bases.map(base => ({itemId: base.id, x: base.position.x, y: base.position.y, width: BASE_CARD_SIZE[0], height: BASE_CARD_SIZE[1]}))
-      );
-    }));
+    ).pipe(map(([draggingCreatureId, coordinates, bases]) => this.isCreatureSuperposing(baseId, draggingCreatureId, coordinates, bases)));
   }
 
   add(base: Base): void {
@@ -114,11 +106,6 @@ export class BaseService extends EntityService {
     this.addCreature(creature.id, baseId);
   }
 
-  moveCreatureToAnotherBase(creatureId: string, newBaseId: string) {
-    this.removeCreature(creatureId);
-    this.addCreature(creatureId, newBaseId);
-  }
-
   getCreatureOrderedList(baseId: string): Observable<CreatureOrderedList> {
     return combineLatest(
       this.bind(),
@@ -148,6 +135,15 @@ export class BaseService extends EntityService {
     }));
   }
 
+  private moveCreatureToAnotherBase(creatureId: string, coordinates: number[]) {
+    const bases = this.entities$.getValue() as Base[];
+    const superposingBase = bases.find(base => this.isCreatureSuperposing(base.id, creatureId, coordinates, bases));
+    if (superposingBase) {
+      this.removeCreature(creatureId);
+      this.addCreature(creatureId, superposingBase.id);
+    }
+  }
+
   private addCreature(creatureId: string, baseId: string) {
     this.editById(baseId, (base: Base) => {
       base.creatures.push(creatureId);
@@ -164,6 +160,21 @@ export class BaseService extends EntityService {
         break;
       }
     }
+  }
+
+  private isCreatureSuperposing(baseId: string, creatureDraggingId: string, draggingCoordinates: number[], bases: Base[]): boolean {
+    if (!creatureDraggingId || !draggingCoordinates) {
+      return false;
+    }
+    const selectedBase = this.get(baseId).entity as Base;
+    if (selectedBase.creatures.find(creatureId => creatureId === creatureDraggingId)) {
+      return false;
+    }
+    return position.isSuperposingNoDuplicate(
+      {itemId: creatureDraggingId, x: draggingCoordinates[0], y: draggingCoordinates[1], width: CREATURE_CARD_SIZE[0], height: CREATURE_CARD_SIZE[1]},
+      selectedBase.id,
+      bases.map(base => ({itemId: base.id, x: base.position.x, y: base.position.y, width: BASE_CARD_SIZE[0], height: BASE_CARD_SIZE[1]}))
+    );
   }
 
   private getResistance(base: Base, creatures: Creature[]): number {

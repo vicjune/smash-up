@@ -1,7 +1,7 @@
 import { ItemCoordinates } from '@shared/interfaces/itemCoordinates';
 
 export const position = {
-  pxToPercent(value: number, direction: 'x'|'y') {
+  pxToPercent(value: number, direction: 'x'|'y'): number {
     if (direction === 'x') {
       return value * 100 / window.innerWidth;
     } else if (direction === 'y') {
@@ -11,7 +11,14 @@ export const position = {
     }
   },
 
-  isSuperposing(itemACoordinates: ItemCoordinates, itemBCoordinates: ItemCoordinates, itemBList: ItemCoordinates[]) {
+  isSuperposingNoDuplicate(itemACoordinates: ItemCoordinates, itemBId: string, itemBList: ItemCoordinates[]) {
+    const lastIdSupperposing = itemBList.reduce((previous, coordinates) => {
+      return this.isSuperposing(itemACoordinates, coordinates) ? coordinates.itemId : previous;
+    }, null);
+    return lastIdSupperposing === itemBId;
+  },
+
+  isSuperposing(itemACoordinates: ItemCoordinates, itemBCoordinates: ItemCoordinates): boolean {
     const isSupperposingX =
     (itemACoordinates.x + this.pxToPercent(itemACoordinates.width, 'x') / 2) <= (itemBCoordinates.x + this.pxToPercent(itemBCoordinates.width, 'x')) &&
     (itemACoordinates.x + this.pxToPercent(itemACoordinates.width, 'x') / 2) >= itemBCoordinates.x;

@@ -12,6 +12,7 @@ import { Draggable } from '@shared/utils/draggable';
 @Injectable()
 export class CreatureService extends EntityService {
   deleteCreatureEvent$ = new Subject<string>();
+  dropCreatureEvent$ = new Subject<{coordinates: number[]; creatureId: string}>();
 
   creatureDraggable: Draggable;
   private dragging$ = new BehaviorSubject<string>(null);
@@ -72,7 +73,10 @@ export class CreatureService extends EntityService {
   }
 
   triggerDrop(coordinates: number[], creatureId: string) {
-
+    this.dropCreatureEvent$.next({
+      coordinates,
+      creatureId
+    });
   }
 
   private getStrength(creature: Creature, players: Player[]): number {
