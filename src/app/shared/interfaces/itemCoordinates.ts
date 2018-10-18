@@ -4,4 +4,6 @@ export interface ItemCoordinates {
   y: number;
   height: number;
   width: number;
+  type: string;
+  hovered?: boolean;
 }

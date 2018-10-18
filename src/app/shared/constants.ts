@@ -8,3 +8,6 @@ export const TIMER_DEFAULT = 900;
 export const TIMER_SECONDS_INTERVAL = 5;
 export const BASE_CARD_SIZE = [300, 214];
 export const CREATURE_CARD_SIZE = [60, 90];
+export const PLAYER_LIST_PADDING = [50, 70];
+export const PLAYER_CARD_MAX_SIZE = [200, 120];
+export const PLAYER_CARD_MARGIN_BOTTOM = 20;

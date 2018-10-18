@@ -66,7 +66,7 @@ export class BaseComponent implements OnInit, OnDestroy {
       this.creatureDragging$
     ).pipe(map(this.getTransform));
 
-    this.isHovered$ = this.draggingService.bindIsHovered(this.baseId, 'base');
+    this.isHovered$ = this.draggingService.bindIsHovered(this.baseId);
 
     if (this.newBase) {
       this.editMode$.next(true);
