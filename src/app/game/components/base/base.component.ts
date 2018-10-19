@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, EventEmitter, Output, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output, OnDestroy, ChangeDetectorRef, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { Observable, Subscription, BehaviorSubject, combineLatest } from 'rxjs';
 import { map, first } from 'rxjs/operators';
 
@@ -18,11 +18,12 @@ import { DraggingService } from '@shared/services/dragging.service';
   templateUrl: './base.component.html',
   styleUrls: ['./base.component.scss'],
 })
-export class BaseComponent implements OnInit, OnDestroy {
+export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() baseId: string;
   @Input() newBase: boolean;
   @Output() delete: EventEmitter<void> = new EventEmitter<void>();
   @Output() conquer: EventEmitter<void> = new EventEmitter<void>();
+  @ViewChild('base') baseElementRef: ElementRef;
 
   detailModeCreatureId: string = null;
 
@@ -34,7 +35,7 @@ export class BaseComponent implements OnInit, OnDestroy {
   transform$: Observable<string>;
   transform: string;
   creatureDragging$ = this.draggingService.bindCreatureDragging();
-  isHovered$: Observable<boolean>;
+  isHovered = false;
 
   draggable = new Draggable();
 
@@ -49,7 +50,7 @@ export class BaseComponent implements OnInit, OnDestroy {
     public creatureService: CreatureService,
     public changeDetectorRef: ChangeDetectorRef,
     public draggingService: DraggingService,
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.base$ = this.baseService.bindFromId(this.baseId).pipe(
@@ -66,8 +67,6 @@ export class BaseComponent implements OnInit, OnDestroy {
       this.creatureDragging$
     ).pipe(map(this.getTransform));
 
-    this.isHovered$ = this.draggingService.bindIsHovered(this.baseId);
-
     if (this.newBase) {
       this.editMode$.next(true);
       this.detailsMode$.next(true);
@@ -79,20 +78,22 @@ export class BaseComponent implements OnInit, OnDestroy {
       }
     }));
     this.subscription.add(this.draggable.clickEvent.subscribe(() => this.seeMoreDetails()));
-    this.subscription.add(this.draggable.dropEvent.subscribe(([x, y]) => {
-      this.baseService.editById(this.baseId, (base: Base) => {
-        if (base) {
-          base.position.x = x;
-          base.position.y = y;
-        }
-        return base;
-      });
-    }));
+    this.subscription.add(this.draggable.dropEvent.subscribe((position) => this.updateBasePosition(position)));
+    this.subscription.add(this.baseService.bindCreatureMovedEvent().subscribe(() => this.exitMoreDetails(true)));
+    this.subscription.add(this.draggingService.bindIsHovered(this.baseId).subscribe((hovered) => this.isHovered = hovered));
 
     // Workaround angular change detect bug
     this.subscription.add(this.transform$.subscribe(transform => {
       this.transform = transform;
       this.changeDetectorRef.detectChanges();
+    }));
+  }
+
+  ngAfterViewInit() {
+    this.subscription.add(this.base$.pipe(first()).subscribe(base => {
+      if (base) {
+        this.registerCoordinates([base.position.x, base.position.y]);
+      }
     }));
   }
 
@@ -103,7 +104,7 @@ export class BaseComponent implements OnInit, OnDestroy {
   increaseReward(index: number) {
     this.baseService.editById(this.baseId, (base: Base) => {
       if (base.rewards[index] < BASE_REWARD_LIMITS[1]) {
-        base.rewards[index] ++;
+        base.rewards[index]++;
       }
       return base;
     });
@@ -112,7 +113,7 @@ export class BaseComponent implements OnInit, OnDestroy {
   decreaseReward(index: number) {
     this.baseService.editById(this.baseId, (base: Base) => {
       if (base.rewards[index] > BASE_REWARD_LIMITS[0]) {
-        base.rewards[index] --;
+        base.rewards[index]--;
       }
       return base;
     });
@@ -121,7 +122,7 @@ export class BaseComponent implements OnInit, OnDestroy {
   increaseResistance() {
     this.baseService.editById(this.baseId, (base: Base) => {
       if (base.maxResistance < BASE_MAX_RESISTANCE) {
-        base.maxResistance ++;
+        base.maxResistance++;
       }
       return base;
     });
@@ -130,7 +131,7 @@ export class BaseComponent implements OnInit, OnDestroy {
   decreaseResistance() {
     this.baseService.editById(this.baseId, (base: Base) => {
       if (base.maxResistance > 0) {
-        base.maxResistance --;
+        base.maxResistance--;
       }
       return base;
     });
@@ -153,13 +154,12 @@ export class BaseComponent implements OnInit, OnDestroy {
     }
   }
 
-  exitMoreDetails() {
-    if (this.detailModeCreatureId) {
-      this.detailModeCreatureId = null;
-    } else {
+  exitMoreDetails(force = false) {
+    if (!this.detailModeCreatureId || force) {
       this.detailsMode$.next(false);
       this.editMode$.next(false);
     }
+    this.detailModeCreatureId = null;
   }
 
   deleteBase() {
@@ -190,7 +190,7 @@ export class BaseComponent implements OnInit, OnDestroy {
   increaseEachCreatureStrength(creatureIds: string[]) {
     creatureIds.forEach(creatureId => {
       this.creatureService.editById(creatureId, (creature: Creature) => {
-        creature.basicStrength ++;
+        creature.basicStrength++;
         return creature;
       });
     });
@@ -200,11 +200,51 @@ export class BaseComponent implements OnInit, OnDestroy {
     creatureIds.forEach(creatureId => {
       this.creatureService.editById(creatureId, (creature: Creature) => {
         if (creature.basicStrength > 0) {
-          creature.basicStrength --;
+          creature.basicStrength--;
         }
         return creature;
       });
     });
+  }
+
+  updateBasePosition(position: [number, number]) {
+    const [x, y] = position;
+    this.baseService.editById(this.baseId, (base: Base) => {
+      if (base) {
+        base.position.x = x;
+        base.position.y = y;
+      }
+      return base;
+    });
+
+    this.registerCoordinates(position);
+  }
+
+  registerCoordinates(position: [number, number]) {
+    const [x, y] = position;
+    this.draggingService.registerCoordinates({
+      itemId: this.baseId,
+      x,
+      y,
+      width: this.baseElementRef.nativeElement.clientWidth,
+      height: this.baseElementRef.nativeElement.clientHeight,
+      type: 'base'
+    });
+  }
+
+  getTransform([base, portrait, editMode, detailsMode, creatureDragging]): string {
+    if (detailsMode && !creatureDragging) {
+      if (editMode || (base && base.creatures.length === 0)) {
+        return 'translate(-50%, -50%) rotate(0) scale(1.5)';
+      }
+      if (portrait) {
+        return 'translate(-50%, 0) rotate(0) scale(1.5)';
+      }
+      return 'translate(0, -50%) rotate(0) scale(1.5)';
+    }
+    return 'translate(0, 0) rotate(' + (base ? (Math.floor(
+      base.position.rotation * (MAX_CARD_ROTATION_DEG + MAX_CARD_ROTATION_DEG + 1)
+    ) - MAX_CARD_ROTATION_DEG) : 0) + 'deg) scale(1)';
   }
 
   mouseDown(e: TouchEvent) {
@@ -225,20 +265,6 @@ export class BaseComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
-  }
-
-  private getTransform([base, portrait, editMode, detailsMode, creatureDragging]): string {
-    if (detailsMode && !creatureDragging) {
-      if (editMode || (base && base.creatures.length === 0)) {
-        return 'translate(-50%, -50%) rotate(0) scale(1.5)';
-      }
-      if (portrait) {
-        return 'translate(-50%, 0) rotate(0) scale(1.5)';
-      }
-      return 'translate(0, -50%) rotate(0) scale(1.5)';
-    }
-    return 'translate(0, 0) rotate(' + (base ? (Math.floor(
-      base.position.rotation * (MAX_CARD_ROTATION_DEG + MAX_CARD_ROTATION_DEG + 1)
-    ) - MAX_CARD_ROTATION_DEG) : 0) + 'deg) scale(1)';
+    this.draggingService.unregisterCoordinates(this.baseId);
   }
 }

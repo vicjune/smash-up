@@ -30,8 +30,7 @@
     @include color('player-color-', $playerColors, border-color);
     background-color: rgba(0, 0, 0, 0.4);
 
-    &.playing,
-    &.hovered {
+    &.highlighted {
       box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
       border-color: white;
       background-color: transparent;
@@ -57,8 +56,7 @@
       text-align: center;
       transition: color 0.5s;
 
-      .playing &,
-      .hovered & {
+      .highlighted & {
         color: white;
       }
     }
@@ -80,8 +78,7 @@
         transform: rotate(180deg);
       }
 
-      .playing &,
-      .hovered & {
+      .highlighted & {
         color: white;
       }
 
@@ -98,8 +95,7 @@
             height: 2px;
             transition: background-color 0.5s;
 
-            .playing.playing &,
-            .hovered.hovered & {
+            .highlighted.highlighted & {
               background-color: white;
             }
           }

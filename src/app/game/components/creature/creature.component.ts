@@ -72,7 +72,7 @@ export class CreatureComponent implements OnInit, OnDestroy {
     this.draggingService.toggleCreatureDragMode(this.creatureId, dragging);
   }
 
-  sendDraggingCoordinates(coordinates: number[]) {
+  sendDraggingCoordinates(coordinates: [number, number]) {
     this.draggingService.setCreatureDraggingCoordinates(coordinates);
   }
 

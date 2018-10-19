@@ -3,20 +3,20 @@ import { Subject, Observable } from 'rxjs';
 import { position } from './position';
 
 export class Draggable {
-  coordinates: number[] = [0, 0];
+  coordinates: [number, number] = [0, 0];
 
-  private previousCoordinates: number[] = [0, 0];
+  private previousCoordinates: [number, number] = [0, 0];
   private _dragging = false;
   private draggingStart = false;
   private draggingStartTimeout;
   private target: HTMLElement;
 
-  private mouseOffset: number[] = [0, 0];
+  private mouseOffset: [number, number] = [0, 0];
 
   private clickEvent$ = new Subject<void>();
   private dragEvent$ = new Subject<boolean>();
-  private draggingEvent$ = new Subject<number[]>();
-  private dropEvent$ = new Subject<number[]>();
+  private draggingEvent$ = new Subject<[number, number]>();
+  private dropEvent$ = new Subject<[number, number]>();
 
   constructor() {}
 
@@ -32,11 +32,11 @@ export class Draggable {
     return this.dragEvent$.asObservable();
   }
 
-  get draggingEvent(): Observable<number[]> {
+  get draggingEvent(): Observable<[number, number]> {
     return this.draggingEvent$.asObservable();
   }
 
-  get dropEvent(): Observable<number[]> {
+  get dropEvent(): Observable<[number, number]> {
     return this.dropEvent$.asObservable();
   }
 

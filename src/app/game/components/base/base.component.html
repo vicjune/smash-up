@@ -1,7 +1,7 @@
-<div
+<div #base
   *ngIf="(base$ | async)"
   [class]="'base base-color-' + (base$ | async).color"
-  [ngClass]="{'detailsMode': detailsMode$ | async, 'editMode': editMode$ | async, 'conquered': (base$ | async).resistance <= 0, 'dragging': draggable?.dragging, 'noCreature': (base$ | async).creatures.length === 0, 'creatureDragging': creatureDragging$ | async, 'isHovered': isHovered$ | async}"
+  [ngClass]="{'detailsMode': detailsMode$ | async, 'editMode': editMode$ | async, 'conquered': (base$ | async).resistance <= 0, 'dragging': draggable?.dragging, 'noCreature': (base$ | async).creatures.length === 0, 'creatureDragging': creatureDragging$ | async, 'isHovered': isHovered}"
   [ngStyle]="{'transform': transform, 'left.%': draggable?.coordinates[0], 'top.%': draggable?.coordinates[1]}"
   (mousedown)="mouseDown($event)"
   (touchstart)="mouseDown($event)"
