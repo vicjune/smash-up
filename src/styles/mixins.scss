@@ -1,10 +1,10 @@
-@mixin color($colorArray, $property: null, $lighten: 0, $opacity: 1) {
+@mixin color($prefix, $colorArray, $property: null, $lighten: 0, $opacity: 1) {
 
   @each $color in $colorArray {
     $i: index($colorArray, $color);
 
-    .color-#{$i} &,
-    &.color-#{$i}.color-#{$i}.color-#{$i} {
+    .#{$prefix}#{$i} &,
+    &.#{$prefix}#{$i} {
       @if ($property != 'background-gradient') {
         #{$property}: transparentize($color, 1 - $opacity);
 
@@ -22,14 +22,14 @@
   }
 }
 
-@mixin button-active-hover($colorArray: null, $forcedColor: null, $type: 'simple') {
+@mixin button-active-hover($prefix: '', $colorArray: null, $forcedColor: null, $type: 'simple') {
   // type = simple, background, border
   @if ($colorArray) {
     @each $color in $colorArray {
       $i: index($colorArray, $color);
 
-      .color-#{$i} &,
-      &.color-#{$i}.color-#{$i}.color-#{$i} {
+      .#{$prefix}#{$i} &,
+      &.#{$prefix}#{$i} {
         @include button-type($color, $type);
 
         @media (hover: hover) {
@@ -67,8 +67,12 @@
     color: $color;
   }
   @if ($type == 'background') {
-    color: white;
     background-color: $color;
+    @if ($color == white) {
+      color: black;
+    } @else {
+      color: white;
+    }
   }
   @if ($type == 'border') {
     border: 1px solid $color;

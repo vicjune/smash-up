@@ -10,9 +10,9 @@ import { localStorage } from '@shared/utils/localStorage';
 
 @Injectable()
 export class CreatureService extends EntityService {
-  deleteCreatureEvent$ = new Subject<string>();
-
   protected entity = 'creatures';
+
+  deleteCreatureEvent$ = new Subject<string>();
 
   constructor(
     private playerService: PlayerService
@@ -60,7 +60,7 @@ export class CreatureService extends EntityService {
     const creatures = this.entities$.getValue() as Creature[];
     let i = creatures.length;
     while (i--) {
-      if (!players.find(player => player.id === creatures[i].ownerId)) {
+      if (creatures[i].ownerId !== 'monster' && !players.find(player => player.id === creatures[i].ownerId)) {
         this.delete(creatures[i].id);
       }
     }

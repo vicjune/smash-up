@@ -6,25 +6,59 @@
   position: relative;
   transition: all 0.3s;
 
-  &.creature--detailsMode {
+  &.creature--detailsMode:not(.creature--dragging) {
     padding: 10px 0;
+    margin: 0 0 0 15px;
+
+    @media (orientation:portrait) {
+      padding: 20px 0 10px;
+    }
+  }
+
+  &.creature--dragging {
     margin: 0;
+    padding: 0;
+    z-index: 6;
+  }
+
+  &__cardWrapper {
+    display: flex;
+    align-items: center;
   }
 
   &__card {
-    @include color($playerColors, 'background');
+    cursor: pointer;
+    @include color('creature-card-player-color-', $playerColors, 'background');
     color: white;
     height: 60px;
     width: 40px;
     border-radius: 5px;
     position: relative;
-    transition: all 0.3s;
+    transition: height 0.3s, width 0.3s, border-radius 0.3s, margin 0.3s;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 
-    .creature--detailsMode & {
-      margin-left: 23px;
+    .creature--monster & {
+      background-color: white;
+      color: black;
+    }
+
+    .creature--detailsMode &,
+    .creature--dragging & {
       height: 90px;
       width: 60px;
+      flex-basis: 60px;
+      flex-shrink: 0;
       border-radius: 7.5px;
+    }
+
+    .creature--dragging & {
+      position: fixed;
+      margin: 0;
+    }
+
+    .creature:not(.creature--dragging) & {
+      top: 0 !important;
+      left: 0 !important;
     }
   }
 
@@ -35,8 +69,10 @@
     top: 50%;
     transform: translate(-50%, -50%);
     transition: all 0.3s;
+    pointer-events: none;
 
-    .creature--detailsMode & {
+    .creature--detailsMode &,
+    .creature--dragging & {
       font-size: 36px;
     }
 
@@ -63,6 +99,7 @@
     justify-content: space-between;
     padding: 0 5px;
     transition: all 0.3s;
+    pointer-events: none;
 
     .creature--detailsMode & {
       top: 6px;
@@ -85,82 +122,75 @@
       color: $bonus;
     }
   }
-
-  &__deleteButton {
-    position: absolute;
-    left: 126px;
-    top: 81px;
-    @include button-active-hover(null, $danger, 'border');
-    border-radius: 7.5px;
-    height: 35px;
-    width: 35px;
-    font-size: 16px;
-  }
 }
 
-.actions {
+.strengthActions {
+  display: flex;
+  align-items: center;
   color: white;
-  margin-top: 15px;
+  flex-grow: 1;
+  flex-basis: auto;
 
-  &.actions--top {
-    margin: 0 0 15px;
-  }
-
-  &__row {
-    display: flex;
-    align-items: center;
-    margin-top: 9px;
-    margin-left: 11px;
-    opacity: 0.8;
-
-    &.actions__row--bonus {
-      margin-left: 0;
-      opacity: 1;
-    }
-
-    .actions--top & {
-      margin-top: 0;
-    }
-  }
-
-  &__label {
-    margin-left: 30px;
-    padding-bottom: 4.5px;
-    font-size: 12px;
+  &.strengthActions--secondary {
     opacity: 0.7;
+  }
 
-    .actions__row--bonus & {
-      margin-left: 18px;
-      padding-bottom: 3px;
-      font-size: 18px;
+  &__buttonWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 10px;
+    flex-basis: 36px;
+    flex-shrink: 0;
+  }
+
+  &__button {
+    @include button-active-hover('', null, white);
+    font-size: 30px;
+    padding: 0 5px;
+
+    .strengthActions--secondary & {
+      font-size: 20px;
     }
   }
 
   &__value {
-    font-size: 27px;
-    flex-basis: 45px;
-    flex-grow: 0;
-    flex-shrink: 0;
-    text-align: center;
-    padding-bottom: 3px;
+    font-size: 24px;
 
-    .actions__row--bonus & {
-      font-size: 36px;
-      flex-basis: 56px;
-      padding-bottom: 4.5px;
+    .strengthActions--secondary & {
+      font-size: 16px;
     }
   }
 
-  &__button{
-    @include button-active-hover(null, white);
-    flex: 0;
+  &__label {
+    font-size: 18px;
+    opacity: 0.7;
+    flex-grow: 1;
 
-    i {
-      font-size: 24px;
-
-      .actions__row--bonus & {
-        font-size: 30px;
-      }
+    .strengthActions--secondary & {
+      font-size: 14px;
     }
+  }
+}
+
+.actions {
+  margin-top: 15px;
+  display: flex;
+
+  &__buttonWrapper {
+    flex-basis: 60px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__deleteButton {
+    @include button-active-hover('', null, $danger, 'background');
+    border-radius: 7.5px;
+    height: 35px;
+    width: 35px;
+    font-size: 16px;
   }
 }

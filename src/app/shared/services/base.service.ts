@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, combineLatest } from 'rxjs';
+import { Observable, combineLatest, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Player } from '@shared/models/player';
@@ -11,10 +11,13 @@ import { CreatureService } from '@shared/services/creature.service';
 import { Creature } from '@shared/models/creature';
 import { Score } from '@shared/interfaces/score';
 import { localStorage } from '@shared/utils/localStorage';
+import { CreatureOrderedList } from '@shared/interfaces/creatureOrderedList';
 
 @Injectable()
 export class BaseService extends EntityService {
   protected entity = 'bases';
+
+  private creatureMovedEvent$ = new Subject<void>();
 
   constructor(
     private playerService: PlayerService,
@@ -37,9 +40,13 @@ export class BaseService extends EntityService {
       this.creatureService.bind()
     ).pipe(map(([bases, players, creatures]) => bases.map((base: Base) => {
       base.scores = this.getScores(base, players, creatures);
-      base.resistance = this.getResistance(base);
+      base.resistance = this.getResistance(base, creatures);
       return base;
     })));
+  }
+
+  bindCreatureMovedEvent(): Observable<void> {
+    return this.creatureMovedEvent$.asObservable();
   }
 
   add(base: Base): void {
@@ -53,27 +60,25 @@ export class BaseService extends EntityService {
   conquer(base: Base): void {
     const sortedScores = base.scores.sort((scoreA, scoreB) => {
       return scoreB.score - scoreA.score;
-    }).map((score, index, array) => {
-      let reward = 0;
-      if (index === 0) {
-        reward = base.rewards[index];
-      } else if (index < 3) {
-        if (score.score === array[index - 1].score) {
-          reward = base.rewards[index - 1];
+    });
 
-          if (index === 2 && score.score === array[index - 2].score) {
-            reward = base.rewards[index - 2];
-          }
+    let rewardIndex = 0;
+    let scoreIndex = 0;
+    while (rewardIndex < base.rewards.length && scoreIndex < sortedScores.length) {
+      const basisScore = sortedScores[scoreIndex];
+      basisScore.reward = base.rewards[rewardIndex];
+      scoreIndex ++;
+
+      while (scoreIndex < sortedScores.length) {
+        if (sortedScores[scoreIndex].score === basisScore.score) {
+          sortedScores[scoreIndex].reward = base.rewards[rewardIndex];
+          scoreIndex ++;
         } else {
-          reward = base.rewards[index];
+          rewardIndex = scoreIndex;
+          break;
         }
       }
-
-      return {
-        ...score,
-        reward
-      };
-    });
+    }
 
     sortedScores.forEach(score => {
       this.playerService.updateScore(score.reward, score.playerId, true);
@@ -96,27 +101,39 @@ export class BaseService extends EntityService {
     this.addCreature(creature.id, baseId);
   }
 
-  moveCreatureToAnotherBase(creatureId: string, newBaseId: string) {
-    this.removeCreature(creatureId);
-    this.addCreature(creatureId, newBaseId);
-  }
-
-  getCreatureOrderedList(baseId: string): Observable<string[][]> {
+  getCreatureOrderedList(baseId: string): Observable<CreatureOrderedList> {
     return combineLatest(
       this.bind(),
       this.creatureService.bind(),
       this.playerService.bind()
     ).pipe(map(([bases, creatures, players]) => {
+      const baseFromId = bases.find(base => base.id === baseId);
+
+      const monsters = baseFromId && baseFromId.creatures
+      .filter(creatureId => {
+        const creatureFromId = creatures.find(creature => creature.id === creatureId);
+        return creatureFromId && creatureFromId.ownerId === 'monster';
+      });
+
       const creatureOwners = players.map(player => {
-        const baseFromId = bases.find(base => base.id === baseId);
         const creaturesFromThisOwner = baseFromId && baseFromId.creatures.filter(creatureId => {
           const creatureFromId = creatures.find(creature => creature.id === creatureId);
           return creatureFromId && creatureFromId.ownerId === player.id;
         });
-        return creaturesFromThisOwner;
-      }).filter(creatureOwner => creatureOwner && creatureOwner.length > 0);
-      return creatureOwners;
+        return {
+          creatures: creaturesFromThisOwner,
+          player: player
+        };
+      }).filter(creatureOwner => creatureOwner && creatureOwner.creatures && creatureOwner.creatures.length > 0);
+
+      return {players: creatureOwners, monsters};
     }));
+  }
+
+  moveCreatureToAnotherBase(creatureId: string, newBaseId: string) {
+    this.creatureMovedEvent$.next();
+    this.removeCreature(creatureId);
+    this.addCreature(creatureId, newBaseId);
   }
 
   private addCreature(creatureId: string, baseId: string) {
@@ -137,8 +154,15 @@ export class BaseService extends EntityService {
     }
   }
 
-  private getResistance(base: Base): number {
-    const resistance = base.maxResistance - base.scores.map(score => score.score).reduce((a, b) => a + b, 0);
+  private getResistance(base: Base, creatures: Creature[]): number {
+    let resistance = base.maxResistance - base.scores.map(score => score.score).reduce((previous, score) => previous + score, 0);
+
+    // add monsters strength to the base resistance
+    resistance += base.creatures
+      .map(creatureId => creatures.find(creature => creature.id === creatureId))
+      .filter(creature => creature && creature.ownerId === 'monster')
+      .reduce((previous, monster) => previous + monster.strength, 0);
+
     return resistance;
   }
 

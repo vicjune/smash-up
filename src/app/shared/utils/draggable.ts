@@ -1,17 +1,22 @@
-import { ElementRef } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
 
-export class Draggable {
-  coordinates: number[] = [0, 0];
+import { position } from './position';
 
+export class Draggable {
+  coordinates: [number, number] = [0, 0];
+
+  private previousCoordinates: [number, number] = [0, 0];
   private _dragging = false;
   private draggingStart = false;
   private draggingStartTimeout;
+  private target: HTMLElement;
 
-  private mouseOffset: number[] = [0, 0];
+  private mouseOffset: [number, number] = [0, 0];
 
-  private clickEventSubject = new Subject<void>();
-  private dropEventSubject = new Subject<number[]>();
+  private clickEvent$ = new Subject<void>();
+  private dragEvent$ = new Subject<boolean>();
+  private draggingEvent$ = new Subject<[number, number]>();
+  private dropEvent$ = new Subject<[number, number]>();
 
   constructor() {}
 
@@ -20,71 +25,87 @@ export class Draggable {
   }
 
   get clickEvent(): Observable<void> {
-    return this.clickEventSubject.asObservable();
+    return this.clickEvent$.asObservable();
   }
 
-  get dropEvent(): Observable<number[]> {
-    return this.dropEventSubject.asObservable();
+  get dragEvent(): Observable<boolean> {
+    return this.dragEvent$.asObservable();
+  }
+
+  get draggingEvent(): Observable<[number, number]> {
+    return this.draggingEvent$.asObservable();
+  }
+
+  get dropEvent(): Observable<[number, number]> {
+    return this.dropEvent$.asObservable();
   }
 
   mouseDown(e: TouchEvent): void {
     if (!this._dragging && (!e.touches || e.touches.length === 1)) {
       e.preventDefault();
+      this.target = e.target as HTMLElement;
+      this.previousCoordinates = this.coordinates;
       this.draggingStart = true;
       this._dragging = true;
       this.mouseOffset = [this.convertEvent(e).offsetX, this.convertEvent(e).offsetY];
 
       this.draggingStartTimeout = setTimeout(() => {
         this.draggingStart = false;
+        this.dragEvent$.next(true);
       }, 200);
+
+      this.mouseMove(e);
     }
   }
 
   mouseMove(e: TouchEvent): void {
     if (this._dragging && (!e.touches || e.touches.length === 1)) {
-      const x = this.toPercentage(this.convertEvent(e).pageX - this.mouseOffset[0], 'x');
-      const y = this.toPercentage(this.convertEvent(e).pageY - this.mouseOffset[1], 'y');
+      const x = position.pxToPercent(this.convertEvent(e).pageX - this.mouseOffset[0], 'x');
+      const y = position.pxToPercent(this.convertEvent(e).pageY - this.mouseOffset[1], 'y');
       let inRangeX = x;
       let inRangeY = y;
 
       if (x <= 0) {
         inRangeX = 0;
       }
-      if (x + this.toPercentage(300, 'x') >= 100) {
-        inRangeX = 100 - this.toPercentage(300, 'x');
+      if (x + position.pxToPercent(this.target.clientWidth, 'x') >= 100) {
+        inRangeX = 100 - position.pxToPercent(this.target.clientWidth, 'x');
       }
 
       if (y <= 0) {
         inRangeY = 0;
       }
-      if (y + this.toPercentage(214, 'y') >= 100) {
-        inRangeY = 100 - this.toPercentage(214, 'y');
+      if (y + position.pxToPercent(this.target.clientHeight, 'y') >= 100) {
+        inRangeY = 100 - position.pxToPercent(this.target.clientHeight, 'y');
       }
 
       this.coordinates = [inRangeX, inRangeY];
+      this.draggingEvent$.next(this.coordinates);
     }
   }
 
   mouseUp() {
-    if (this.draggingStartTimeout) {
-      clearTimeout(this.draggingStartTimeout);
-    }
-
     if (this._dragging) {
-      this._dragging = false;
-      this.dropEventSubject.next(this.coordinates);
-    }
+      if (this.draggingStart) {
+        this.clickEvent$.next();
+        this.coordinates = this.previousCoordinates;
+      } else {
+        this.dropEvent$.next(this.coordinates);
+      }
 
-    if (this.draggingStart) {
-      this.draggingStart = false;
+      if (this.draggingStartTimeout) {
+        clearTimeout(this.draggingStartTimeout);
+      }
+
       this._dragging = false;
-      this.clickEventSubject.next();
+      this.draggingStart = false;
+      this.dragEvent$.next(false);
     }
   }
 
   private convertEvent(event) {
     if ('targetTouches' in event) {
-      const bouncingRect = event.target.getBoundingClientRect();
+      const bouncingRect = this.target.getBoundingClientRect();
       return {
         pageX: event.targetTouches[0].pageX,
         pageY: event.targetTouches[0].pageY,
@@ -98,16 +119,6 @@ export class Draggable {
         offsetX: event.offsetX,
         offsetY: event.offsetY
       };
-    }
-  }
-
-  private toPercentage(value: number, direction: string): number {
-    if (direction === 'x') {
-      return value * 100 / window.innerWidth;
-    } else if (direction === 'y') {
-      return value * 100 / window.innerHeight;
-    } else {
-      return value;
     }
   }
 }
