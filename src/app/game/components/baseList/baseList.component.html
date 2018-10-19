@@ -1,6 +1,10 @@
 <div class="baseList">
   <app-base *ngFor="let base of (bases$ | async)" [baseId]="base.id" (delete)="deleteClicked(base)" (conquer)="conquerClicked(base)" [newBase]="newBase"></app-base>
 
+  <div #deleteCreature class="baseList__addButton baseList__addButton--deleteCreature" [ngClass]="{'display': creatureDragging$ | async, 'isHovered': deleteCreatureIsHovered}">
+    <i class="icon-bin2"></i>
+    <span class="baseList__addButton__label">{{'REMOVE_CREATURE' | translate}}</span>
+  </div>
   <button (click)="addBase()" class="baseList__addButton" *ngIf="(playerService.bind() | async).length > 1 && (baseService.bind() | async).length < MAX_BASES && !(creatureDragging$ | async)">
     <i class="icon-plus"></i>
     <span class="baseList__addButton__label">{{'ADD_BASE' | translate}}</span>

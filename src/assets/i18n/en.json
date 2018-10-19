@@ -28,5 +28,6 @@
   "BASE_STRENGTH_MONSTER": "Strength of the monster",
   "BONUS_STRENGTH": "Bonus/Malus effects",
   "BONUS_STRENGTH_DURING_TURN": "Effects during {{playerName}}'s turn",
-  "CHANGE_OWNER": "give control"
+  "CHANGE_OWNER": "give control",
+  "REMOVE_CREATURE": "Remove creature"
 }

@@ -30,11 +30,16 @@
     @include color('player-color-', $playerColors, border-color);
     background-color: rgba(0, 0, 0, 0.4);
 
-    &.highlighted {
+    &.highlighted,
+    &.isHovered {
       box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
       border-color: white;
       background-color: transparent;
       @include color('player-color-', $playerColors, background-color, -10);
+    }
+
+    &.isHovered {
+      transition: none;
     }
 
     &__button {
@@ -56,8 +61,13 @@
       text-align: center;
       transition: color 0.5s;
 
-      .highlighted & {
+      .highlighted &,
+      .isHovered & {
         color: white;
+      }
+
+      .isHovered & {
+        transition: none;
       }
     }
 
@@ -78,8 +88,13 @@
         transform: rotate(180deg);
       }
 
-      .highlighted & {
+      .highlighted &,
+      .isHovered & {
         color: white;
+      }
+
+      .isHovered & {
+        transition: none;
       }
 
       &__score {
@@ -95,8 +110,13 @@
             height: 2px;
             transition: background-color 0.5s;
 
-            .highlighted.highlighted & {
+            .highlighted.highlighted &,
+            .isHovered.isHovered & {
               background-color: white;
+            }
+
+            .isHovered.isHovered & {
+              transition: none;
             }
           }
 

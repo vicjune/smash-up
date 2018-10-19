@@ -84,6 +84,9 @@ export class DraggingService {
           return creature;
         });
       }
+      if (hoveredEntity && hoveredEntity.type === 'delete_button') {
+        this.creatureService.delete(creatureId);
+      }
     });
   }
 
@@ -125,7 +128,7 @@ export class DraggingService {
       };
 
       return [
-        { id: 'deleteButton' },
+        { id: 'delete_button' },
         ...players,
         ...bases
       ].map(entity => {
@@ -152,16 +155,11 @@ export class DraggingService {
       return false;
     }
 
-    let selectedPlayer;
     if (!selectedBase) {
-      selectedPlayer = players.find(player => player.id === entityId);
-
-      if (!selectedPlayer) {
-        return false;
-      }
+      const selectedPlayer = players.find(player => player.id === entityId);
 
       const draggingCreature = creatures.find(creature => creature.id === creatureDraggingId);
-      if (!draggingCreature || draggingCreature.ownerId === selectedPlayer.id) {
+      if (selectedPlayer && draggingCreature && draggingCreature.ownerId === selectedPlayer.id) {
         return false;
       }
     }
