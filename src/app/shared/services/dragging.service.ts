@@ -5,12 +5,11 @@ import { map, first } from 'rxjs/operators';
 import { Draggable } from '@shared/utils/draggable';
 import { Base } from '@shared/models/base';
 import { position } from '@shared/utils/position';
-import { CREATURE_CARD_SIZE, BASE_CARD_SIZE, PLAYER_LIST_PADDING, PLAYER_CARD_MAX_SIZE, PLAYER_CARD_MARGIN_BOTTOM } from '@shared/constants';
+import { CREATURE_CARD_SIZE } from '@shared/constants';
 import { BaseService } from './base.service';
 import { CreatureService } from './creature.service';
 import { PlayerService } from './player.service';
 import { ItemCoordinates } from '@shared/interfaces/itemCoordinates';
-import { windowEvents } from '@shared/utils/windowEvents';
 import { Player } from '@shared/models/player';
 import { Creature } from '@shared/models/creature';
 
