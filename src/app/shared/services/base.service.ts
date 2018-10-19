@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, combineLatest } from 'rxjs';
+import { Observable, combineLatest, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Player } from '@shared/models/player';
@@ -16,6 +16,8 @@ import { CreatureOrderedList } from '@shared/interfaces/creatureOrderedList';
 @Injectable()
 export class BaseService extends EntityService {
   protected entity = 'bases';
+
+  private creatureMovedEvent$ = new Subject<void>();
 
   constructor(
     private playerService: PlayerService,
@@ -41,6 +43,10 @@ export class BaseService extends EntityService {
       base.resistance = this.getResistance(base, creatures);
       return base;
     })));
+  }
+
+  bindCreatureMovedEvent(): Observable<void> {
+    return this.creatureMovedEvent$.asObservable();
   }
 
   add(base: Base): void {
@@ -95,11 +101,6 @@ export class BaseService extends EntityService {
     this.addCreature(creature.id, baseId);
   }
 
-  moveCreatureToAnotherBase(creatureId: string, newBaseId: string) {
-    this.removeCreature(creatureId);
-    this.addCreature(creatureId, newBaseId);
-  }
-
   getCreatureOrderedList(baseId: string): Observable<CreatureOrderedList> {
     return combineLatest(
       this.bind(),
@@ -127,6 +128,12 @@ export class BaseService extends EntityService {
 
       return {players: creatureOwners, monsters};
     }));
+  }
+
+  moveCreatureToAnotherBase(creatureId: string, newBaseId: string) {
+    this.creatureMovedEvent$.next();
+    this.removeCreature(creatureId);
+    this.addCreature(creatureId, newBaseId);
   }
 
   private addCreature(creatureId: string, baseId: string) {

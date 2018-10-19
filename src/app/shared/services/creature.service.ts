@@ -10,9 +10,9 @@ import { localStorage } from '@shared/utils/localStorage';
 
 @Injectable()
 export class CreatureService extends EntityService {
-  deleteCreatureEvent$ = new Subject<string>();
-
   protected entity = 'creatures';
+
+  deleteCreatureEvent$ = new Subject<string>();
 
   constructor(
     private playerService: PlayerService

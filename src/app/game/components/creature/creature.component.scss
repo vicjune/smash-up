@@ -6,13 +6,19 @@
   position: relative;
   transition: all 0.3s;
 
-  &.creature--detailsMode {
+  &.creature--detailsMode:not(.creature--dragging) {
     padding: 10px 0;
-    margin: 0;
+    margin: 0 0 0 15px;
 
     @media (orientation:portrait) {
       padding: 20px 0 10px;
     }
+  }
+
+  &.creature--dragging {
+    margin: 0;
+    padding: 0;
+    z-index: 6;
   }
 
   &__cardWrapper {
@@ -21,26 +27,38 @@
   }
 
   &__card {
-    @include color($playerColors, 'background');
+    cursor: pointer;
+    @include color('creature-card-player-color-', $playerColors, 'background');
     color: white;
     height: 60px;
     width: 40px;
     border-radius: 5px;
     position: relative;
-    transition: all 0.3s;
+    transition: height 0.3s, width 0.3s, border-radius 0.3s, margin 0.3s;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 
     .creature--monster & {
       background-color: white;
       color: black;
     }
 
-    .creature--detailsMode & {
-      margin-left: 25px;
+    .creature--detailsMode &,
+    .creature--dragging & {
       height: 90px;
       width: 60px;
       flex-basis: 60px;
       flex-shrink: 0;
       border-radius: 7.5px;
+    }
+
+    .creature--dragging & {
+      position: fixed;
+      margin: 0;
+    }
+
+    .creature:not(.creature--dragging) & {
+      top: 0 !important;
+      left: 0 !important;
     }
   }
 
@@ -51,8 +69,10 @@
     top: 50%;
     transform: translate(-50%, -50%);
     transition: all 0.3s;
+    pointer-events: none;
 
-    .creature--detailsMode & {
+    .creature--detailsMode &,
+    .creature--dragging & {
       font-size: 36px;
     }
 
@@ -79,6 +99,7 @@
     justify-content: space-between;
     padding: 0 5px;
     transition: all 0.3s;
+    pointer-events: none;
 
     .creature--detailsMode & {
       top: 6px;
@@ -125,7 +146,7 @@
   }
 
   &__button {
-    @include button-active-hover(null, white);
+    @include button-active-hover('', null, white);
     font-size: 30px;
     padding: 0 5px;
 
@@ -163,11 +184,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-left: 25px;
   }
 
   &__deleteButton {
-    @include button-active-hover(null, $danger, 'background');
+    @include button-active-hover('', null, $danger, 'background');
     border-radius: 7.5px;
     height: 35px;
     width: 35px;

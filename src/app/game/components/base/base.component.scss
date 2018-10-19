@@ -7,7 +7,7 @@
   cursor: pointer;
   z-index: 1;
 
-  &.detailsMode {
+  &.detailsMode:not(.creatureDragging) {
     cursor: default;
     z-index: 5;
     top: 50% !important;
@@ -85,7 +85,7 @@
     &__button {
       font-size: 30px;
       padding: 0 5px;
-      @include button-active-hover(null, white, 'simple');
+      @include button-active-hover('', null, white, 'simple');
     }
   }
 
@@ -96,10 +96,10 @@
       padding: 5px 10px;
       border-radius: 5px;
       font-size: 18px;
-      @include button-active-hover(null, $danger, 'background');
+      @include button-active-hover('', null, $danger, 'background');
 
       .forceConquest & {
-        @include button-active-hover(null, $danger, 'border');
+        @include button-active-hover('', null, $danger, 'border');
       }
 
       &__icon {
@@ -111,7 +111,7 @@
   &__card {
     position: relative;
     background-color: rgb(70, 20, 20);
-    @include color($baseColors, 'background-gradient');
+    @include color('base-color-', $baseColors, 'background-gradient');
     border-radius: 15px;
     height: 214px;
     width: 300px;
@@ -125,7 +125,8 @@
       pointer-events: auto;
     }
 
-    .conquered:not(.editMode) & {
+    .conquered:not(.editMode) &,
+    .isHovered:not(.editMode) & {
       &:before {
         content: '';
         position: absolute;
@@ -138,24 +139,9 @@
       }
     }
 
-    &__addScoreList {
-      position: absolute;
-      bottom: 0;
-      left: -50px;
-      padding: 10px;
-
-      &__button {
-        display: block;
-        height: 30px;
-        width: 30px;
-        border-radius: 5px;
-        margin-top: 10px;
-        font-size: 17px;
-        @include button-active-hover($playerColors, null, 'background');
-
-        &:first-child {
-          margin-top: 0;
-        }
+    .isHovered:not(.editMode) & {
+      &:before {
+        border-color: white;
       }
     }
 
@@ -175,12 +161,12 @@
         text-align: center;
 
         &.edit {
-          @include button-active-hover(null, $primary, 'background');
+          @include button-active-hover('', null, $primary, 'background');
         }
 
         &.delete {
           margin-top: 10px;
-          @include button-active-hover(null, $danger, 'background');
+          @include button-active-hover('', null, $danger, 'background');
         }
       }
     }
@@ -192,7 +178,7 @@
       font-size: 40px;
       line-height: 40px;
       color: white;
-      @include color($baseColors, color);
+      @include color('base-color-', $baseColors, color);
 
       &.upsideDown {
         top: auto;
@@ -222,7 +208,7 @@
         position: relative;
         font-size: 100px;
         line-height: 100px;
-        @include color($baseColors, color);
+        @include color('base-color-', $baseColors, color);
         padding-bottom: 8px;
         flex-basis: 55px;
         flex-grow: 1;
@@ -230,7 +216,7 @@
         text-align: center;
 
         &:nth-child(2) {
-          @include color($baseColors, color, 20);
+          @include color('base-color-', $baseColors, color, 20);
         }
 
         &:last-child:last-child {
@@ -282,7 +268,7 @@
       width: 30px;
       border-radius: 5px;
       margin: 0 5px 10px;
-      @include button-active-hover($baseColors, null, 'background');
+      @include button-active-hover('base-color-picker-color-', $baseColors, null, 'background');
     }
   }
 
@@ -292,7 +278,7 @@
     justify-content: space-around;
 
     &__score {
-      @include color($playerColors, color);
+      @include color('score-player-color-', $playerColors, color);
       font-size: 30px;
     }
   }
@@ -303,6 +289,12 @@
     top: 50%;
     transform: translateY(-50%);
     padding-left: 20px;
+
+    .creatureDragging & {
+      width: 0;
+      height: 0;
+      overflow: hidden;
+    }
 
     @media (orientation:portrait) {
       width: calc(100% + 50px);
@@ -357,32 +349,12 @@
       }
 
       button {
-        @include button-active-hover($playerColors, null, 'simple');
+        @include button-active-hover('creature-each-player-color-', $playerColors, null, 'simple');
         font-size: 22px;
         padding: 0 5px;
       }
     }
   }
-
-  &__backdrop {
-    position: fixed;
-    z-index: 4;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: black;
-    visibility: hidden;
-    opacity: 0;
-    transition: opacity 0.5s, visibility 0s ease 0.5s;
-
-    &.visible {
-      opacity: 0.6;
-      visibility: visible;
-      transition: opacity 0.5s;
-    }
-  }
-
 }
 
 .globalActions {
@@ -412,7 +384,7 @@
   }
 
   &__addCreature {
-    @include button-active-hover($playerColors, null, 'background');
+    @include button-active-hover('add-creature-player-color-', $playerColors, null, 'background');
     border-radius: 5px;
     height: 40px;
     padding: 0 10px;
@@ -445,7 +417,7 @@
     }
 
     .globalActions__player--monsters & {
-      @include button-active-hover(null, white, 'border');
+      @include button-active-hover('', null, white, 'border');
     }
 
     .icon:first-child {
@@ -453,7 +425,6 @@
       margin-right: 10px;
     }
 
-    .icon-hipster,
     .icon-hipster {
       font-size: 20px;
     }
@@ -462,5 +433,24 @@
       font-size: 24px;
       line-height: 26px;
     }
+  }
+}
+
+.backdrop {
+  position: fixed;
+  z-index: 4;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: black;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.5s, visibility 0s ease 0.5s;
+
+  &.visible {
+    opacity: 0.6;
+    visibility: visible;
+    transition: opacity 0.5s;
   }
 }

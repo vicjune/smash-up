@@ -12,6 +12,7 @@ import { BaseService } from '@shared/services/base.service';
 import { TimerService } from '@shared/services/timer.service';
 import { TimerComponent } from '@shared/components/timer/timer.component';
 import { CreatureService } from '@shared/services/creature.service';
+import { DraggingService } from './services/dragging.service';
 
 @NgModule({
   imports: [
@@ -41,6 +42,7 @@ import { CreatureService } from '@shared/services/creature.service';
     BaseService,
     TimerService,
     CreatureService,
+    DraggingService,
   ]
 })
 export class SharedModule { }

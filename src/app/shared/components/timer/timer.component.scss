@@ -10,7 +10,7 @@
     left: 50%;
     transform: translateX(-50%);
     font-size: 40px;
-    @include color($playerColors, color, 10);
+    @include color('timer-player-', $playerColors, color, 10);
 
     &--blinking {
       animation: blinking 1s infinite;
@@ -42,7 +42,7 @@
 
     &--playPause,
     &--reset {
-      @include button-active-hover(null, white, border);
+      @include button-active-hover('', null, white, border);
       border-width: 2px !important;
       width: 40px;
       opacity: 0.7;
@@ -51,7 +51,7 @@
     &--next {
       padding: 0 20px;
       box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-      @include button-active-hover($playerColors, null, background);
+      @include button-active-hover('timer-player-', $playerColors, null, background);
     }
   }
 }

@@ -1,6 +1,7 @@
 import { BehaviorSubject } from 'rxjs';
 
 const portrait$ = new BehaviorSubject<boolean>(false);
+
 checkOrientation();
 window.addEventListener('orientationchange', checkOrientation, false);
 window.addEventListener('resize', checkOrientation, false);

@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { CreatureService } from '@shared/services/creature.service';
 import { Creature } from '@shared/models/creature';
 import { Draggable } from '@shared/utils/draggable';
+import { DraggingService } from '@shared/services/dragging.service';
 
 @Component({
   selector: 'app-creature',
@@ -14,6 +15,8 @@ import { Draggable } from '@shared/utils/draggable';
 export class CreatureComponent implements OnInit, OnDestroy {
   @Input() creatureId: string;
   @Input() detailModeCreatureId: string;
+  @Input() creatureDragging = false;
+  @Input() otherDraggable: Draggable = null;
   @Output() toggleDetailMode = new EventEmitter<void>();
 
   creature$: Observable<Creature>;
@@ -31,10 +34,13 @@ export class CreatureComponent implements OnInit, OnDestroy {
   }
 
   constructor(
-    public creatureService: CreatureService
+    public creatureService: CreatureService,
+    public draggingService: DraggingService
   ) {}
 
   ngOnInit() {
+    this.draggable = this.otherDraggable || new Draggable();
+
     this.creature$ = this.creatureService.bindFromId(this.creatureId) as Observable<Creature>;
     this.totalBonusStrengthAbsolute$ = this.creature$.pipe(map((creature: Creature) => {
       return creature && Math.abs(
@@ -52,10 +58,26 @@ export class CreatureComponent implements OnInit, OnDestroy {
     }));
 
     this.subscription.add(this.draggable.clickEvent.subscribe(() => this.seeMoreDetails()));
+    this.subscription.add(this.draggable.dragEvent.subscribe(dragging => this.toggleDragMode(dragging)));
+    this.subscription.add(this.draggable.draggingEvent.subscribe(coordinates => this.sendDraggingCoordinates(coordinates)));
+    this.subscription.add(this.draggable.dropEvent.subscribe(() => this.triggerDrop()));
   }
 
   seeMoreDetails() {
     this.toggleDetailMode.emit();
+  }
+
+  toggleDragMode(dragging: boolean) {
+    this.draggingService.creatureDraggable = this.draggable;
+    this.draggingService.toggleCreatureDragMode(this.creatureId, dragging);
+  }
+
+  sendDraggingCoordinates(coordinates: [number, number]) {
+    this.draggingService.setCreatureDraggingCoordinates(coordinates);
+  }
+
+  triggerDrop() {
+    this.draggingService.triggerCreatureDrop(this.creatureId);
   }
 
   increaseBaseStrength() {
@@ -109,6 +131,10 @@ export class CreatureComponent implements OnInit, OnDestroy {
 
   mouseDown(e) {
     this.draggable.mouseDown(e);
+  }
+
+  mouseMove(e) {
+    this.draggable.mouseMove(e);
   }
 
   mouseUp() {

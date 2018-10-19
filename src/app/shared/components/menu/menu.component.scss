@@ -35,7 +35,7 @@
     font-size: 30px;
     line-height: 30px;
 
-    @include button-active-hover(null, rgba(255, 255, 255, 0.5), 'simple');
+    @include button-active-hover('', null, rgba(255, 255, 255, 0.5), 'simple');
   }
 
   &__wrapper {
@@ -57,7 +57,7 @@
       &__button {
         opacity: 0.5;
         padding: 0 5px;
-        @include button-active-hover(null, white, 'simple');
+        @include button-active-hover('', null, white, 'simple');
 
         &[disabled] {
           opacity: 1;
@@ -118,7 +118,7 @@
       }
 
       &__button {
-        @include button-active-hover(null, white, 'simple');
+        @include button-active-hover('', null, white, 'simple');
         font-size: 22px;
       }
 
@@ -131,7 +131,7 @@
     }
 
     &__deletePlayer {
-      @include color($playerColors, color, 10);
+      @include color('menu-player-color-', $playerColors, color, 10);
     }
   }
 
@@ -148,7 +148,7 @@
 
     &__link {
       color: white;
-      @include button-active-hover(null, white, 'simple');
+      @include button-active-hover('', null, white, 'simple');
 
       @media (hover: hover) {
         &:hover {

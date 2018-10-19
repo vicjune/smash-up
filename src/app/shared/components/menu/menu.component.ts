@@ -1,7 +1,6 @@
 import { TimerService } from '@shared/services/timer.service';
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
 
 import { PlayerService } from '../../services/player.service';
 import { Player } from '../../models/player';
@@ -9,6 +8,7 @@ import { BaseService } from '@shared/services/base.service';
 import { MAX_PLAYERS, TIMER_SECONDS_INTERVAL } from '@shared/constants';
 import { localStorage } from '@shared/utils/localStorage';
 import { CreatureService } from '@shared/services/creature.service';
+import { DraggingService } from '@shared/services/dragging.service';
 
 @Component({
   selector: 'app-menu',
@@ -31,7 +31,8 @@ export class MenuComponent implements OnInit {
     public baseService: BaseService,
     public translate: TranslateService,
     public timerService: TimerService,
-    public creatureService: CreatureService
+    public creatureService: CreatureService,
+    public draggingService: DraggingService
   ) { }
 
   ngOnInit() {
@@ -52,6 +53,7 @@ export class MenuComponent implements OnInit {
   callbackDelete(index: number) {
     if (index === 1) {
       this.playerService.delete(this.removedPlayer.id);
+      this.draggingService.unregisterCoordinates(this.removedPlayer.id);
     }
   }
 

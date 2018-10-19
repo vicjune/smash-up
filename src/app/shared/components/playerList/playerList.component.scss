@@ -1,7 +1,7 @@
 @import "styles";
 
 .playerList {
-  margin-top: 50px;
+  margin: 50px 0 0 25px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -9,7 +9,7 @@
   top: 0;
   left: 0;
   bottom: 0;
-  width: 250px;
+  width: 200px;
   padding: 20px 0;
 
   &__element {
@@ -27,14 +27,19 @@
     position: relative;
     box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
     transition: all 0.5s;
-    @include color($playerColors, border-color);
+    @include color('player-color-', $playerColors, border-color);
     background-color: rgba(0, 0, 0, 0.4);
 
-    &.playing.playing.playing {
+    &.highlighted,
+    &.isHovered {
       box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
       border-color: white;
       background-color: transparent;
-      @include color($playerColors, background-color, -10);
+      @include color('player-color-', $playerColors, background-color, -10);
+    }
+
+    &.isHovered {
+      transition: none;
     }
 
     &__button {
@@ -56,8 +61,13 @@
       text-align: center;
       transition: color 0.5s;
 
-      .playing & {
+      .highlighted &,
+      .isHovered & {
         color: white;
+      }
+
+      .isHovered & {
+        transition: none;
       }
     }
 
@@ -68,7 +78,7 @@
       font-size: 40px;
       transition: color 0.5s;
       line-height: 40px;
-      @include color($playerColors, color);
+      @include color('player-color-', $playerColors, color);
 
       &.upsideDown {
         left: auto;
@@ -78,8 +88,13 @@
         transform: rotate(180deg);
       }
 
-      .playing & {
+      .highlighted &,
+      .isHovered & {
         color: white;
+      }
+
+      .isHovered & {
+        transition: none;
       }
 
       &__score {
@@ -95,15 +110,20 @@
             height: 2px;
             transition: background-color 0.5s;
 
-            .playing.playing & {
+            .highlighted.highlighted &,
+            .isHovered.isHovered & {
               background-color: white;
+            }
+
+            .isHovered.isHovered & {
+              transition: none;
             }
           }
 
           @each $color in $playerColors {
             $i: index($playerColors, $color);
 
-            .color-#{$i} &:after {
+            .player-color-#{$i} &:after {
               background-color: $color;
             }
           }
@@ -155,7 +175,7 @@
       font-size: 30px;
       line-height: 20px;
       padding: 0 5px;
-      @include button-active-hover($playerColors, null, 'simple');
+      @include button-active-hover('player-color-', $playerColors, null, 'simple');
     }
   }
 
