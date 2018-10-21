@@ -44,14 +44,16 @@ export class PlayerListComponent implements OnInit, AfterViewInit, OnDestroy {
     ).subscribe(([, players]) => {
       const htmlCollection = this.playerListElementRef.nativeElement.children;
       Array.from(htmlCollection).forEach((playerRef: HTMLElement, index) => {
-        this.draggingService.registerCoordinates({
-          itemId: players[index].id,
-          x: position.pxToPercent(playerRef.getBoundingClientRect().left, 'x'),
-          y: position.pxToPercent(playerRef.getBoundingClientRect().top, 'y'),
-          width: playerRef.clientWidth,
-          height: playerRef.clientHeight,
-          type: 'player'
-        });
+        if (players && players[index]) {
+          this.draggingService.registerCoordinates({
+            itemId: players[index].id,
+            x: position.pxToPercent(playerRef.getBoundingClientRect().left, 'x'),
+            y: position.pxToPercent(playerRef.getBoundingClientRect().top, 'y'),
+            width: playerRef.clientWidth,
+            height: playerRef.clientHeight,
+            type: 'player'
+          });
+        }
       });
     }));
   }

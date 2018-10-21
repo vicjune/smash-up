@@ -80,6 +80,7 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscription.add(this.draggable.clickEvent.subscribe(() => this.seeMoreDetails()));
     this.subscription.add(this.draggable.dropEvent.subscribe((position) => this.updateBasePosition(position)));
     this.subscription.add(this.baseService.bindCreatureMovedEvent().subscribe(() => this.exitMoreDetails(true)));
+    this.subscription.add(this.baseService.bindCreatureDeletedEvent().subscribe(() => this.exitCreatureDetailMode()));
     this.subscription.add(this.draggingService.bindIsHovered(this.baseId).subscribe((hovered) => this.isHovered = hovered));
 
     // Workaround angular change detect bug
@@ -159,7 +160,7 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
       this.detailsMode$.next(false);
       this.editMode$.next(false);
     }
-    this.detailModeCreatureId = null;
+    this.exitCreatureDetailMode();
   }
 
   deleteBase() {
