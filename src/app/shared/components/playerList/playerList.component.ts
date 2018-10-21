@@ -42,18 +42,20 @@ export class PlayerListComponent implements OnInit, AfterViewInit, OnDestroy {
       windowEvents.portrait,
       this.players$
     ).subscribe(([, players]) => {
-      const htmlCollection = this.playerListElementRef.nativeElement.children;
-      Array.from(htmlCollection).forEach((playerRef: HTMLElement, index) => {
-        if (players && players[index]) {
-          this.draggingService.registerCoordinates({
-            itemId: players[index].id,
-            x: position.pxToPercent(playerRef.getBoundingClientRect().left, 'x'),
-            y: position.pxToPercent(playerRef.getBoundingClientRect().top, 'y'),
-            width: playerRef.clientWidth,
-            height: playerRef.clientHeight,
-            type: 'player'
-          });
-        }
+      setTimeout(() => {
+        const htmlCollection = this.playerListElementRef.nativeElement.children;
+        Array.from(htmlCollection).forEach((playerRef: HTMLElement, index) => {
+          if (players && players[index]) {
+            this.draggingService.registerCoordinates({
+              itemId: players[index].id,
+              x: position.pxToPercent(playerRef.getBoundingClientRect().left, 'x'),
+              y: position.pxToPercent(playerRef.getBoundingClientRect().top, 'y'),
+              width: playerRef.clientWidth,
+              height: playerRef.clientHeight,
+              type: 'player'
+            });
+          }
+        });
       });
     }));
   }
