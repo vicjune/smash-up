@@ -26,6 +26,6 @@
   "BASE_STRENGTH": "Force de la créature",
   "BASE_STRENGTH_MONSTER": "Force du monstre",
   "BONUS_STRENGTH_DURING_TURN": "Effets durant le tour de {{playerName}}",
-  "CHANGE_OWNER": "donner le contrôle",
+  "CHANGE_OWNER": "Donner le contrôle",
   "REMOVE_CREATURE": "Retirer la créature"
 }

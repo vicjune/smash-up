@@ -6,6 +6,7 @@ import { CreatureService } from '@shared/services/creature.service';
 import { Creature } from '@shared/models/creature';
 import { Draggable } from '@shared/utils/draggable';
 import { DraggingService } from '@shared/services/dragging.service';
+import { MAX_CREATURE_CARD_ROTATION_DEG } from '@shared/constants';
 
 @Component({
   selector: 'app-creature',
@@ -20,6 +21,7 @@ export class CreatureComponent implements OnInit, OnDestroy {
   @Output() toggleDetailMode = new EventEmitter<void>();
 
   creature$: Observable<Creature>;
+  transform$: Observable<string>;
   totalBonusStrengthAbsolute$: Observable<number>;
   totalBonusStrengthSeparator$: Observable<string>;
 
@@ -56,6 +58,8 @@ export class CreatureComponent implements OnInit, OnDestroy {
     this.translatePlayerParam = this.creature$.pipe(map((creature: Creature) => {
       return {playerName: creature ? creature.owner.name : ''};
     }));
+
+    this.transform$ = this.creature$.pipe(map(this.getTransform));
 
     this.subscription.add(this.draggable.clickEvent.subscribe(() => this.seeMoreDetails()));
     this.subscription.add(this.draggable.dragEvent.subscribe(dragging => this.toggleDragMode(dragging)));
@@ -127,6 +131,15 @@ export class CreatureComponent implements OnInit, OnDestroy {
   delete() {
     this.toggleDetailMode.emit();
     this.creatureService.delete(this.creatureId);
+  }
+
+  getTransform(creature: Creature) {
+    if (!creature) {
+      return 'none';
+    }
+    return 'rotate(' + (Math.floor(
+      creature.rotation * (MAX_CREATURE_CARD_ROTATION_DEG + MAX_CREATURE_CARD_ROTATION_DEG + 1)
+    ) - MAX_CREATURE_CARD_ROTATION_DEG) + 'deg)';
   }
 
   mouseDown(e) {

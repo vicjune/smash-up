@@ -1,7 +1,7 @@
 <div [class]="'creature ' + ((creature$ | async).owner ? 'creature-card-player-color-' + ((creature$ | async).owner.color) : 'creature--monster')" [ngClass]="{'creature--detailsMode': detailsMode, 'creature--dragging': otherDraggable, 'creature__card--bonusPositive': (totalBonusStrengthSeparator$ | async) === '+'}">
   <div class="creature__cardWrapper">
     <div class="creature__card"
-    [ngStyle]="{'left.%': draggable?.coordinates[0], 'top.%': draggable?.coordinates[1]}"
+    [ngStyle]="{'left.%': draggable?.coordinates[0], 'top.%': draggable?.coordinates[1], transform: transform$ | async}"
     (mousedown)="mouseDown($event)"
     (touchstart)="mouseDown($event)"
     (window:mousemove)="mouseMove($event)"
