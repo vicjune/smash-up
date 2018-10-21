@@ -32,6 +32,7 @@ export class TimerService {
   toggleActive(): void {
     const timer = this.timerSubject.getValue();
     timer.active = !timer.active;
+    timer.startValue = TIMER_DEFAULT;
     this.reset();
     this.timerSubject.next(timer);
     this.storeInLocalStorage();
@@ -72,16 +73,6 @@ export class TimerService {
     } else {
       timer.startValue = (TIMER_SECONDS_INTERVAL * 10);
     }
-    if (!timer.running) {
-      timer.value = timer.startValue;
-    }
-    this.timerSubject.next(timer);
-    this.storeInLocalStorage();
-  }
-
-  resetStartValue() {
-    const timer = this.timerSubject.getValue();
-    timer.startValue = TIMER_DEFAULT;
     if (!timer.running) {
       timer.value = timer.startValue;
     }

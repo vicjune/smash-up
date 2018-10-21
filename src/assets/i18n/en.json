@@ -16,7 +16,6 @@
   "FORCE_CONQUEST": "Force conquest",
   "ADD_BASE": "Add base",
   "BASE_RESISTANCE": "Resistance",
-  "ON_TURN": "during the turn",
   "SIGNATURE": "Created with love by",
   "PLAYING": "playing",
   "ENABLE_TIMER": "Enable timer",
@@ -26,7 +25,6 @@
   "MONSTERS": "Monsters",
   "BASE_STRENGTH": "Strength of the creature",
   "BASE_STRENGTH_MONSTER": "Strength of the monster",
-  "BONUS_STRENGTH": "Bonus/Malus effects",
   "BONUS_STRENGTH_DURING_TURN": "Effects during {{playerName}}'s turn",
   "CHANGE_OWNER": "give control",
   "REMOVE_CREATURE": "Remove creature"

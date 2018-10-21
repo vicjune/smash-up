@@ -18,6 +18,7 @@ export class BaseService extends EntityService {
   protected entity = 'bases';
 
   private creatureMovedEvent$ = new Subject<void>();
+  private creatureDeletedEvent$ = new Subject<void>();
 
   constructor(
     private playerService: PlayerService,
@@ -47,6 +48,10 @@ export class BaseService extends EntityService {
 
   bindCreatureMovedEvent(): Observable<void> {
     return this.creatureMovedEvent$.asObservable();
+  }
+
+  bindCreatureDeletedEvent(): Observable<void> {
+    return this.creatureDeletedEvent$.asObservable();
   }
 
   add(base: Base): void {
@@ -144,6 +149,7 @@ export class BaseService extends EntityService {
   }
 
   private removeCreature(creatureId: string) {
+    this.creatureDeletedEvent$.next();
     for (const base of this.entities$.getValue() as Base[]) {
       const creatureIndex = base.creatures.findIndex(baseCreatureId => baseCreatureId === creatureId);
       if (creatureIndex !== -1) {

@@ -121,13 +121,6 @@
         @include button-active-hover('', null, white, 'simple');
         font-size: 22px;
       }
-
-      &__reset {
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-      }
     }
 
     &__deletePlayer {

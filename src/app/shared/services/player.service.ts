@@ -115,7 +115,7 @@ export class PlayerService extends EntityService {
   }
 
   updateScore(modifier: number, id: string, fromConquest = false): void {
-    if (modifier !== 0) {
+    if (modifier) {
       const player = this.get(id).entity as Player;
       if (player) {
         player.realScore = player.realScore + modifier >= 0 ? player.realScore + modifier : 0;
