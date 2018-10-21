@@ -35,7 +35,7 @@ export function HttpLoaderFactory(http: HttpClient) {
   bootstrap: [AppComponent]
 })
 export class AppModule {
-  localStorageVersion = 4;
+  localStorageVersion = 5;
 
   constructor() {
     if (localStorage.get<number>('version') !== this.localStorageVersion) {
