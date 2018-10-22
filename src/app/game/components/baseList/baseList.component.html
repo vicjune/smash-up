@@ -1,18 +1,12 @@
 <div class="baseList">
-  <app-base *ngFor="let base of (bases$ | async)" [baseId]="base.id" (delete)="deleteClicked(base)" (conquer)="conquerClicked(base)" [newBase]="newBase"></app-base>
+  <app-base *ngFor="let baseId of (bases$ | async)" [baseId]="baseId" (delete)="deleteBase(baseId)" (conquer)="conquerBase(baseId)" [newBase]="newBase"></app-base>
 
   <div #deleteCreature class="baseList__addButton baseList__addButton--deleteCreature" [ngClass]="{'display': creatureDragging$ | async, 'isHovered': deleteCreatureIsHovered}">
     <i class="icon-bin2"></i>
     <span class="baseList__addButton__label">{{'REMOVE_CREATURE' | translate}}</span>
   </div>
-  <button (click)="addBase()" class="baseList__addButton" *ngIf="(playerService.bind() | async).length > 1 && (baseService.bind() | async).length < MAX_BASES && !(creatureDragging$ | async)">
+  <button (click)="addBase()" class="baseList__addButton" *ngIf="(playerService.bindList() | async).length > 1 && (baseService.bindList() | async).length < MAX_BASES && !(creatureDragging$ | async)">
     <i class="icon-plus"></i>
     <span class="baseList__addButton__label">{{'ADD_BASE' | translate}}</span>
   </button>
 </div>
-
-<app-popin [(modal)]="deletePopin" [title]="'REMOVE_BASE_PROMPT' | translate" [buttons]="[{text: 'CANCEL' | translate, secondary: true}, {text: 'REMOVE' | translate, danger: true}]" (buttonPressed)="deleteBase($event)">
-</app-popin>
-
-<app-popin [(modal)]="conquerPopin" [title]="conqueringBase ? ('CONQUER_BASE_PROMPT' | translate: {baseResistance: conqueringBase.resistance}) : ''" [buttons]="[{text: 'CANCEL' | translate, secondary: true}, {text: 'CONQUER' | translate, danger: true}]" (buttonPressed)="conquerBase($event)">
-</app-popin>

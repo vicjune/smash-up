@@ -78,7 +78,7 @@ export class DraggingService {
         this.baseService.moveCreatureToAnotherBase(creatureId, hoveredEntity.itemId);
       }
       if (hoveredEntity && hoveredEntity.type === 'player') {
-        this.creatureService.editById(creatureId, (creature: Creature) => {
+        this.creatureService.edit(creatureId, (creature: Creature) => {
           creature.ownerId = hoveredEntity.itemId;
           return creature;
         });
@@ -94,9 +94,9 @@ export class DraggingService {
       this.draggingCreatureId$,
       this.draggingCoordinates$,
       this.bindEntitiesCoordinates(),
-      this.baseService.bind(),
-      this.playerService.bind(),
-      this.creatureService.bind()
+      this.baseService.bindAllEntities(),
+      this.playerService.bindAllEntities(),
+      this.creatureService.bindAllEntities()
     ).pipe(map(([draggingCreatureId, coordinates, entitiesCoordinates, bases, players, creatures]) => entitiesCoordinates.map(entityCoordinates => ({
       ...entityCoordinates,
       hovered: this.isCreatureSuperposingEntity(
@@ -104,9 +104,9 @@ export class DraggingService {
         draggingCreatureId,
         coordinates,
         entitiesCoordinates,
-        bases,
+        bases as Base[],
         players,
-        creatures
+        creatures as Creature[]
       )
     }))));
   }
@@ -114,8 +114,8 @@ export class DraggingService {
   private bindEntitiesCoordinates(): Observable<ItemCoordinates[]> {
     return combineLatest(
       this.itemCoordinates$,
-      this.playerService.bind(),
-      this.baseService.bind(),
+      this.playerService.bindAllEntities(),
+      this.baseService.bindAllEntities(),
     ).pipe(map(([itemCoordinates, players, bases]) => {
       const emptyItem = {
         itemId: null,

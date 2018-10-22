@@ -1,97 +1,84 @@
 import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, BehaviorSubject, of, combineLatest } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 import { Entity } from '@shared/models/entity';
 import { localStorage } from '@shared/utils/localStorage';
+import { arrayUtils } from '@shared/utils/arrayUtils';
 
 @Injectable()
 export class EntityService {
   protected entity: string;
-  protected entities$: BehaviorSubject<Entity[]> = new BehaviorSubject<Entity[]>([]);
+  protected entities$ = {};
+  protected entityList$: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
 
   constructor() {}
 
-  bind(): Observable<Entity[]> {
-    return this.entities$.asObservable();
+  bindFromId(id: string): Observable<Entity> {
+    return this.entities$[id] ? this.entities$[id].asObservable() : of(null);
   }
 
-  bindFromId(id: string): Observable<Entity> {
-    return this.bind().pipe(map(entities => entities.find(entity => entity.id === id)));
+  bindList(): Observable<string[]> {
+    return this.entityList$.asObservable();
+  }
+
+  bindAllEntities() {
+    return this.bindList().pipe(
+      switchMap(entitiesId => combineLatest(...entitiesId.map(entityId => this.bindFromId(entityId))))
+    );
   }
 
   add(entity: Entity): void {
-    const entities = this.entities$.getValue();
-    entities.push(entity);
-    this.update(entities);
+    this.entities$[entity.id] = new BehaviorSubject<Entity>(entity);
+    const entityList = this.entityList$.getValue();
+    entityList.push(entity.id);
+    this.entityList$.next(entityList);
+    this.updateLocalStorage();
   }
 
-  edit(entity: Entity): void {
-    const entities = this.entities$.getValue();
-    if (this.get(entity.id).entity) {
-      entities[this.get(entity.id).index] = entity;
+  edit(entityId: string, editFunction: (entity: Entity) => Entity) {
+    let entity = entityId && this.entities$[entityId].getValue();
+    if (entity) {
+      entity = editFunction(entity);
+      this.entities$[entity.id].next(entity);
+      this.updateLocalStorage();
     }
-    this.update(entities);
-  }
-
-  editById(entityId: string, editFunction: (entity: Entity) => Entity) {
-    const entity = this.get(entityId).entity;
-    this.edit(editFunction(entity));
   }
 
   delete(id: string): void {
-    const entities = this.entities$.getValue();
-    if (this.get(id).entity) {
-      entities.splice(this.get(id).index, 1);
-    }
-    this.update(entities);
+    const entityList = arrayUtils.delete(id, this.entityList$.getValue());
+    this.entityList$.next(entityList);
+    delete this.entities$[id];
+    this.updateLocalStorage();
   }
 
   reset(): void {
-    this.update([]);
+    this.entityList$.next([]);
+    this.entities$ = {};
+    this.updateLocalStorage();
   }
 
-  getNewColor(): number {
-    const existingItems = this.entities$.getValue();
-    for (let index = 1; index < 99; index++) {
-      if (existingItems.map(item => item.color).indexOf(index) === -1) {
-        return index;
-      }
+  protected getAllEntities(): Entity[] {
+    return this.entityList$.getValue().map(entityId => this.getEntity(entityId));
+  }
+
+  protected getEntity(id: string): Entity {
+    if (this.entities$[id]) {
+      return this.entities$[id].getValue();
     }
+    return null;
   }
 
-  bindAvailableColors(length: number): Observable<number[]> {
-    return this.bind().pipe(map(entities => {
-      const takenColors = entities.map(entity => entity.color);
-      const allColors = [];
-      for (let index = 1; index < length + 1; index++) {
-        allColors[index] = index;
-      }
-      return this.arrayDiff(allColors, takenColors);
-    }));
+  protected updateLocalStorage(): void {
+    localStorage.set(this.entity, this.getAllEntities());
   }
 
-  protected get(id: string): {entity: Entity, index: number} {
-    const entities = this.entities$.getValue();
-    const entityIndex = entities.map(ent => ent.id).indexOf(id);
-    if (entityIndex !== -1) {
-      return {
-        entity: entities[entityIndex],
-        index: entityIndex
-      };
+  protected updateFromLocalStorage(entities: Entity[]): void {
+    if (entities) {
+      this.entityList$.next(entities.map(entity => entity.id));
+      entities.forEach(entity => {
+        this.entities$[entity.id] = new BehaviorSubject<Entity>(entity);
+      });
     }
-    return {
-      entity: null,
-      index: null
-    };
-  }
-
-  protected update(entities: Entity[]): void {
-    localStorage.set(this.entity, entities);
-    this.entities$.next(entities);
-  }
-
-  protected arrayDiff(longArray: any[], shortArray: any[]): any[] {
-    return longArray.filter(i => shortArray.indexOf(i) < 0);
   }
 }

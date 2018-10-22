@@ -29,7 +29,7 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
 
   base$: Observable<Base>;
   creatureList$: Observable<CreatureOrderedList>;
-  players$ = this.playerService.bind();
+  players$ = this.playerService.bindAllEntities();
   editMode$ = new BehaviorSubject<boolean>(false);
   detailsMode$ = new BehaviorSubject<boolean>(false);
   transform$: Observable<string>;
@@ -57,7 +57,7 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
       map(base => base as Base),
     );
 
-    this.creatureList$ = this.baseService.getCreatureOrderedList(this.baseId);
+    this.creatureList$ = this.baseService.bindCreatureOrderedList(this.baseId);
 
     this.transform$ = combineLatest(
       this.base$,
@@ -103,7 +103,7 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   increaseReward(index: number) {
-    this.baseService.editById(this.baseId, (base: Base) => {
+    this.baseService.edit(this.baseId, (base: Base) => {
       if (base.rewards[index] < BASE_REWARD_LIMITS[1]) {
         base.rewards[index]++;
       }
@@ -112,7 +112,7 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   decreaseReward(index: number) {
-    this.baseService.editById(this.baseId, (base: Base) => {
+    this.baseService.edit(this.baseId, (base: Base) => {
       if (base.rewards[index] > BASE_REWARD_LIMITS[0]) {
         base.rewards[index]--;
       }
@@ -121,7 +121,7 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   increaseResistance() {
-    this.baseService.editById(this.baseId, (base: Base) => {
+    this.baseService.edit(this.baseId, (base: Base) => {
       if (base.maxResistance < BASE_MAX_RESISTANCE) {
         base.maxResistance++;
       }
@@ -130,7 +130,7 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   decreaseResistance() {
-    this.baseService.editById(this.baseId, (base: Base) => {
+    this.baseService.edit(this.baseId, (base: Base) => {
       if (base.maxResistance > 0) {
         base.maxResistance--;
       }
@@ -139,7 +139,7 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   chooseColor(color: number) {
-    this.baseService.editById(this.baseId, (base: Base) => {
+    this.baseService.edit(this.baseId, (base: Base) => {
       base.color = color;
       return base;
     });
@@ -190,7 +190,7 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
 
   increaseEachCreatureStrength(creatureIds: string[]) {
     creatureIds.forEach(creatureId => {
-      this.creatureService.editById(creatureId, (creature: Creature) => {
+      this.creatureService.edit(creatureId, (creature: Creature) => {
         creature.basicStrength++;
         return creature;
       });
@@ -199,7 +199,7 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
 
   decreaseEachCreatureStrength(creatureIds: string[]) {
     creatureIds.forEach(creatureId => {
-      this.creatureService.editById(creatureId, (creature: Creature) => {
+      this.creatureService.edit(creatureId, (creature: Creature) => {
         if (creature.basicStrength > 0) {
           creature.basicStrength--;
         }
@@ -210,7 +210,7 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
 
   updateBasePosition(position: [number, number]) {
     const [x, y] = position;
-    this.baseService.editById(this.baseId, (base: Base) => {
+    this.baseService.edit(this.baseId, (base: Base) => {
       if (base) {
         base.position.x = x;
         base.position.y = y;

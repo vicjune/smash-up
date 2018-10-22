@@ -15,12 +15,8 @@ import { position } from '@shared/utils/position';
   styleUrls: ['./baseList.component.scss']
 })
 export class BaseListComponent implements OnInit, AfterViewInit, OnDestroy {
-  deletePopin = false;
-  conquerPopin = false;
   newBase = false;
-  conqueringBase: Base;
-  deletingBase: Base;
-  bases$: Observable<Base[]>;
+  bases$: Observable<string[]>;
   MAX_BASES: number = MAX_PLAYERS + 1;
   creatureDragging$ = this.draggingService.bindCreatureDragging();
 
@@ -36,7 +32,7 @@ export class BaseListComponent implements OnInit, AfterViewInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.bases$ = this.baseService.bind();
+    this.bases$ = this.baseService.bindList();
     this.subscription.add(this.draggingService.bindIsHovered('delete_button').subscribe(isHovered => {
       this.deleteCreatureIsHovered = isHovered;
     }));
@@ -55,35 +51,17 @@ export class BaseListComponent implements OnInit, AfterViewInit, OnDestroy {
     }));
   }
 
-  deleteClicked(base: Base) {
-    this.deletingBase = base;
-    this.deletePopin = true;
-  }
-
-  conquerClicked(base: Base) {
-    this.conqueringBase = base;
-    if (base.resistance > 0) {
-      this.conquerPopin = true;
-    } else {
-      this.conquerBase(1);
-    }
-  }
-
   addBase() {
     this.newBase = true;
     this.baseService.add(new Base());
   }
 
-  deleteBase(popinButtonIndex: number) {
-    if (popinButtonIndex === 1) {
-      this.baseService.delete(this.deletingBase.id);
-    }
+  deleteBase(baseId: string) {
+    this.baseService.delete(baseId);
   }
 
-  conquerBase(popinButtonIndex: number) {
-    if (popinButtonIndex === 1) {
-      this.baseService.conquer(this.conqueringBase);
-    }
+  conquerBase(baseId: string) {
+    this.baseService.conquer(baseId);
   }
 
   ngOnDestroy() {

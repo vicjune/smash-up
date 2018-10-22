@@ -31,12 +31,12 @@
       </div>
     </div>
 
-    <button [class]="'menu__wrapper__button menu__wrapper__deletePlayer menu-player-color-' + player.color" *ngFor="let player of (playerService.bind() | async)"
+    <button [class]="'menu__wrapper__button menu__wrapper__deletePlayer menu-player-color-' + player.color" *ngFor="let player of (playerService.bindAllEntities() | async)"
       (click)="deletePlayerClicked(player)">
       <i class="icon-bin2"></i>
       <span>{{player.name}}</span>
     </button>
-    <button class="menu__wrapper__button menu__wrapper__addPlayer" (click)="addPlayerClicked()" *ngIf="(playerService.bind() | async).length < MAX_PLAYERS">
+    <button class="menu__wrapper__button menu__wrapper__addPlayer" (click)="addPlayerClicked()" *ngIf="(playerService.bindList() | async).length < MAX_PLAYERS">
       <i class="icon-plus"></i>
       <span>{{'ADD_PLAYER' | translate}}</span>
     </button>
