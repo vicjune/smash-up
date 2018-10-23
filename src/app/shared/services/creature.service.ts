@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject, combineLatest } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import { EntityService } from '@shared/services/entity.service';

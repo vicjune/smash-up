@@ -50,6 +50,7 @@
     transition: all 0.5s;
     @include color('player-color-', $playerColors, border-color);
     background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
 
     &.highlighted,
     &.isHovered {
@@ -64,9 +65,7 @@
     }
 
     &__button {
-      display: block;
-      height: 100%;
-      width: 100%;
+      flex: 1;
     }
 
     &__name {

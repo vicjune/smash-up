@@ -3,7 +3,7 @@ import { Observable, Subscription, BehaviorSubject, combineLatest } from 'rxjs';
 import { map, first } from 'rxjs/operators';
 
 import { Base } from '@shared/models/base';
-import { BASE_REWARD_LIMITS, MAX_CARD_ROTATION_DEG, BASE_MAX_RESISTANCE, AVAILABLE_COLORS } from '@shared/constants';
+import { BASE_REWARD_LIMITS, MAX_CARD_ROTATION_DEG, BASE_MAX_RESISTANCE } from '@shared/constants';
 import { BaseService } from '@shared/services/base.service';
 import { PlayerService } from '@shared/services/player.service';
 import { Draggable } from '@shared/utils/draggable';
@@ -54,7 +54,7 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.base$ = this.baseService.bindFromId(this.baseId).pipe(
-      map(base => base as Base),
+      map(base => base as Base)
     );
 
     this.creatureList$ = this.baseService.bindCreatureOrderedList(this.baseId);
@@ -99,7 +99,7 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   bindAvailableColors(): Observable<number[]> {
-    return this.baseService.bindAvailableColors(AVAILABLE_COLORS);
+    return this.baseService.bindAvailableColors();
   }
 
   increaseReward(index: number) {

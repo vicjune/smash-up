@@ -4,7 +4,6 @@ import { switchMap } from 'rxjs/operators';
 
 import { Entity } from '@shared/models/entity';
 import { localStorage } from '@shared/utils/localStorage';
-import { arrayUtils } from '@shared/utils/arrayUtils';
 
 @Injectable()
 export class EntityService {
@@ -24,7 +23,12 @@ export class EntityService {
 
   bindAllEntities() {
     return this.bindList().pipe(
-      switchMap(entitiesId => combineLatest(...entitiesId.map(entityId => this.bindFromId(entityId))))
+      switchMap(entitiesId => {
+        if (entitiesId.length === 0) {
+          return of([]);
+        }
+        return combineLatest(...entitiesId.map(entityId => this.bindFromId(entityId)));
+      })
     );
   }
 
@@ -37,7 +41,7 @@ export class EntityService {
   }
 
   edit(entityId: string, editFunction: (entity: Entity) => Entity) {
-    let entity = entityId && this.entities$[entityId].getValue();
+    let entity = entityId && this.entities$[entityId] && this.entities$[entityId].getValue();
     if (entity) {
       entity = editFunction(entity);
       this.entities$[entity.id].next(entity);
@@ -46,7 +50,11 @@ export class EntityService {
   }
 
   delete(id: string): void {
-    const entityList = arrayUtils.delete(id, this.entityList$.getValue());
+    const entityList = this.entityList$.getValue();
+    const index = entityList.findIndex(element => element === id);
+    if (index !== -1) {
+      entityList.splice(index, 1);
+    }
     this.entityList$.next(entityList);
     delete this.entities$[id];
     this.updateLocalStorage();
@@ -75,10 +83,11 @@ export class EntityService {
 
   protected updateFromLocalStorage(entities: Entity[]): void {
     if (entities) {
-      this.entityList$.next(entities.map(entity => entity.id));
+      entities = entities.filter(entity => !!entity);
       entities.forEach(entity => {
         this.entities$[entity.id] = new BehaviorSubject<Entity>(entity);
       });
+      this.entityList$.next(entities.map(entity => entity.id));
     }
   }
 }

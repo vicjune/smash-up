@@ -17,7 +17,7 @@ export class PlayerService extends EntityService {
 
   constructor() {
     super();
-    const players = localStorage.get<Player[]>(this.entity, localPlayers => localPlayers.map(player => {
+    const players = localStorage.get<Player[]>(this.entity, localPlayers => localPlayers.filter(player => !!player).map(player => {
       if (player.playing) {
         this.playerPlaying$.next(player.id);
       }
@@ -75,10 +75,11 @@ export class PlayerService extends EntityService {
 
   add(newPlayer: Player): void {
     const players = this.entityList$.getValue();
-    if (players.length < MAX_PLAYERS) {
+    const playersLength = players.length;
+    if (playersLength < MAX_PLAYERS) {
       newPlayer.color = arrayUtils.getNewIndex(this.getAllEntities().map((player: Player) => player.color));
       super.add(newPlayer);
-      if (players.length === 0) {
+      if (playersLength === 0) {
         this.setPlayerPlaying(newPlayer.id);
       }
     }
@@ -86,7 +87,9 @@ export class PlayerService extends EntityService {
 
   delete(id: string): void {
     super.delete(id);
-    this.nextPlayerPlaying();
+    if (this.playerPlaying$.getValue() === id) {
+      this.nextPlayerPlaying();
+    }
   }
 
   updateScore(modifier: number, id: string, fromConquest = false): void {
@@ -137,7 +140,7 @@ export class PlayerService extends EntityService {
     }
   }
 
-  private triggerConqueringScore(score: ConqueringScore, updateScore) {
+  private triggerConqueringScore(score: ConqueringScore, updateScore: boolean) {
     const conqueringScores = this.conqueringScores$.getValue();
     if (updateScore) {
       this.edit(score.playerId, (player: Player) => {
@@ -148,6 +151,8 @@ export class PlayerService extends EntityService {
     if (score.timeout) {
       clearTimeout(score.timeout);
     }
-    this.conqueringScores$.next(arrayUtils.delete(score.id, conqueringScores));
+    const index = conqueringScores.findIndex(scoreFromList => scoreFromList.id === score.id);
+    conqueringScores.splice(index, 1);
+    this.conqueringScores$.next(conqueringScores);
   }
 }

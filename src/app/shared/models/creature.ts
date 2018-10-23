@@ -1,5 +1,4 @@
 import { Entity } from './entity';
-import { Player } from '@shared/models/player';
 
 export class Creature extends Entity {
   ownerId: string;

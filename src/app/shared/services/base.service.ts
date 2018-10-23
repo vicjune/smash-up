@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Observable, combineLatest, Subject } from 'rxjs';
+import { Observable, combineLatest, Subject, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import { EntityService } from '@shared/services/entity.service';
 import { Base } from '@shared/models/base';
-import { MAX_PLAYERS } from '@shared/constants';
+import { MAX_PLAYERS, AVAILABLE_COLORS } from '@shared/constants';
 import { PlayerService } from '@shared/services/player.service';
 import { CreatureService } from '@shared/services/creature.service';
 import { Creature } from '@shared/models/creature';
@@ -57,11 +57,11 @@ export class BaseService extends EntityService {
     return this.creatureDeletedEvent$.asObservable();
   }
 
-  bindAvailableColors(length: number): Observable<number[]> {
+  bindAvailableColors(): Observable<number[]> {
     return this.bindAllEntities().pipe(map((bases: Base[]) => {
       const takenColors = bases.map(base => base.color);
       const allColors = [];
-      for (let index = 1; index < length + 1; index++) {
+      for (let index = 1; index < AVAILABLE_COLORS + 1; index++) {
         allColors[index] = index;
       }
       return arrayUtils.diff(allColors, takenColors);
@@ -86,7 +86,7 @@ export class BaseService extends EntityService {
             .map(creature => creature.id);
           return {
             creatures: creaturesFromThisOwner,
-            playerColor: player.color
+            player
           };
         }).filter(creatureOwner => creatureOwner && creatureOwner.creatures && creatureOwner.creatures.length > 0);
 
@@ -157,9 +157,10 @@ export class BaseService extends EntityService {
   }
 
   private bindCreaturesOnThisBase(base: Base): Observable<Creature[]> {
-    return combineLatest(
-      ...base.creatures.map(creatureId => this.creatureService.bindFromId(creatureId))
-    );
+    if (base.creatures.length === 0) {
+      return of([]);
+    }
+    return combineLatest(...base.creatures.map(creatureId => this.creatureService.bindFromId(creatureId)));
   }
 
   private addCreature(creatureId: string, baseId: string) {

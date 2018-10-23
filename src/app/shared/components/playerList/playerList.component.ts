@@ -10,8 +10,6 @@ import { DraggingService } from '@shared/services/dragging.service';
 import { ItemCoordinates } from '@shared/interfaces/itemCoordinates';
 import { position } from '@shared/utils/position';
 import { windowEvents } from '@shared/utils/windowEvents';
-import { Player } from '@angular/core/src/render3/interfaces/player';
-import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-player-list',

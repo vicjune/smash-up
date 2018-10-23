@@ -79,7 +79,7 @@
         </div>
       </ng-container>
       <div class="base__creatures__title" *ngIf="(creatureList$ | async).players.length > 0 && !detailModeCreatureId">{{'CREATURES' | translate}}</div>
-      <div [class]="'base__creatures__player creature-each-player-color-' + creatureOwner.playerColor" *ngFor="let creatureOwner of (creatureList$ | async).players" [ngStyle]="{'width.px': creatureOwner.creatures.length * 50 + 40}">
+      <div [class]="'base__creatures__player creature-each-player-color-' + creatureOwner.player.color" *ngFor="let creatureOwner of (creatureList$ | async).players" [ngStyle]="{'width.px': creatureOwner.creatures.length * 50 + 40}">
         <ng-container *ngFor="let creatureId of creatureOwner.creatures">
           <app-creature [creatureId]="creatureId" *ngIf="(!detailModeCreatureId || detailModeCreatureId === creatureId)" (toggleDetailMode)="toggleCreatureDetailMode(creatureId)" [detailModeCreatureId]="detailModeCreatureId"></app-creature>
         </ng-container>

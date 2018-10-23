@@ -5,7 +5,7 @@
 
   <div class="menu__wrapper">
     <div class="menu__wrapper__i18n">
-      <button class="menu__wrapper__i18n__button" [disabled]="language === 'en'" (click)="setLanguage('en')">EN</button>
+      <button class="menu__wrapper__i18n__button" [disabled]="language === 'en' || !language" (click)="setLanguage('en')">EN</button>
       <button class="menu__wrapper__i18n__button" [disabled]="language === 'fr'" (click)="setLanguage('fr')">FR</button>
     </div>
 
@@ -32,7 +32,7 @@
     </div>
 
     <button [class]="'menu__wrapper__button menu__wrapper__deletePlayer menu-player-color-' + player.color" *ngFor="let player of (playerService.bindAllEntities() | async)"
-      (click)="deletePlayerClicked(player)">
+      (click)="deletePlayer(player.id)">
       <i class="icon-bin2"></i>
       <span>{{player.name}}</span>
     </button>
@@ -49,9 +49,6 @@
 </div>
 
 <div class="menu__overlay" [ngClass]="{'active': menuOpen}" (click)="menuOpen = false"></div>
-
-<app-popin [(modal)]="deletePopin" [title]="removedPlayer ? ('REMOVE_PROMPT'| translate: {playerName: removedPlayer.name}) : ''"
-  [buttons]="[{text: 'CANCEL' | translate, secondary: true}, {text: 'REMOVE' | translate, danger: true}]" (buttonPressed)="callbackDelete($event)"></app-popin>
 
 <app-popin [(modal)]="resetPopin" [title]="'RESET_PROMPT' | translate" [buttons]="[{text: 'CANCEL' | translate, secondary: true}, {text: 'RESET' | translate, danger: true}]"
   (buttonPressed)="callbackReset($event)"></app-popin>
