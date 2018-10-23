@@ -3,7 +3,7 @@ import { Observable, Subscription, BehaviorSubject, combineLatest } from 'rxjs';
 import { map, first } from 'rxjs/operators';
 
 import { Base } from '@shared/models/base';
-import { BASE_REWARD_LIMITS, MAX_CARD_ROTATION_DEG, BASE_MAX_RESISTANCE, AVAILABLE_COLORS } from '@shared/constants';
+import { BASE_REWARD_LIMITS, MAX_CARD_ROTATION_DEG, BASE_MAX_RESISTANCE, MONSTER_OWNER_ID, BASE_TYPE } from '@shared/constants';
 import { BaseService } from '@shared/services/base.service';
 import { PlayerService } from '@shared/services/player.service';
 import { Draggable } from '@shared/utils/draggable';
@@ -12,6 +12,7 @@ import { windowEvents } from '@shared/utils/windowEvents';
 import { CreatureOrderedList } from '@shared/interfaces/creatureOrderedList';
 import { CreatureService } from '@shared/services/creature.service';
 import { DraggingService } from '@shared/services/dragging.service';
+import { position } from '@shared/utils/position';
 
 @Component({
   selector: 'app-base',
@@ -29,18 +30,19 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
 
   base$: Observable<Base>;
   creatureList$: Observable<CreatureOrderedList>;
-  players$ = this.playerService.bind();
+  players$ = this.playerService.bindAllEntities();
   editMode$ = new BehaviorSubject<boolean>(false);
   detailsMode$ = new BehaviorSubject<boolean>(false);
   transform$: Observable<string>;
   transform: string;
   creatureDragging$ = this.draggingService.bindCreatureDragging();
-  isHovered = false;
+  isHovered$: Observable<boolean>;
 
   draggable = new Draggable();
 
   BASE_REWARD_LIMITS = BASE_REWARD_LIMITS;
   BASE_MAX_RESISTANCE = BASE_MAX_RESISTANCE;
+  MONSTER_OWNER_ID = MONSTER_OWNER_ID;
 
   subscription = new Subscription();
 
@@ -54,10 +56,10 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.base$ = this.baseService.bindFromId(this.baseId).pipe(
-      map(base => base as Base),
+      map(base => base as Base)
     );
 
-    this.creatureList$ = this.baseService.getCreatureOrderedList(this.baseId);
+    this.creatureList$ = this.baseService.bindCreatureOrderedList(this.baseId);
 
     this.transform$ = combineLatest(
       this.base$,
@@ -66,6 +68,8 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
       this.detailsMode$,
       this.creatureDragging$
     ).pipe(map(this.getTransform));
+
+    this.isHovered$ = this.draggingService.bindIsHovered(this.baseId);
 
     if (this.newBase) {
       this.editMode$.next(true);
@@ -77,11 +81,11 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
         this.draggable.coordinates = [base.position.x, base.position.y];
       }
     }));
+
     this.subscription.add(this.draggable.clickEvent.subscribe(() => this.seeMoreDetails()));
-    this.subscription.add(this.draggable.dropEvent.subscribe((position) => this.updateBasePosition(position)));
+    this.subscription.add(this.draggable.dropEvent.subscribe((pos) => this.updateBasePosition(pos)));
     this.subscription.add(this.baseService.bindCreatureMovedEvent().subscribe(() => this.exitMoreDetails(true)));
     this.subscription.add(this.baseService.bindCreatureDeletedEvent().subscribe(() => this.exitCreatureDetailMode()));
-    this.subscription.add(this.draggingService.bindIsHovered(this.baseId).subscribe((hovered) => this.isHovered = hovered));
 
     // Workaround angular change detect bug
     this.subscription.add(this.transform$.subscribe(transform => {
@@ -91,7 +95,10 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.subscription.add(this.base$.pipe(first()).subscribe(base => {
+    this.subscription.add(combineLatest(
+      this.base$.pipe(first()),
+      windowEvents.portrait
+    ).subscribe(([base, ]) => {
       if (base) {
         this.registerCoordinates([base.position.x, base.position.y]);
       }
@@ -99,11 +106,11 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   bindAvailableColors(): Observable<number[]> {
-    return this.baseService.bindAvailableColors(AVAILABLE_COLORS);
+    return this.baseService.bindAvailableColors();
   }
 
   increaseReward(index: number) {
-    this.baseService.editById(this.baseId, (base: Base) => {
+    this.baseService.edit(this.baseId, (base: Base) => {
       if (base.rewards[index] < BASE_REWARD_LIMITS[1]) {
         base.rewards[index]++;
       }
@@ -112,7 +119,7 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   decreaseReward(index: number) {
-    this.baseService.editById(this.baseId, (base: Base) => {
+    this.baseService.edit(this.baseId, (base: Base) => {
       if (base.rewards[index] > BASE_REWARD_LIMITS[0]) {
         base.rewards[index]--;
       }
@@ -121,7 +128,7 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   increaseResistance() {
-    this.baseService.editById(this.baseId, (base: Base) => {
+    this.baseService.edit(this.baseId, (base: Base) => {
       if (base.maxResistance < BASE_MAX_RESISTANCE) {
         base.maxResistance++;
       }
@@ -130,7 +137,7 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   decreaseResistance() {
-    this.baseService.editById(this.baseId, (base: Base) => {
+    this.baseService.edit(this.baseId, (base: Base) => {
       if (base.maxResistance > 0) {
         base.maxResistance--;
       }
@@ -139,7 +146,7 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   chooseColor(color: number) {
-    this.baseService.editById(this.baseId, (base: Base) => {
+    this.baseService.edit(this.baseId, (base: Base) => {
       base.color = color;
       return base;
     });
@@ -190,7 +197,7 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
 
   increaseEachCreatureStrength(creatureIds: string[]) {
     creatureIds.forEach(creatureId => {
-      this.creatureService.editById(creatureId, (creature: Creature) => {
+      this.creatureService.edit(creatureId, (creature: Creature) => {
         creature.basicStrength++;
         return creature;
       });
@@ -199,7 +206,7 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
 
   decreaseEachCreatureStrength(creatureIds: string[]) {
     creatureIds.forEach(creatureId => {
-      this.creatureService.editById(creatureId, (creature: Creature) => {
+      this.creatureService.edit(creatureId, (creature: Creature) => {
         if (creature.basicStrength > 0) {
           creature.basicStrength--;
         }
@@ -208,9 +215,9 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  updateBasePosition(position: [number, number]) {
-    const [x, y] = position;
-    this.baseService.editById(this.baseId, (base: Base) => {
+  updateBasePosition(pos: [number, number]) {
+    const [x, y] = pos;
+    this.baseService.edit(this.baseId, (base: Base) => {
       if (base) {
         base.position.x = x;
         base.position.y = y;
@@ -218,18 +225,18 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
       return base;
     });
 
-    this.registerCoordinates(position);
+    this.registerCoordinates(pos);
   }
 
-  registerCoordinates(position: [number, number]) {
-    const [x, y] = position;
+  registerCoordinates(pos: [number, number]) {
+    const [x, y] = pos;
     this.draggingService.registerCoordinates({
       itemId: this.baseId,
       x,
       y,
-      width: this.baseElementRef.nativeElement.clientWidth,
-      height: this.baseElementRef.nativeElement.clientHeight,
-      type: 'base'
+      width: position.pxToPercent(this.baseElementRef.nativeElement.clientWidth, 'x'),
+      height: position.pxToPercent(this.baseElementRef.nativeElement.clientHeight, 'y'),
+      type: BASE_TYPE
     });
   }
 

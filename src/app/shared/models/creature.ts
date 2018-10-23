@@ -1,8 +1,6 @@
 import { Entity } from './entity';
-import { Player } from '@shared/models/player';
 
 export class Creature extends Entity {
-  owner: Player;
   ownerId: string;
   strength: number;
   basicStrength: number;

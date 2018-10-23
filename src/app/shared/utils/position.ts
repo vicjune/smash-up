@@ -11,20 +11,23 @@ export const position = {
     }
   },
 
-  isSuperposingNoDuplicate(itemACoordinates: ItemCoordinates, itemBId: string, itemBList: ItemCoordinates[]) {
-    const lastIdSupperposing = itemBList.reduce((previous, coordinates) => {
-      return this.isSuperposing(itemACoordinates, coordinates) ? coordinates.itemId : previous;
-    }, null);
-    return lastIdSupperposing === itemBId;
+  getSuperposingId(itemACoordinates: ItemCoordinates, itemBList: ItemCoordinates[], itemBBlackList: string[]): ItemCoordinates {
+    let i = itemBList.length;
+    while (i--) {
+      if (this.isSuperposing(itemACoordinates, itemBList[i])) {
+        return !itemBBlackList.find(blackListedId => blackListedId === itemBList[i].itemId) ? itemBList[i] : null;
+      }
+    }
+    return null;
   },
 
   isSuperposing(itemACoordinates: ItemCoordinates, itemBCoordinates: ItemCoordinates): boolean {
-    const isSupperposingX =
-    (itemACoordinates.x + this.pxToPercent(itemACoordinates.width, 'x') / 2) <= (itemBCoordinates.x + this.pxToPercent(itemBCoordinates.width, 'x')) &&
-    (itemACoordinates.x + this.pxToPercent(itemACoordinates.width, 'x') / 2) >= itemBCoordinates.x;
-    const isSupperposingY =
-    (itemACoordinates.y + this.pxToPercent(itemACoordinates.height, 'y') / 2) <= (itemBCoordinates.y + this.pxToPercent(itemBCoordinates.height, 'y')) &&
-    (itemACoordinates.y + this.pxToPercent(itemACoordinates.height, 'y') / 2) >= itemBCoordinates.y;
+    const itemAX = itemACoordinates.x + itemACoordinates.width / 2;
+    const isSupperposingX = itemAX <= (itemBCoordinates.x + itemBCoordinates.width) && itemAX >= itemBCoordinates.x;
+
+    const itemAY = itemACoordinates.y + itemACoordinates.height / 2;
+    const isSupperposingY = itemAY <= (itemBCoordinates.y + itemBCoordinates.height) && itemAY >= itemBCoordinates.y;
+
     return isSupperposingX && isSupperposingY;
   }
 };

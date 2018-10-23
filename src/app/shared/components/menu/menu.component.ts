@@ -3,7 +3,6 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 import { PlayerService } from '../../services/player.service';
-import { Player } from '../../models/player';
 import { BaseService } from '@shared/services/base.service';
 import { MAX_PLAYERS, TIMER_SECONDS_INTERVAL } from '@shared/constants';
 import { localStorage } from '@shared/utils/localStorage';
@@ -17,9 +16,7 @@ import { DraggingService } from '@shared/services/dragging.service';
 })
 export class MenuComponent implements OnInit {
   menuOpen = false;
-  deletePopin = false;
   resetPopin = false;
-  removedPlayer: Player;
   language: string;
   MAX_PLAYERS: number = MAX_PLAYERS;
   TIMER_SECONDS_INTERVAL: number = TIMER_SECONDS_INTERVAL;
@@ -45,16 +42,9 @@ export class MenuComponent implements OnInit {
     this.addPlayer.emit();
   }
 
-  deletePlayerClicked(player: Player) {
-    this.removedPlayer = player;
-    this.deletePopin = true;
-  }
-
-  callbackDelete(index: number) {
-    if (index === 1) {
-      this.playerService.delete(this.removedPlayer.id);
-      this.draggingService.unregisterCoordinates(this.removedPlayer.id);
-    }
+  deletePlayer(playerId: string) {
+    this.playerService.delete(playerId);
+    this.draggingService.unregisterCoordinates(playerId);
   }
 
   resetClicked() {

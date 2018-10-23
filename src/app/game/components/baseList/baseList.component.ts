@@ -4,7 +4,7 @@ import { Observable, Subscription } from 'rxjs';
 import { BaseService } from '@shared/services/base.service';
 import { PlayerService } from '@shared/services/player.service';
 import { Base } from '@shared/models/base';
-import { MAX_PLAYERS } from '@shared/constants';
+import { MAX_PLAYERS, DELETE_BUTTON_ID, DELETE_BUTTON_TYPE } from '@shared/constants';
 import { DraggingService } from '@shared/services/dragging.service';
 import { windowEvents } from '@shared/utils/windowEvents';
 import { position } from '@shared/utils/position';
@@ -15,16 +15,12 @@ import { position } from '@shared/utils/position';
   styleUrls: ['./baseList.component.scss']
 })
 export class BaseListComponent implements OnInit, AfterViewInit, OnDestroy {
-  deletePopin = false;
-  conquerPopin = false;
   newBase = false;
-  conqueringBase: Base;
-  deletingBase: Base;
-  bases$: Observable<Base[]>;
+  bases$: Observable<string[]>;
   MAX_BASES: number = MAX_PLAYERS + 1;
   creatureDragging$ = this.draggingService.bindCreatureDragging();
 
-  deleteCreatureIsHovered = false;
+  deleteCreatureIsHovered$ = this.draggingService.bindIsHovered(DELETE_BUTTON_ID);
   subscription = new Subscription();
 
   @ViewChild('deleteCreature') deleteCreatureButton: ElementRef;
@@ -36,37 +32,20 @@ export class BaseListComponent implements OnInit, AfterViewInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.bases$ = this.baseService.bind();
-    this.subscription.add(this.draggingService.bindIsHovered('delete_button').subscribe(isHovered => {
-      this.deleteCreatureIsHovered = isHovered;
-    }));
+    this.bases$ = this.baseService.bindList();
   }
 
   ngAfterViewInit() {
     this.subscription.add(windowEvents.portrait.subscribe(() => {
       this.draggingService.registerCoordinates({
-        itemId: 'delete_button',
+        itemId: DELETE_BUTTON_ID,
         x: position.pxToPercent(this.deleteCreatureButton.nativeElement.getBoundingClientRect().left, 'x'),
         y: position.pxToPercent(this.deleteCreatureButton.nativeElement.getBoundingClientRect().top, 'y'),
-        width: this.deleteCreatureButton.nativeElement.clientWidth,
-        height: this.deleteCreatureButton.nativeElement.clientHeight,
-        type: 'delete_button'
+        width: position.pxToPercent(this.deleteCreatureButton.nativeElement.clientWidth, 'x'),
+        height: position.pxToPercent(this.deleteCreatureButton.nativeElement.clientHeight, 'y'),
+        type: DELETE_BUTTON_TYPE
       });
     }));
-  }
-
-  deleteClicked(base: Base) {
-    this.deletingBase = base;
-    this.deletePopin = true;
-  }
-
-  conquerClicked(base: Base) {
-    this.conqueringBase = base;
-    if (base.resistance > 0) {
-      this.conquerPopin = true;
-    } else {
-      this.conquerBase(1);
-    }
   }
 
   addBase() {
@@ -74,16 +53,12 @@ export class BaseListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.baseService.add(new Base());
   }
 
-  deleteBase(popinButtonIndex: number) {
-    if (popinButtonIndex === 1) {
-      this.baseService.delete(this.deletingBase.id);
-    }
+  deleteBase(baseId: string) {
+    this.baseService.delete(baseId);
   }
 
-  conquerBase(popinButtonIndex: number) {
-    if (popinButtonIndex === 1) {
-      this.baseService.conquer(this.conqueringBase);
-    }
+  conquerBase(baseId: string) {
+    this.baseService.conquer(baseId);
   }
 
   ngOnDestroy() {
