@@ -96,9 +96,12 @@ export class DraggingService {
   }
 
   private bindItemHovered(): Observable<ItemCoordinates> {
-    return this.draggingCreatureId$.pipe(
-      switchMap(draggingCreatureId => {
-        if (!draggingCreatureId) {
+    return combineLatest(
+      this.draggingCreatureId$,
+      this.dragMode$
+    ).pipe(
+      switchMap(([draggingCreatureId, dragMode]) => {
+        if (!draggingCreatureId || !dragMode) {
           return of(null);
         }
         const creatureItemCoordinates = {
