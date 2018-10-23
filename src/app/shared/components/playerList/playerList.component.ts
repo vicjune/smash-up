@@ -1,13 +1,12 @@
-import { Component, AfterViewInit, Output, EventEmitter, ViewChild, ElementRef, OnDestroy, OnInit } from '@angular/core';
+import { Component, AfterViewInit, Output, EventEmitter, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { combineLatest } from 'rxjs';
 
 import { PlayerService } from '../../services/player.service';
 import { BaseService } from '@shared/services/base.service';
-import { MAX_PLAYERS } from '../../constants';
+import { MAX_PLAYERS, PLAYER_TYPE } from '../../constants';
 import { Observable, Subscription } from 'rxjs';
 import { ConqueringScore } from '@shared/models/conqueringScore';
 import { DraggingService } from '@shared/services/dragging.service';
-import { ItemCoordinates } from '@shared/interfaces/itemCoordinates';
 import { position } from '@shared/utils/position';
 import { windowEvents } from '@shared/utils/windowEvents';
 
@@ -16,12 +15,11 @@ import { windowEvents } from '@shared/utils/windowEvents';
   templateUrl: './playerList.component.html',
   styleUrls: ['./playerList.component.scss']
 })
-export class PlayerListComponent implements OnInit, AfterViewInit, OnDestroy {
+export class PlayerListComponent implements AfterViewInit, OnDestroy {
   MAX_PLAYERS: number = MAX_PLAYERS;
-  creatureDragging$ = this.draggingService.bindCreatureDragging();
 
+  creatureDragging$ = this.draggingService.bindCreatureDragging();
   players$ = this.playerService.bindAllEntities();
-  entitiesHovered: ItemCoordinates[] = [];
   subscription = new Subscription();
 
   @Output('addPlayer') addPlayer = new EventEmitter<void>();
@@ -33,28 +31,24 @@ export class PlayerListComponent implements OnInit, AfterViewInit, OnDestroy {
     public draggingService: DraggingService,
   ) { }
 
-  ngOnInit() {
-    this.subscription.add(this.draggingService.bindEntitiesHovered().subscribe(entities => this.entitiesHovered = entities));
-  }
-
   ngAfterViewInit() {
     this.subscription.add(combineLatest(
       windowEvents.portrait,
-      this.players$
-    ).subscribe(([, players]) => {
+      this.playerService.bindList()
+    ).subscribe(([, playersId]) => {
       setTimeout(() => {
         const htmlCollection = this.playerListElementRef.nativeElement.children;
         Array.from(htmlCollection)
           .filter((playerRef: HTMLElement) => Array.from(playerRef.classList).find(className => className === 'playerList__player'))
           .forEach((playerRef: HTMLElement, index) => {
-            if (players && players[index]) {
+            if (playersId && playersId[index]) {
               this.draggingService.registerCoordinates({
-                itemId: players[index].id,
+                itemId: playersId[index],
                 x: position.pxToPercent(playerRef.getBoundingClientRect().left, 'x'),
                 y: position.pxToPercent(playerRef.getBoundingClientRect().top, 'y'),
-                width: playerRef.clientWidth,
-                height: playerRef.clientHeight,
-                type: 'player'
+                width: position.pxToPercent(playerRef.clientWidth, 'x'),
+                height: position.pxToPercent(playerRef.clientHeight, 'y'),
+                type: PLAYER_TYPE
               });
             }
           });
@@ -62,9 +56,8 @@ export class PlayerListComponent implements OnInit, AfterViewInit, OnDestroy {
     }));
   }
 
-  isHovered(id: string) {
-    const entity = this.entitiesHovered.find(entityHovered => entityHovered.itemId === id);
-    return entity ? entity.hovered : false;
+  isHovered(id: string): Observable<boolean> {
+    return this.draggingService.bindIsHovered(id);
   }
 
   getConqueringScores$(playerId: string): Observable<ConqueringScore[]> {

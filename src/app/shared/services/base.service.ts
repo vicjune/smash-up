@@ -4,7 +4,7 @@ import { map, switchMap } from 'rxjs/operators';
 
 import { EntityService } from '@shared/services/entity.service';
 import { Base } from '@shared/models/base';
-import { MAX_PLAYERS, AVAILABLE_COLORS } from '@shared/constants';
+import { MAX_PLAYERS, AVAILABLE_COLORS, MONSTER_OWNER_ID } from '@shared/constants';
 import { PlayerService } from '@shared/services/player.service';
 import { CreatureService } from '@shared/services/creature.service';
 import { Creature } from '@shared/models/creature';
@@ -77,7 +77,7 @@ export class BaseService extends EntityService {
     ).pipe(
       map(([creaturesOnThisBase, players]: [Creature[], Player[]]) => {
         const monsters = creaturesOnThisBase
-          .filter(creature => creature.ownerId === 'monster')
+          .filter(creature => creature.ownerId === MONSTER_OWNER_ID)
           .map(monster => monster.id);
 
         const creatureOwners = players.map(player => {
@@ -189,7 +189,7 @@ export class BaseService extends EntityService {
 
     // add monsters strength to the base resistance
     resistance += creaturesOnThisBase
-      .filter(creature => creature && creature.ownerId === 'monster')
+      .filter(creature => creature && creature.ownerId === MONSTER_OWNER_ID)
       .reduce((previous, monster) => previous + monster.strength, 0);
 
     return resistance;

@@ -3,7 +3,7 @@ import { Observable, Subscription, BehaviorSubject, combineLatest } from 'rxjs';
 import { map, first } from 'rxjs/operators';
 
 import { Base } from '@shared/models/base';
-import { BASE_REWARD_LIMITS, MAX_CARD_ROTATION_DEG, BASE_MAX_RESISTANCE } from '@shared/constants';
+import { BASE_REWARD_LIMITS, MAX_CARD_ROTATION_DEG, BASE_MAX_RESISTANCE, MONSTER_OWNER_ID, BASE_TYPE } from '@shared/constants';
 import { BaseService } from '@shared/services/base.service';
 import { PlayerService } from '@shared/services/player.service';
 import { Draggable } from '@shared/utils/draggable';
@@ -12,6 +12,7 @@ import { windowEvents } from '@shared/utils/windowEvents';
 import { CreatureOrderedList } from '@shared/interfaces/creatureOrderedList';
 import { CreatureService } from '@shared/services/creature.service';
 import { DraggingService } from '@shared/services/dragging.service';
+import { position } from '@shared/utils/position';
 
 @Component({
   selector: 'app-base',
@@ -35,12 +36,13 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
   transform$: Observable<string>;
   transform: string;
   creatureDragging$ = this.draggingService.bindCreatureDragging();
-  isHovered = false;
+  isHovered$: Observable<boolean>;
 
   draggable = new Draggable();
 
   BASE_REWARD_LIMITS = BASE_REWARD_LIMITS;
   BASE_MAX_RESISTANCE = BASE_MAX_RESISTANCE;
+  MONSTER_OWNER_ID = MONSTER_OWNER_ID;
 
   subscription = new Subscription();
 
@@ -67,6 +69,8 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
       this.creatureDragging$
     ).pipe(map(this.getTransform));
 
+    this.isHovered$ = this.draggingService.bindIsHovered(this.baseId);
+
     if (this.newBase) {
       this.editMode$.next(true);
       this.detailsMode$.next(true);
@@ -77,11 +81,11 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
         this.draggable.coordinates = [base.position.x, base.position.y];
       }
     }));
+
     this.subscription.add(this.draggable.clickEvent.subscribe(() => this.seeMoreDetails()));
-    this.subscription.add(this.draggable.dropEvent.subscribe((position) => this.updateBasePosition(position)));
+    this.subscription.add(this.draggable.dropEvent.subscribe((pos) => this.updateBasePosition(pos)));
     this.subscription.add(this.baseService.bindCreatureMovedEvent().subscribe(() => this.exitMoreDetails(true)));
     this.subscription.add(this.baseService.bindCreatureDeletedEvent().subscribe(() => this.exitCreatureDetailMode()));
-    this.subscription.add(this.draggingService.bindIsHovered(this.baseId).subscribe((hovered) => this.isHovered = hovered));
 
     // Workaround angular change detect bug
     this.subscription.add(this.transform$.subscribe(transform => {
@@ -91,7 +95,10 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.subscription.add(this.base$.pipe(first()).subscribe(base => {
+    this.subscription.add(combineLatest(
+      this.base$.pipe(first()),
+      windowEvents.portrait
+    ).subscribe(([base, ]) => {
       if (base) {
         this.registerCoordinates([base.position.x, base.position.y]);
       }
@@ -208,8 +215,8 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  updateBasePosition(position: [number, number]) {
-    const [x, y] = position;
+  updateBasePosition(pos: [number, number]) {
+    const [x, y] = pos;
     this.baseService.edit(this.baseId, (base: Base) => {
       if (base) {
         base.position.x = x;
@@ -218,18 +225,18 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
       return base;
     });
 
-    this.registerCoordinates(position);
+    this.registerCoordinates(pos);
   }
 
-  registerCoordinates(position: [number, number]) {
-    const [x, y] = position;
+  registerCoordinates(pos: [number, number]) {
+    const [x, y] = pos;
     this.draggingService.registerCoordinates({
       itemId: this.baseId,
       x,
       y,
-      width: this.baseElementRef.nativeElement.clientWidth,
-      height: this.baseElementRef.nativeElement.clientHeight,
-      type: 'base'
+      width: position.pxToPercent(this.baseElementRef.nativeElement.clientWidth, 'x'),
+      height: position.pxToPercent(this.baseElementRef.nativeElement.clientHeight, 'y'),
+      type: BASE_TYPE
     });
   }
 

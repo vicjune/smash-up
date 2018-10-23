@@ -1,7 +1,7 @@
 <div class="baseList">
   <app-base *ngFor="let baseId of (bases$ | async)" [baseId]="baseId" (delete)="deleteBase(baseId)" (conquer)="conquerBase(baseId)" [newBase]="newBase"></app-base>
 
-  <div #deleteCreature class="baseList__addButton baseList__addButton--deleteCreature" [ngClass]="{'display': creatureDragging$ | async, 'isHovered': deleteCreatureIsHovered}">
+  <div #deleteCreature class="baseList__addButton baseList__addButton--deleteCreature" [ngClass]="{'display': creatureDragging$ | async, 'isHovered': deleteCreatureIsHovered$ | async}">
     <i class="icon-bin2"></i>
     <span class="baseList__addButton__label">{{'REMOVE_CREATURE' | translate}}</span>
   </div>

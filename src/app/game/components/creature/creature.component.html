@@ -1,4 +1,4 @@
-<div [class]="'creature ' + ((creature$ | async).ownerId !== 'monster' ? 'creature-card-player-color-' + ((owner$ | async).color) : 'creature--monster')" [ngClass]="{'creature--detailsMode': detailsMode, 'creature--dragging': otherDraggable, 'creature__card--bonusPositive': (totalBonusStrengthSeparator$ | async) === '+'}">
+<div [class]="'creature ' + ((creature$ | async).ownerId !== MONSTER_OWNER_ID ? 'creature-card-player-color-' + ((owner$ | async).color) : 'creature--monster')" [ngClass]="{'creature--detailsMode': detailsMode, 'creature--dragging': otherDraggable, 'creature__card--bonusPositive': (totalBonusStrengthSeparator$ | async) === '+'}">
   <div class="creature__cardWrapper">
     <div class="creature__card"
     [ngStyle]="{'left.%': draggable?.coordinates[0], 'top.%': draggable?.coordinates[1], transform: transform$ | async}"
@@ -29,7 +29,7 @@
         <button class="strengthActions__button" (click)="decreaseBaseStrength()" [disabled]="(creature$ | async).basicStrength <= 0"><i class="icon-minus-square"></i></button>
       </div>
       <div class="strengthActions__label">
-        {{((creature$ | async).ownerId !== 'monster' ? 'BASE_STRENGTH' : 'BASE_STRENGTH_MONSTER') | translate}}
+        {{((creature$ | async).ownerId !== MONSTER_OWNER_ID ? 'BASE_STRENGTH' : 'BASE_STRENGTH_MONSTER') | translate}}
       </div>
     </div>
   </div>
@@ -40,7 +40,7 @@
         <i class="icon icon-bin2"></i>
       </button>
     </div>
-    <div class="strengthActions strengthActions--secondary" *ngIf="(creature$ | async).ownerId !== 'monster'">
+    <div class="strengthActions strengthActions--secondary" *ngIf="(creature$ | async).ownerId !== MONSTER_OWNER_ID">
       <div class="strengthActions__buttonWrapper">
         <button class="strengthActions__button" (click)="increaseDuringTurnStrength()"><i class="icon-plus-square"></i></button>
         <div class="strengthActions__value">

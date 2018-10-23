@@ -6,7 +6,7 @@ import { CreatureService } from '@shared/services/creature.service';
 import { Creature } from '@shared/models/creature';
 import { Draggable } from '@shared/utils/draggable';
 import { DraggingService } from '@shared/services/dragging.service';
-import { MAX_CREATURE_CARD_ROTATION_DEG } from '@shared/constants';
+import { MAX_CREATURE_CARD_ROTATION_DEG, MONSTER_OWNER_ID } from '@shared/constants';
 import { PlayerService } from '@shared/services/player.service';
 import { Player } from '@shared/models/player';
 
@@ -33,6 +33,8 @@ export class CreatureComponent implements OnInit, OnDestroy {
   draggable = new Draggable();
 
   subscription = new Subscription();
+
+  MONSTER_OWNER_ID = MONSTER_OWNER_ID;
 
   get detailsMode() {
     return this.detailModeCreatureId === this.creatureId;

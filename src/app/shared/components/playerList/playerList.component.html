@@ -2,7 +2,7 @@
   <div class="playerList__dragTooltip">
     {{'CHANGE_OWNER' | translate}}
   </div>
-  <div *ngFor="let player of (players$ | async)" [class]="'playerList__player playerList__element player-color-' + player.color" [ngClass]="{'highlighted': player.playing && !(creatureDragging$ | async), 'isHovered': isHovered(player.id)}">
+  <div *ngFor="let player of (players$ | async)" [class]="'playerList__player playerList__element player-color-' + player.color" [ngClass]="{'highlighted': player.playing && !(creatureDragging$ | async), 'isHovered': isHovered(player.id) | async}">
     <button class="playerList__player__button" (click)="selectPlayer(player.id)">
       <div class="playerList__player__name">{{player.name}}</div>
       <div class="playerList__player__score">
