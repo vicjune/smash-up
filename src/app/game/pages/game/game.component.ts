@@ -13,6 +13,7 @@ export class GameComponent {
   addPopin = false;
   newPlayerName = '';
   creatureDragging$ = this.draggingService.bindCreatureDragging();
+  creatureDraggingId$ = this.draggingService.bindCreatureDraggingId();
 
   @ViewChild('input') addInput: ElementRef;
 

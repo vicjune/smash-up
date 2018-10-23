@@ -17,6 +17,7 @@ export class DraggingService {
   creatureDraggable: Draggable;
 
   private draggingCreatureId$ = new BehaviorSubject<string>(null);
+  private dragMode$ = new BehaviorSubject<boolean>(false);
   private draggingCoordinates$ = new BehaviorSubject<[number, number]>(null);
   private itemCoordinates$ = new BehaviorSubject<ItemCoordinates[]>([]);
   private hoveringItem$ = new BehaviorSubject<ItemCoordinates>(null);
@@ -29,7 +30,11 @@ export class DraggingService {
     this.bindItemHovered().subscribe(itemHovered => this.hoveringItem$.next(itemHovered));
   }
 
-  bindCreatureDragging(): Observable<string> {
+  bindCreatureDragging(): Observable<boolean> {
+    return this.dragMode$.asObservable();
+  }
+
+  bindCreatureDraggingId(): Observable<string> {
     return this.draggingCreatureId$.asObservable();
   }
 
@@ -57,10 +62,15 @@ export class DraggingService {
     this.itemCoordinates$.next(itemsCoordinates);
   }
 
-  toggleCreatureDragMode(creatureId: string, dragging: boolean) {
+  creatureMouseDown(creatureId: string) {
     this.draggingCreatureId$.next(creatureId);
+  }
+
+  toggleCreatureDragMode(dragging: boolean) {
+    this.dragMode$.next(true);
     if (!dragging) {
       this.draggingCreatureId$.next(null);
+      this.dragMode$.next(false);
       this.draggingCoordinates$.next(null);
     }
   }

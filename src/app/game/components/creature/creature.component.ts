@@ -95,8 +95,7 @@ export class CreatureComponent implements OnInit, OnDestroy {
   }
 
   toggleDragMode(dragging: boolean) {
-    this.draggingService.creatureDraggable = this.draggable;
-    this.draggingService.toggleCreatureDragMode(this.creatureId, dragging);
+    this.draggingService.toggleCreatureDragMode(dragging);
   }
 
   sendDraggingCoordinates(coordinates: [number, number]) {
@@ -167,6 +166,8 @@ export class CreatureComponent implements OnInit, OnDestroy {
 
   mouseDown(e) {
     this.draggable.mouseDown(e);
+    this.draggingService.creatureDraggable = this.draggable;
+    this.draggingService.creatureMouseDown(this.creatureId);
   }
 
   mouseMove(e) {
