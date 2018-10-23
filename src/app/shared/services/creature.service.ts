@@ -1,45 +1,48 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject, combineLatest } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, Subject, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 import { EntityService } from '@shared/services/entity.service';
 import { PlayerService } from '@shared/services/player.service';
 import { Creature } from '@shared/models/creature';
 import { Player } from '@shared/models/player';
 import { localStorage } from '@shared/utils/localStorage';
+import { MONSTER_OWNER_ID } from '@shared/constants';
 
 @Injectable()
 export class CreatureService extends EntityService {
   protected entity = 'creatures';
 
-  deleteCreatureEvent$ = new Subject<string>();
+  private deleteCreatureEvent$ = new Subject<string>();
 
   constructor(
     private playerService: PlayerService
   ) {
     super();
     const creatures = localStorage.get<Creature[]>(this.entity);
+    this.updateFromLocalStorage(creatures);
 
-    if (creatures) {
-      this.entities$.next(creatures);
-    }
-
-    playerService.bind().subscribe(players => this.removeExcessCreatures(players));
+    playerService.bindList().subscribe(playersId => this.removeExcessCreatures(playersId));
   }
 
   get deleteCreatureEvent(): Observable<string> {
     return this.deleteCreatureEvent$.asObservable();
   }
 
-  bind(): Observable<Creature[]> {
-    return combineLatest(
-      super.bind(),
-      this.playerService.bind(),
-    ).pipe(map(([creatures, players]) => creatures.map((creature: Creature) => {
-      creature.owner = players.find(player => player.id === creature.ownerId);
-      creature.strength = this.getStrength(creature, players);
-      return creature;
-    })));
+  bindFromId(id): Observable<Creature> {
+    return super.bindFromId(id).pipe(
+      switchMap((creature: Creature) => {
+        if (!creature) {
+          return of(creature);
+        }
+        return this.playerService.bindFromId(creature.ownerId).pipe(
+          map(owner => {
+            creature.strength = this.getStrength(creature, owner);
+            return creature;
+          })
+        );
+      })
+    );
   }
 
   delete(creatureId: string) {
@@ -47,20 +50,19 @@ export class CreatureService extends EntityService {
     super.delete(creatureId);
   }
 
-  private getStrength(creature: Creature, players: Player[]): number {
+  private getStrength(creature: Creature, owner: Player): number {
     let strength = creature.basicStrength + creature.bonusStrength;
-    const owner = players.find(player => player.id === creature.ownerId);
     if (owner && owner.playing) {
       strength += creature.modifierDuringOwnerTurn;
     }
     return strength > 0 ? strength : 0;
   }
 
-  private removeExcessCreatures(players: Player[]) {
-    const creatures = this.entities$.getValue() as Creature[];
+  private removeExcessCreatures(playersId: string[]) {
+    const creatures = this.getAllEntities() as Creature[];
     let i = creatures.length;
     while (i--) {
-      if (creatures[i].ownerId !== 'monster' && !players.find(player => player.id === creatures[i].ownerId)) {
+      if (creatures[i].ownerId !== MONSTER_OWNER_ID && !playersId.find(playerId => playerId === creatures[i].ownerId)) {
         this.delete(creatures[i].id);
       }
     }

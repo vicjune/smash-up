@@ -1,25 +1,46 @@
 @import "styles";
 
 .playerList {
-  margin: 50px 0 0 25px;
+  margin: 10px 0 10px 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: fixed;
   top: 0;
   left: 0;
-  bottom: 0;
-  width: 200px;
-  padding: 20px 0;
+  width: 230px;
+  padding: 15px;
+
+  &.creatureDragging {
+    border: 5px dashed hsla(0, 0%, 100%, 0.5);
+    padding: 10px;
+    border-radius: 10px;
+  }
+
+  &__dragTooltip {
+    opacity: 0;
+    transition: opacity 0.3s;
+    color: white;
+    margin: 5px 0 20px 0;
+    font-size: 20px;
+
+    .creatureDragging & {
+      opacity: 0.5;
+    }
+  }
 
   &__element {
     flex-basis: 120px;
     flex-shrink: 1;
     flex-grow: 0;
     min-height: 60px;
-    width: 200px;
+    width: 100%;
     margin-bottom: 20px;
     border-radius: 10px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 
   &__player {
@@ -29,6 +50,7 @@
     transition: all 0.5s;
     @include color('player-color-', $playerColors, border-color);
     background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
 
     &.highlighted,
     &.isHovered {
@@ -43,9 +65,7 @@
     }
 
     &__button {
-      display: block;
-      height: 100%;
-      width: 100%;
+      flex: 1;
     }
 
     &__name {

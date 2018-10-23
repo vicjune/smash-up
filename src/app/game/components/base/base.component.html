@@ -1,7 +1,7 @@
 <div #base
   *ngIf="(base$ | async)"
   [class]="'base base-color-' + (base$ | async).color"
-  [ngClass]="{'detailsMode': detailsMode$ | async, 'editMode': editMode$ | async, 'conquered': (base$ | async).resistance <= 0, 'dragging': draggable?.dragging, 'noCreature': (base$ | async).creatures.length === 0, 'creatureDragging': creatureDragging$ | async, 'isHovered': isHovered}"
+  [ngClass]="{'detailsMode': detailsMode$ | async, 'editMode': editMode$ | async, 'conquered': (base$ | async).resistance <= 0, 'dragging': draggable?.dragging, 'noCreature': (base$ | async).creatures.length === 0, 'creatureDragging': creatureDragging$ | async, 'isHovered': isHovered$ | async}"
   [ngStyle]="{'transform': transform, 'left.%': draggable?.coordinates[0], 'top.%': draggable?.coordinates[1]}"
   (mousedown)="mouseDown($event)"
   (touchstart)="mouseDown($event)"
@@ -62,7 +62,7 @@
     </div>
 
     <div class="base__playerScoresReduced" *ngIf="!(editMode$ | async)">
-      <div [class]="'base__playerScoresReduced__score score-player-color-' + (playerService.bindPlayer(score.playerId) | async).color" *ngFor="let score of (base$ | async).scores; let i = index">
+      <div [class]="'base__playerScoresReduced__score score-player-color-' + (playerService.bindFromId(score.playerId) | async).color" *ngFor="let score of (base$ | async).scores; let i = index">
         {{score.score}}
       </div>
     </div>
@@ -94,7 +94,7 @@
 
 <div class="globalActions" *ngIf="(detailsMode$ | async) && !(editMode$ | async) && !detailModeCreatureId && !(creatureDragging$ | async)">
   <div class="globalActions__player globalActions__player--monsters">
-    <button class="globalActions__addCreature" (click)="createCreature('monster')">
+    <button class="globalActions__addCreature" (click)="createCreature(MONSTER_OWNER_ID)">
       <i class="icon-plus icon"></i>
       <i class="icon-evil2 icon"></i>
     </button>

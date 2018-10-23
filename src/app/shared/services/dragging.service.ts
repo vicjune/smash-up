@@ -1,16 +1,15 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
-import { map, first } from 'rxjs/operators';
+import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 import { Draggable } from '@shared/utils/draggable';
 import { Base } from '@shared/models/base';
 import { position } from '@shared/utils/position';
-import { CREATURE_CARD_SIZE } from '@shared/constants';
+import { CREATURE_CARD_SIZE, DELETE_BUTTON_ID, DELETE_BUTTON_TYPE, BASE_TYPE, PLAYER_TYPE } from '@shared/constants';
 import { BaseService } from './base.service';
 import { CreatureService } from './creature.service';
 import { PlayerService } from './player.service';
 import { ItemCoordinates } from '@shared/interfaces/itemCoordinates';
-import { Player } from '@shared/models/player';
 import { Creature } from '@shared/models/creature';
 
 @Injectable()
@@ -18,28 +17,31 @@ export class DraggingService {
   creatureDraggable: Draggable;
 
   private draggingCreatureId$ = new BehaviorSubject<string>(null);
+  private dragMode$ = new BehaviorSubject<boolean>(false);
   private draggingCoordinates$ = new BehaviorSubject<[number, number]>(null);
   private itemCoordinates$ = new BehaviorSubject<ItemCoordinates[]>([]);
+  private hoveringItem$ = new BehaviorSubject<ItemCoordinates>(null);
 
   constructor(
     private baseService: BaseService,
     private creatureService: CreatureService,
     private playerService: PlayerService
-  ) {}
+  ) {
+    this.bindItemHovered().subscribe(itemHovered => this.hoveringItem$.next(itemHovered));
+  }
 
-  bindCreatureDragging(): Observable<string> {
+  bindCreatureDragging(): Observable<boolean> {
+    return this.dragMode$.asObservable();
+  }
+
+  bindCreatureDraggingId(): Observable<string> {
     return this.draggingCreatureId$.asObservable();
   }
 
   bindIsHovered(entityId: string): Observable<boolean> {
-    return this.bindEntitiesHovered().pipe(map(entities => {
-      const selectedEntity = entities.find(entity => entity.itemId === entityId);
-      return selectedEntity ? selectedEntity.hovered : false;
+    return this.hoveringItem$.pipe(map(hoveringItemId => {
+      return hoveringItemId && hoveringItemId.itemId === entityId;
     }));
-  }
-
-  bindCreatureDraggingCoordinates(): Observable<[number, number]> {
-    return this.draggingCoordinates$.asObservable();
   }
 
   registerCoordinates(coordinates: ItemCoordinates) {
@@ -60,9 +62,15 @@ export class DraggingService {
     this.itemCoordinates$.next(itemsCoordinates);
   }
 
-  toggleCreatureDragMode(creatureId: string, dragging: boolean) {
-    this.draggingCreatureId$.next(dragging ? creatureId : null);
+  creatureMouseDown(creatureId: string) {
+    this.draggingCreatureId$.next(creatureId);
+  }
+
+  toggleCreatureDragMode(dragging: boolean) {
+    this.dragMode$.next(true);
     if (!dragging) {
+      this.draggingCreatureId$.next(null);
+      this.dragMode$.next(false);
       this.draggingCoordinates$.next(null);
     }
   }
@@ -72,108 +80,102 @@ export class DraggingService {
   }
 
   triggerCreatureDrop(creatureId: string) {
-    this.bindEntitiesHovered().pipe(first()).subscribe(entities => {
-      const hoveredEntity = entities.find(entity => entity.hovered);
-      if (hoveredEntity && hoveredEntity.type === 'base') {
-        this.baseService.moveCreatureToAnotherBase(creatureId, hoveredEntity.itemId);
-      }
-      if (hoveredEntity && hoveredEntity.type === 'player') {
-        this.creatureService.editById(creatureId, (creature: Creature) => {
-          creature.ownerId = hoveredEntity.itemId;
-          return creature;
-        });
-      }
-      if (hoveredEntity && hoveredEntity.type === 'delete_button') {
-        this.creatureService.delete(creatureId);
-      }
+    const hoveredEntity = this.hoveringItem$.getValue();
+    if (hoveredEntity && hoveredEntity.type === BASE_TYPE) {
+      this.baseService.moveCreatureToAnotherBase(creatureId, hoveredEntity.itemId);
+    }
+    if (hoveredEntity && hoveredEntity.type === PLAYER_TYPE) {
+      this.creatureService.edit(creatureId, (creature: Creature) => {
+        creature.ownerId = hoveredEntity.itemId;
+        return creature;
+      });
+    }
+    if (hoveredEntity && hoveredEntity.type === DELETE_BUTTON_TYPE) {
+      this.creatureService.delete(creatureId);
+    }
+  }
+
+  private bindItemHovered(): Observable<ItemCoordinates> {
+    return combineLatest(
+      this.draggingCreatureId$,
+      this.dragMode$
+    ).pipe(
+      switchMap(([draggingCreatureId, dragMode]) => {
+        if (!draggingCreatureId || !dragMode) {
+          return of(null);
+        }
+        const creatureItemCoordinates = {
+          itemId: draggingCreatureId,
+          x: null,
+          y: null,
+          width: position.pxToPercent(CREATURE_CARD_SIZE[0], 'x'),
+          height: position.pxToPercent(CREATURE_CARD_SIZE[1], 'y'),
+          type: null
+        };
+        return combineLatest(
+          this.itemCoordinates$,
+          this.creatureService.bindFromId(draggingCreatureId),
+          this.baseService.bindAllEntities(),
+          this.playerService.bindAllEntities()
+        ).pipe(
+          switchMap(([itemCoordinates, creature, bases, players]) => {
+            const blackList = this.getBlackListedIds(creature, bases);
+            const entitiesCoordinates = this.getEntitiesCoordinates(
+              itemCoordinates,
+              players.map(player => player.id),
+              bases.map(base => base.id)
+            );
+            return this.draggingCoordinates$.pipe(
+              map(creatureCoordinates => {
+                if (!creatureCoordinates) {
+                  return null;
+                }
+                creatureItemCoordinates.x = creatureCoordinates[0];
+                creatureItemCoordinates.y = creatureCoordinates[1];
+                return position.getSuperposingId(
+                  creatureItemCoordinates,
+                  entitiesCoordinates,
+                  blackList
+                );
+              })
+            );
+          })
+        );
+      })
+    );
+  }
+
+  private getEntitiesCoordinates(itemCoordinates: ItemCoordinates[], playersId: string[], basesId: string[]): ItemCoordinates[] {
+    const emptyItem = {
+      itemId: null,
+      x: null,
+      y: null,
+      width: null,
+      height: null,
+      type: null
+    };
+
+    return [
+      DELETE_BUTTON_ID,
+      ...playersId,
+      ...basesId
+    ].map(entityId => {
+      return itemCoordinates.find(item => item.itemId === entityId) || emptyItem;
     });
   }
 
-  bindEntitiesHovered(): Observable<ItemCoordinates[]> {
-    return combineLatest(
-      this.draggingCreatureId$,
-      this.draggingCoordinates$,
-      this.bindEntitiesCoordinates(),
-      this.baseService.bind(),
-      this.playerService.bind(),
-      this.creatureService.bind()
-    ).pipe(map(([draggingCreatureId, coordinates, entitiesCoordinates, bases, players, creatures]) => entitiesCoordinates.map(entityCoordinates => ({
-      ...entityCoordinates,
-      hovered: this.isCreatureSuperposingEntity(
-        entityCoordinates.itemId,
-        draggingCreatureId,
-        coordinates,
-        entitiesCoordinates,
-        bases,
-        players,
-        creatures
-      )
-    }))));
-  }
-
-  private bindEntitiesCoordinates(): Observable<ItemCoordinates[]> {
-    return combineLatest(
-      this.itemCoordinates$,
-      this.playerService.bind(),
-      this.baseService.bind(),
-    ).pipe(map(([itemCoordinates, players, bases]) => {
-      const emptyItem = {
-        itemId: null,
-        x: null,
-        y: null,
-        width: null,
-        height: null,
-        type: null
-      };
-
-      return [
-        { id: 'delete_button' },
-        ...players,
-        ...bases
-      ].map(entity => {
-        return itemCoordinates.find(item => item.itemId === entity.id) || emptyItem;
-      });
-    }));
-  }
-
-  private isCreatureSuperposingEntity(
-    entityId: string,
-    creatureDraggingId: string,
-    draggingCoordinates: [number, number],
-    entitiesCoordinates: ItemCoordinates[],
-    bases: Base[],
-    players: Player[],
-    creatures: Creature[]
-  ): boolean {
-    if (!creatureDraggingId || !draggingCoordinates) {
-      return false;
+  private getBlackListedIds(creature: Creature, bases: Base[]): string[] {
+    if (!creature) {
+      return [];
     }
-
-    const selectedBase = bases.find(base => base.id === entityId);
-    if (selectedBase && selectedBase.creatures.find(creatureId => creatureId === creatureDraggingId)) {
-      return false;
+    const baseOnWhichTheCreatureIs = bases.find(base => !!base.creatures.find(creatureOnBaseId => creatureOnBaseId === creature.id));
+    const result = [];
+    if (baseOnWhichTheCreatureIs) {
+      result.push(baseOnWhichTheCreatureIs.id);
     }
-
-    if (!selectedBase) {
-      const selectedPlayer = players.find(player => player.id === entityId);
-
-      const draggingCreature = creatures.find(creature => creature.id === creatureDraggingId);
-      if (selectedPlayer && draggingCreature && draggingCreature.ownerId === selectedPlayer.id) {
-        return false;
-      }
+    if (creature) {
+      result.push(creature.ownerId);
     }
-
-    return position.isSuperposingNoDuplicate(
-      {
-        itemId: creatureDraggingId,
-        x: draggingCoordinates[0],
-        y: draggingCoordinates[1],
-        width: CREATURE_CARD_SIZE[0],
-        height: CREATURE_CARD_SIZE[1],
-        type: null
-      },
-      entityId,
-      entitiesCoordinates
-    );
+    return result;
   }
 }
