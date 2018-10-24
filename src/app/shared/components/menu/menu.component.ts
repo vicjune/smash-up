@@ -17,7 +17,7 @@ import { DraggingService } from '@shared/services/dragging.service';
 export class MenuComponent implements OnInit {
   menuOpen = false;
   resetPopin = false;
-  language: string;
+  language = 'en';
   MAX_PLAYERS: number = MAX_PLAYERS;
   TIMER_SECONDS_INTERVAL: number = TIMER_SECONDS_INTERVAL;
 

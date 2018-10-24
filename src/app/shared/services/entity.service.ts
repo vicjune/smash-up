@@ -21,7 +21,7 @@ export class EntityService {
     return this.entityList$.asObservable();
   }
 
-  bindAllEntities() {
+  bindAllEntities(): Observable<Entity[]> {
     return this.bindList().pipe(
       switchMap(entitiesId => {
         if (entitiesId.length === 0) {
@@ -40,7 +40,7 @@ export class EntityService {
     this.updateLocalStorage();
   }
 
-  edit(entityId: string, editFunction: (entity: Entity) => Entity) {
+  edit(entityId: string, editFunction: (entity: Entity) => Entity): void {
     let entity = entityId && this.entities$[entityId] && this.entities$[entityId].getValue();
     if (entity) {
       entity = editFunction(entity);

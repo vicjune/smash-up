@@ -10,6 +10,7 @@
   left: 0;
   width: 230px;
   padding: 15px;
+  max-height: calc(100vh - 25px);
 
   &.creatureDragging {
     border: 5px dashed hsla(0, 0%, 100%, 0.5);

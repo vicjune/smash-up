@@ -45,6 +45,10 @@ export class CreatureService extends EntityService {
     );
   }
 
+  bindAllEntities(): Observable<Creature[]> {
+    return super.bindAllEntities().pipe(map(creatures => creatures as Creature[]));
+  }
+
   delete(creatureId: string) {
     this.deleteCreatureEvent$.next(creatureId);
     super.delete(creatureId);

@@ -39,7 +39,7 @@ export class BaseService extends EntityService {
     ).pipe(
       switchMap(([base, playersId]: [Base, string[]]) => {
         return this.bindCreaturesOnThisBase(base).pipe(
-          map((creaturesOnThisBase: Creature[]) => {
+          map(creaturesOnThisBase => {
             base.scores = this.getScores(playersId, creaturesOnThisBase);
             base.resistance = this.getResistance(base, creaturesOnThisBase);
             return base;
@@ -47,6 +47,10 @@ export class BaseService extends EntityService {
         );
       })
     );
+  }
+
+  bindAllEntities(): Observable<Base[]> {
+    return super.bindAllEntities().pipe(map(bases => bases as Base[]));
   }
 
   bindCreatureMovedEvent(): Observable<void> {
@@ -71,11 +75,11 @@ export class BaseService extends EntityService {
   bindCreatureOrderedList(baseId: string): Observable<CreatureOrderedList> {
     return combineLatest(
       this.bindFromId(baseId).pipe(
-        switchMap((base: Base) => this.bindCreaturesOnThisBase(base))
+        switchMap(base => this.bindCreaturesOnThisBase(base))
       ),
       this.playerService.bindAllEntities()
     ).pipe(
-      map(([creaturesOnThisBase, players]: [Creature[], Player[]]) => {
+      map(([creaturesOnThisBase, players]) => {
         const monsters = creaturesOnThisBase
           .filter(creature => creature.ownerId === MONSTER_OWNER_ID)
           .map(monster => monster.id);
