@@ -10,12 +10,10 @@ const portrait$ = new Observable(observer => {
     window.removeEventListener('orientationchange', handler);
     window.removeEventListener('resize', handler);
   };
-});
-
-const hotPortrait$ = portrait$.pipe(shareReplay(1));
+}).pipe(shareReplay(1));
 
 export const windowEvents = {
   get portrait() {
-    return hotPortrait$;
+    return portrait$;
   }
 };
