@@ -85,6 +85,7 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscription.add(this.draggable.clickEvent.subscribe(() => this.seeMoreDetails()));
     this.subscription.add(this.draggable.dropEvent.subscribe((pos) => this.updateBasePosition(pos)));
     this.subscription.add(this.baseService.bindCreatureMovedEvent().subscribe(() => this.exitMoreDetails(true)));
+    this.subscription.add(this.creatureService.deleteCreatureFromDragEvent.subscribe(() => this.exitMoreDetails(true)));
     this.subscription.add(this.baseService.bindCreatureDeletedEvent().subscribe(() => this.exitCreatureDetailMode()));
 
     // Workaround angular change detect bug

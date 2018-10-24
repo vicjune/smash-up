@@ -94,7 +94,7 @@ export class DraggingService {
       });
     }
     if (this.hoveredItem && this.hoveredItem.type === DELETE_BUTTON_TYPE) {
-      this.creatureService.delete(creatureId);
+      this.creatureService.delete(creatureId, true);
     }
   }
 
