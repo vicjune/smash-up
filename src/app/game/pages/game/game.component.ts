@@ -11,6 +11,7 @@ import { DraggingService } from '@shared/services/dragging.service';
 })
 export class GameComponent {
   addPopin = false;
+  alreadyAdded = false;
   newPlayerName = '';
   creatureDragging$ = this.draggingService.bindCreatureDragging();
   creatureDraggingId$ = this.draggingService.bindCreatureDraggingId();
@@ -25,6 +26,7 @@ export class GameComponent {
   addPlayerClicked() {
     this.newPlayerName = '';
     this.addPopin = true;
+    this.alreadyAdded = false;
     setTimeout(() => {
       this.addInput.nativeElement.focus();
     });
@@ -32,7 +34,8 @@ export class GameComponent {
 
   addPlayer(index: number) {
     this.addPopin = false;
-    if (index === 1) {
+    if (index === 1 && !this.alreadyAdded) {
+      this.alreadyAdded = true;
       this.playerService.add(new Player(this.newPlayerName));
     }
   }

@@ -27,7 +27,7 @@ export class DraggingService {
     private creatureService: CreatureService,
     private playerService: PlayerService
   ) {
-    this.bindItemHovered().subscribe(itemHovered => this.hoveringItem$.next(itemHovered));
+    this.bindItemHovered().subscribe(this.hoveringItem$);
   }
 
   bindCreatureDragging(): Observable<boolean> {
@@ -116,13 +116,13 @@ export class DraggingService {
           this.itemCoordinates$,
           this.creatureService.bindFromId(draggingCreatureId),
           this.baseService.bindAllEntities(),
-          this.playerService.bindAllEntities()
+          this.playerService.bindList()
         ).pipe(
-          switchMap(([itemCoordinates, creature, bases, players]) => {
+          switchMap(([itemCoordinates, creature, bases, playersId]) => {
             const blackList = this.getBlackListedIds(creature, bases);
             const entitiesCoordinates = this.getEntitiesCoordinates(
               itemCoordinates,
-              players.map(player => player.id),
+              playersId,
               bases.map(base => base.id)
             );
             return this.draggingCoordinates$.pipe(
