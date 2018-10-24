@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { map, switchMap, shareReplay, tap } from 'rxjs/operators';
 
 import { Draggable } from '@shared/utils/draggable';
 import { Base } from '@shared/models/base';
@@ -20,14 +20,18 @@ export class DraggingService {
   private dragMode$ = new BehaviorSubject<boolean>(false);
   private draggingCoordinates$ = new BehaviorSubject<[number, number]>(null);
   private itemCoordinates$ = new BehaviorSubject<ItemCoordinates[]>([]);
-  private hoveringItem$ = new BehaviorSubject<ItemCoordinates>(null);
+  private hoveredItem$ = new Observable<ItemCoordinates>(null);
+  private hoveredItem: ItemCoordinates = null;
 
   constructor(
     private baseService: BaseService,
     private creatureService: CreatureService,
     private playerService: PlayerService
   ) {
-    this.bindItemHovered().subscribe(this.hoveringItem$);
+    this.hoveredItem$ = this.bindItemHovered().pipe(
+      shareReplay(1),
+      tap(hoveredItem => this.hoveredItem = hoveredItem)
+    );
   }
 
   bindCreatureDragging(): Observable<boolean> {
@@ -39,7 +43,7 @@ export class DraggingService {
   }
 
   bindIsHovered(entityId: string): Observable<boolean> {
-    return this.hoveringItem$.pipe(map(hoveringItemId => {
+    return this.hoveredItem$.pipe(map(hoveringItemId => {
       return hoveringItemId && hoveringItemId.itemId === entityId;
     }));
   }
@@ -80,17 +84,16 @@ export class DraggingService {
   }
 
   triggerCreatureDrop(creatureId: string) {
-    const hoveredEntity = this.hoveringItem$.getValue();
-    if (hoveredEntity && hoveredEntity.type === BASE_TYPE) {
-      this.baseService.moveCreatureToAnotherBase(creatureId, hoveredEntity.itemId);
+    if (this.hoveredItem && this.hoveredItem.type === BASE_TYPE) {
+      this.baseService.moveCreatureToAnotherBase(creatureId, this.hoveredItem.itemId);
     }
-    if (hoveredEntity && hoveredEntity.type === PLAYER_TYPE) {
+    if (this.hoveredItem && this.hoveredItem.type === PLAYER_TYPE) {
       this.creatureService.edit(creatureId, (creature: Creature) => {
-        creature.ownerId = hoveredEntity.itemId;
+        creature.ownerId = this.hoveredItem.itemId;
         return creature;
       });
     }
-    if (hoveredEntity && hoveredEntity.type === DELETE_BUTTON_TYPE) {
+    if (this.hoveredItem && this.hoveredItem.type === DELETE_BUTTON_TYPE) {
       this.creatureService.delete(creatureId);
     }
   }

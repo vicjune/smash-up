@@ -1,17 +1,21 @@
-import { BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs';
+import { shareReplay } from 'rxjs/operators';
 
-const portrait$ = new BehaviorSubject<boolean>(false);
+const portrait$ = new Observable(observer => {
+  const handler = () => observer.next(window.innerHeight > window.innerWidth);
+  handler();
+  window.addEventListener('orientationchange', handler);
+  window.addEventListener('resize', handler);
+  return () => {
+    window.removeEventListener('orientationchange', handler);
+    window.removeEventListener('resize', handler);
+  };
+});
 
-checkOrientation();
-window.addEventListener('orientationchange', checkOrientation, false);
-window.addEventListener('resize', checkOrientation, false);
-
-function checkOrientation() {
-  portrait$.next(window.innerHeight > window.innerWidth);
-}
+const hotPortrait$ = portrait$.pipe(shareReplay(1));
 
 export const windowEvents = {
   get portrait() {
-    return portrait$.asObservable();
+    return hotPortrait$;
   }
 };
