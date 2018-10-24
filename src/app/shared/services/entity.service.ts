@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject, of, combineLatest } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, shareReplay } from 'rxjs/operators';
 
 import { Entity } from '@shared/models/entity';
 import { localStorage } from '@shared/utils/localStorage';
@@ -11,7 +11,11 @@ export class EntityService {
   protected entities$ = {};
   protected entityList$: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
 
-  constructor() {}
+  private allEntities$: Observable<Entity[]>;
+
+  constructor() {
+    this.allEntities$ = this._bindAllEntities().pipe(shareReplay(1));
+  }
 
   bindFromId(id: string): Observable<Entity> {
     return this.entities$[id] ? this.entities$[id].asObservable() : of(null);
@@ -22,14 +26,7 @@ export class EntityService {
   }
 
   bindAllEntities(): Observable<Entity[]> {
-    return this.bindList().pipe(
-      switchMap(entitiesId => {
-        if (entitiesId.length === 0) {
-          return of([]);
-        }
-        return combineLatest(...entitiesId.map(entityId => this.bindFromId(entityId)));
-      })
-    );
+    return this.allEntities$;
   }
 
   add(entity: Entity): void {
@@ -89,5 +86,16 @@ export class EntityService {
       });
       this.entityList$.next(entities.map(entity => entity.id));
     }
+  }
+
+  private _bindAllEntities(): Observable<Entity[]> {
+    return this.bindList().pipe(
+      switchMap(entitiesId => {
+        if (entitiesId.length === 0) {
+          return of([]);
+        }
+        return combineLatest(...entitiesId.map(entityId => this.bindFromId(entityId)));
+      })
+    );
   }
 }

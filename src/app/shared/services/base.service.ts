@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, combineLatest, Subject, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { map, switchMap, shareReplay } from 'rxjs/operators';
 
 import { EntityService } from '@shared/services/entity.service';
 import { Base } from '@shared/models/base';
@@ -12,7 +12,6 @@ import { Score } from '@shared/interfaces/score';
 import { localStorage } from '@shared/utils/localStorage';
 import { CreatureOrderedList } from '@shared/interfaces/creatureOrderedList';
 import { arrayUtils } from '@shared/utils/arrayUtils';
-import { Player } from '@shared/models/player';
 
 @Injectable()
 export class BaseService extends EntityService {
@@ -20,6 +19,7 @@ export class BaseService extends EntityService {
 
   private creatureMovedEvent$ = new Subject<void>();
   private creatureDeletedEvent$ = new Subject<void>();
+  private availableColors$: Observable<number[]>;
 
   constructor(
     private playerService: PlayerService,
@@ -28,6 +28,8 @@ export class BaseService extends EntityService {
     super();
     const bases = localStorage.get<Base[]>(this.entity);
     this.updateFromLocalStorage(bases);
+
+    this.availableColors$ = this._bindAvailableColors().pipe(shareReplay(1));
 
     this.creatureService.deleteCreatureEvent.subscribe(creatureId => this.removeCreature(creatureId));
   }
@@ -62,14 +64,7 @@ export class BaseService extends EntityService {
   }
 
   bindAvailableColors(): Observable<number[]> {
-    return this.bindAllEntities().pipe(map((bases: Base[]) => {
-      const takenColors = bases.map(base => base.color);
-      const allColors = [];
-      for (let index = 1; index < AVAILABLE_COLORS + 1; index++) {
-        allColors[index] = index;
-      }
-      return arrayUtils.diff(allColors, takenColors);
-    }));
+    return this.availableColors$;
   }
 
   bindCreatureOrderedList(baseId: string): Observable<CreatureOrderedList> {
@@ -158,6 +153,17 @@ export class BaseService extends EntityService {
     this.creatureMovedEvent$.next();
     this.removeCreature(creatureId);
     this.addCreature(creatureId, newBaseId);
+  }
+
+  private _bindAvailableColors(): Observable<number[]> {
+    return this.bindAllEntities().pipe(map((bases: Base[]) => {
+      const takenColors = bases.map(base => base.color);
+      const allColors = [];
+      for (let index = 1; index < AVAILABLE_COLORS + 1; index++) {
+        allColors[index] = index;
+      }
+      return arrayUtils.diff(allColors, takenColors);
+    }));
   }
 
   private bindCreaturesOnThisBase(base: Base): Observable<Creature[]> {
