@@ -29,8 +29,8 @@ export class DraggingService {
     private playerService: PlayerService
   ) {
     this.hoveredItem$ = this.bindItemHovered().pipe(
+      tap(hoveredItem => this.hoveredItem = hoveredItem),
       shareReplay(1),
-      tap(hoveredItem => this.hoveredItem = hoveredItem)
     );
   }
 

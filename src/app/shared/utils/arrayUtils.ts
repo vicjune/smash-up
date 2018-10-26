@@ -9,5 +9,13 @@ export const arrayUtils = {
         return index;
       }
     }
+  },
+
+  arrayOfInts(length: number) {
+    const array = [];
+    for (let index = 1; index < length + 1; index++) {
+      array[index] = index;
+    }
+    return array;
   }
 };

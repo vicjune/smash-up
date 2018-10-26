@@ -21,16 +21,6 @@
     transition: opacity 0.5s, transform 0.5s;
   }
 
-  &__closeButton {
-    position: absolute;
-    top: 5px;
-    right: 10px;
-    padding: 5px;
-    font-size: 18px;
-
-    @include button-active-hover('', null, rgb(131, 131, 131), 'simple');
-  }
-
   &__title {
     font-size: 20px;
     text-align: center;
