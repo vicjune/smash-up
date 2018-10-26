@@ -58,7 +58,7 @@
     height: 40px;
     width: 40px;
     border-radius: 5px;
-    margin: 0 5px 10px;
+    margin: 0 5px;
     @include button-active-hover('add-player-color-', $playerColors, null, 'background');
 
     &.addPopin__color--selected {

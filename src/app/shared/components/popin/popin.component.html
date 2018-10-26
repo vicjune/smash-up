@@ -1,5 +1,5 @@
 <div class="popin" [ngClass]="{'popin--active': modal}">
-  <div class="popin__title">{{title}}</div>
+  <div class="popin__title" *ngIf="title">{{title}}</div>
   <ng-content></ng-content>
   <div class="popin__buttons">
     <button class="popin__button" *ngFor="let button of buttons; let i = index" [ngClass]="{'secondary': button.secondary, 'danger': button.danger}" [disabled]="button.disabled" (click)="onButtonClick(i)">{{button.text}}</button>

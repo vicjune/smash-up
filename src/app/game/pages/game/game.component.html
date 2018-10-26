@@ -6,7 +6,7 @@
   <app-creature *ngIf="(creatureDraggingId$ | async)" [creatureId]="creatureDraggingId$ | async" [creatureDragging]="true" [otherDraggable]="draggingService.creatureDraggable"></app-creature>
 </div>
 
-<app-popin [(modal)]="addPopin" [title]="'NEW_PLAYER' | translate" [buttons]="[{text: 'CANCEL' | translate, secondary: true}, {text: 'ADD' | translate, disabled: newPlayerName.length === 0}]" (buttonPressed)="addPlayer($event)">
+<app-popin [(modal)]="addPopin" [buttons]="[{text: 'CANCEL' | translate, secondary: true}, {text: 'ADD' | translate, disabled: newPlayerName.length === 0}]" (buttonPressed)="addPlayer($event)">
   <input class="addPopin__input" type="text" [placeholder]="'PLAYER_NAME' | translate" [(ngModel)]="newPlayerName" #input (keydown.enter)="addPlayer(1)">
   <div class="addPopin__availableColors" *ngIf="availableColors.length > 1">
     <button [class]="'addPopin__color add-player-color-' + color" [ngClass]="{'addPopin__color--selected': newPlayerColor === color}" *ngFor="let color of availableColors" (click)="newPlayerColor = color"></button>

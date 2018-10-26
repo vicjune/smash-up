@@ -2,20 +2,21 @@
 
 .popin {
   position: fixed;
-  top: 50%;
+  top: 0;
   left: 50%;
-  transform: translate(-50%, -70%);
+  transform: translate(-50%, -20%);
   max-width: 400px;
   opacity: 0;
   visibility: hidden;
   background-color: white;
-  border-radius: 10px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
   z-index: 20;
-  padding: 40px;
+  padding: 30px 40px;
   transition: opacity 0.5s, transform 0.5s, visibility 0s ease 0.5s;
 
   &.popin--active {
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, 0);
     opacity: 1;
     visibility: visible;
     transition: opacity 0.5s, transform 0.5s;
@@ -34,7 +35,7 @@
   &__buttons {
     display: flex;
     justify-content: space-around;
-    padding: 40px 0 0;
+    padding: 20px 0 0;
   }
 
   &__button {
