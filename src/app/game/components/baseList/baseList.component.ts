@@ -4,7 +4,7 @@ import { Observable, Subscription } from 'rxjs';
 import { BaseService } from '@shared/services/base.service';
 import { PlayerService } from '@shared/services/player.service';
 import { Base } from '@shared/models/base';
-import { MAX_PLAYERS, DELETE_BUTTON_ID, DELETE_BUTTON_TYPE } from '@shared/constants';
+import { DELETE_BUTTON_ID, DELETE_BUTTON_TYPE, MAX_BASES } from '@shared/constants';
 import { DraggingService } from '@shared/services/dragging.service';
 import { windowEvents } from '@shared/utils/windowEvents';
 import { position } from '@shared/utils/position';
@@ -17,7 +17,7 @@ import { position } from '@shared/utils/position';
 export class BaseListComponent implements OnInit, AfterViewInit, OnDestroy {
   newBase = false;
   bases$: Observable<string[]>;
-  MAX_BASES: number = MAX_PLAYERS + 1;
+  MAX_BASES: number = MAX_BASES;
   creatureDragging$ = this.draggingService.bindCreatureDragging();
 
   deleteCreatureIsHovered$ = this.draggingService.bindIsHovered(DELETE_BUTTON_ID);
