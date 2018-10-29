@@ -74,15 +74,15 @@ export class Draggable {
       if (x <= 0) {
         inRangeX = 0;
       }
-      if (x + position.pxToPercent(this.target.clientWidth, 'x') >= 100) {
-        inRangeX = 100 - position.pxToPercent(this.target.clientWidth, 'x');
+      if (x + position.pxToPercent(this.target.offsetWidth, 'x') >= 100) {
+        inRangeX = 100 - position.pxToPercent(this.target.offsetWidth, 'x');
       }
 
       if (y <= 0) {
         inRangeY = 0;
       }
-      if (y + position.pxToPercent(this.target.clientHeight, 'y') >= 100) {
-        inRangeY = 100 - position.pxToPercent(this.target.clientHeight, 'y');
+      if (y + position.pxToPercent(this.target.offsetHeight, 'y') >= 100) {
+        inRangeY = 100 - position.pxToPercent(this.target.offsetHeight, 'y');
       }
 
       this.coordinates = [inRangeX, inRangeY];

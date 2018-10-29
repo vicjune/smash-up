@@ -235,8 +235,8 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
       itemId: this.baseId,
       x,
       y,
-      width: position.pxToPercent(this.baseElementRef.nativeElement.clientWidth, 'x'),
-      height: position.pxToPercent(this.baseElementRef.nativeElement.clientHeight, 'y'),
+      width: position.pxToPercent(this.baseElementRef.nativeElement.offsetWidth, 'x'),
+      height: position.pxToPercent(this.baseElementRef.nativeElement.offsetHeight, 'y'),
       type: BASE_TYPE
     });
   }

@@ -172,6 +172,8 @@ export class CreatureComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
-    this.draggable.destroy();
+    if (!this.creatureDragging) {
+      this.draggable.destroy();
+    }
   }
 }

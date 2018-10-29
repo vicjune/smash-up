@@ -22,6 +22,7 @@ export class PlayerListComponent implements OnInit, AfterViewInit, OnDestroy {
   players$ = this.playerService.bindAllEntities();
   subscription = new Subscription();
 
+  playerSizes: [number, number][] = [];
   draggable = new Draggable();
   draggingPlayer: string = null;
 
@@ -45,21 +46,23 @@ export class PlayerListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.playerService.bindList()
     ).subscribe(([, playersId]) => {
       setTimeout(() => {
-        const htmlCollection = this.playerListElementRef.nativeElement.children;
-        Array.from(htmlCollection)
-          .filter((playerRef: HTMLElement) => Array.from(playerRef.classList).find(className => className === 'playerList__player'))
-          .forEach((playerRef: HTMLElement, index) => {
-            if (playersId && playersId[index]) {
-              this.draggingService.registerCoordinates({
-                itemId: playersId[index],
-                x: position.pxToPercent(playerRef.getBoundingClientRect().left, 'x'),
-                y: position.pxToPercent(playerRef.getBoundingClientRect().top, 'y'),
-                width: position.pxToPercent(playerRef.clientWidth, 'x'),
-                height: position.pxToPercent(playerRef.clientHeight, 'y'),
-                type: PLAYER_TYPE
-              });
-            }
-          });
+        const domPlayerList = Array.from(this.playerListElementRef.nativeElement.children)
+          .filter((playerRef: HTMLElement) => Array.from(playerRef.classList).find(className => className === 'playerList__player'));
+
+        domPlayerList.forEach((playerRef: HTMLElement, index) => {
+          if (playersId && playersId[index]) {
+            this.draggingService.registerCoordinates({
+              itemId: playersId[index],
+              x: position.pxToPercent(playerRef.getBoundingClientRect().left, 'x'),
+              y: position.pxToPercent(playerRef.getBoundingClientRect().top, 'y'),
+              width: position.pxToPercent(playerRef.offsetWidth, 'x'),
+              height: position.pxToPercent(playerRef.offsetHeight, 'y'),
+              type: PLAYER_TYPE
+            });
+          }
+        });
+
+        this.playerSizes = domPlayerList.map((playerRef: HTMLElement) => ([playerRef.offsetWidth, playerRef.offsetHeight] as [number, number]));
       });
     }));
   }

@@ -4,10 +4,10 @@ class="playerList"
   <div class="playerList__dragTooltip">
     {{'CHANGE_OWNER' | translate}}
   </div>
-  <div *ngFor="let player of (players$ | async)"
+  <div *ngFor="let player of (players$ | async); index as i"
   [class]="'playerList__player playerList__element player-color-' + player.color"
   [ngClass]="{'highlighted': player.playing && !(creatureDragging$ | async), 'isHovered': isHovered(player.id) | async, 'isDragging': player.id === draggingPlayer}"
-  [ngStyle]="{'top.%': draggable?.coordinates[1]}">
+  [ngStyle]="{'top.%': draggable?.coordinates[1], 'width.px': playerSizes[i] ? playerSizes[i][0] : 0, 'height.px': playerSizes[i] ? playerSizes[i][1] : 0}">
     <div class="playerList__player__button"
     (mousedown)="mouseDown($event, player.id)"
     (touchstart)="mouseDown($event, player.id)">

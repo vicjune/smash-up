@@ -41,8 +41,8 @@ export class BaseListComponent implements OnInit, AfterViewInit, OnDestroy {
         itemId: DELETE_BUTTON_ID,
         x: position.pxToPercent(this.deleteCreatureButton.nativeElement.getBoundingClientRect().left, 'x'),
         y: position.pxToPercent(this.deleteCreatureButton.nativeElement.getBoundingClientRect().top, 'y'),
-        width: position.pxToPercent(this.deleteCreatureButton.nativeElement.clientWidth, 'x'),
-        height: position.pxToPercent(this.deleteCreatureButton.nativeElement.clientHeight, 'y'),
+        width: position.pxToPercent(this.deleteCreatureButton.nativeElement.offsetWidth, 'x'),
+        height: position.pxToPercent(this.deleteCreatureButton.nativeElement.offsetHeight, 'y'),
         type: DELETE_BUTTON_TYPE
       });
     }));

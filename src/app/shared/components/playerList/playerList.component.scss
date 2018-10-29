@@ -67,6 +67,8 @@
 
     &:not(.isDragging) {
       top: 0 !important;
+      width: 100% !important;
+      height: auto !important;
     }
 
     &.isDragging {
