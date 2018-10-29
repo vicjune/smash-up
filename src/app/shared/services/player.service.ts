@@ -99,6 +99,16 @@ export class PlayerService extends EntityService {
     }
   }
 
+  changePlayerOrder(playerMovingId: string, playerLeavingSpotId: string) {
+    console.log(playerLeavingSpotId);
+    const playerIdList = this.entityList$.getValue();
+    const indexOfMoving = playerIdList.findIndex(id => playerMovingId === id);
+    playerIdList.splice(indexOfMoving, 1);
+    const indexOfLeaving = playerIdList.findIndex(id => playerLeavingSpotId === id);
+    playerIdList.splice(indexOfLeaving, 0, playerMovingId);
+    this.entityList$.next(playerIdList);
+  }
+
   updateScore(modifier: number, id: string, fromConquest = false): void {
     if (modifier) {
       this.edit(id, (player: Player) => {

@@ -4,14 +4,42 @@ class="playerList"
   <div class="playerList__dragTooltip">
     {{'CHANGE_OWNER' | translate}}
   </div>
+
+  <div *ngIf="draggingPlayerId.id"
+  [class]="'playerList__player playerList__element isDragging player-color-' + (draggingPlayer$ | async).color"
+  [ngClass]="{'highlighted': (draggingPlayer$ | async).playing && !(creatureDragging$ | async)}"
+  [ngStyle]="{'top.%': draggable?.coordinates[1], 'width.%': playersCoordinates[draggingPlayerId.index] ? playersCoordinates[draggingPlayerId.index].width : 0, 'height.%': playersCoordinates[draggingPlayerId.index] ? playersCoordinates[draggingPlayerId.index].height : 0}">
+    <div class="playerList__player__button">
+      <div class="playerList__player__name">{{(draggingPlayer$ | async).name}}</div>
+      <div class="playerList__player__score">
+        <span class="playerList__player__score__score" [ngClass]="{'underscore': (draggingPlayer$ | async).score === 6 || (draggingPlayer$ | async).score === 9}">{{(draggingPlayer$ | async).score}}</span>
+        <span class="playerList__player__score__modifier" *ngFor="let conqueringScore of (getConqueringScores$(draggingPlayerId.id) | async)">
+          {{conqueringScore.score > 0 ? '+' : ''}}{{conqueringScore.score}}
+        </span>
+      </div>
+      <div class="playerList__player__score upsideDown">
+        <span class="playerList__player__score__score" [ngClass]="{'underscore': (draggingPlayer$ | async).score === 6 || (draggingPlayer$ | async).score === 9}">{{(draggingPlayer$ | async).score}}</span>
+        <span class="playerList__player__score__modifier" *ngFor="let conqueringScore of (getConqueringScores$(draggingPlayerId.id) | async)">
+          {{conqueringScore.score > 0 ? '+' : ''}}{{conqueringScore.score}}
+        </span>
+      </div>
+    </div>
+    <div class="playerList__player__playing" [ngClass]="{'display': (draggingPlayer$ | async).playing && !(creatureDragging$ | async)}">
+      {{'PLAYING' | translate}}
+    </div>
+    <div class="playerList__player__valueButtons" *ngIf="!(creatureDragging$ | async)">
+      <button class="playerList__player__valueButton" (click)="increaseScore(draggingPlayerId.id, $event)"><i class="icon-plus-square"></i></button>
+      <button class="playerList__player__valueButton" (click)="decreaseScore(draggingPlayerId.id, $event)" [disabled]="(draggingPlayer$ | async).realScore === 0"><i class="icon-minus-square"></i></button>
+    </div>
+  </div>
+
   <div *ngFor="let player of (players$ | async); index as i"
   [class]="'playerList__player playerList__element player-color-' + player.color"
-  [ngClass]="{'highlighted': player.playing && !(creatureDragging$ | async), 'isHovered': isHovered(player.id) | async, 'isDragging': player.id === draggingPlayer}"
-  [ngStyle]="{'top.%': draggable?.coordinates[1], 'width.px': playerSizes[i] ? playerSizes[i][0] : 0, 'height.px': playerSizes[i] ? playerSizes[i][1] : 0}">
+  [ngClass]="{'highlighted': player.playing && !(creatureDragging$ | async), 'isHovered': isHovered(player.id) | async, 'isHidden': player.id === draggingPlayerId.id}">
     <div class="playerList__player__button"
-    (mousedown)="mouseDown($event, player.id)"
-    (touchstart)="mouseDown($event, player.id)">
-      <div class="playerList__player__name">{{player.name}}</div>
+    (mousedown)="mouseDown($event, player.id, i)"
+    (touchstart)="mouseDown($event, player.id, i)">
+      <div class="playerList__player__name">{{player.id}}</div>
       <div class="playerList__player__score">
         <span class="playerList__player__score__score" [ngClass]="{'underscore': player.score === 6 || player.score === 9}">{{player.score}}</span>
         <span class="playerList__player__score__modifier" *ngFor="let conqueringScore of (getConqueringScores$(player.id) | async)">
@@ -33,6 +61,7 @@ class="playerList"
       <button class="playerList__player__valueButton" (click)="decreaseScore(player.id, $event)" [disabled]="player.realScore === 0"><i class="icon-minus-square"></i></button>
     </div>
   </div>
+
   <button class="playerList__button playerList__element" (click)="addPlayerClicked()" *ngIf="((playerService.bindList() | async).length < MAX_PLAYERS && ((baseService.bindList() | async).length === 0 || (playerService.bindList() | async).length < 2)) && !(creatureDragging$ | async)">
     <i class="icon-plus"></i>
     <span class="playerList__button__label">{{'ADD_PLAYER' | translate}}</span>

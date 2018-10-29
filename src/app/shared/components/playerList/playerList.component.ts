@@ -9,6 +9,8 @@ import { DraggingService } from '@shared/services/dragging.service';
 import { position } from '@shared/utils/position';
 import { windowEvents } from '@shared/utils/windowEvents';
 import { Draggable } from '@shared/utils/draggable';
+import { Player } from '@shared/models/player';
+import { ItemCoordinates } from '@shared/interfaces/itemCoordinates';
 
 @Component({
   selector: 'app-player-list',
@@ -22,9 +24,10 @@ export class PlayerListComponent implements OnInit, AfterViewInit, OnDestroy {
   players$ = this.playerService.bindAllEntities();
   subscription = new Subscription();
 
-  playerSizes: [number, number][] = [];
+  playersCoordinates: ItemCoordinates[] = [];
   draggable = new Draggable();
-  draggingPlayer: string = null;
+  draggingPlayerId: {id: string, index: number} = {id: null, index: null};
+  draggingPlayer$: Observable<Player>;
 
   @Output('addPlayer') addPlayer = new EventEmitter<void>();
   @ViewChild('playerList') playerListElementRef: ElementRef;
@@ -36,8 +39,9 @@ export class PlayerListComponent implements OnInit, AfterViewInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.subscription.add(this.draggable.clickEvent.subscribe(() => this.selectPlayer(this.draggingPlayer)));
-    this.subscription.add(windowEvents.mouseUp.subscribe(() => this.draggingPlayer = null));
+    this.subscription.add(this.draggable.clickEvent.subscribe(() => this.selectPlayer(this.draggingPlayerId.id)));
+    this.subscription.add(this.draggable.draggingEvent.subscribe(coordinates => this.checkOrderChange(coordinates)));
+    this.subscription.add(windowEvents.mouseUp.subscribe(() => this.draggingPlayerId = {id: null, index: null}));
   }
 
   ngAfterViewInit() {
@@ -46,23 +50,23 @@ export class PlayerListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.playerService.bindList()
     ).subscribe(([, playersId]) => {
       setTimeout(() => {
-        const domPlayerList = Array.from(this.playerListElementRef.nativeElement.children)
-          .filter((playerRef: HTMLElement) => Array.from(playerRef.classList).find(className => className === 'playerList__player'));
+        this.playersCoordinates = Array.from(this.playerListElementRef.nativeElement.children)
+          .filter((playerRef: HTMLElement) => Array.from(playerRef.classList).find(className => className === 'playerList__player'))
+          .map((playerRef: HTMLElement, index) => (playersId && playersId[index] ? {
+            itemId: playersId[index],
+            x: position.pxToPercent(playerRef.getBoundingClientRect().left, 'x'),
+            y: position.pxToPercent(playerRef.getBoundingClientRect().top, 'y'),
+            width: position.pxToPercent(playerRef.offsetWidth, 'x'),
+            height: position.pxToPercent(playerRef.offsetHeight, 'y'),
+            type: PLAYER_TYPE
+          } : null))
+          .filter(coordinates => !!coordinates);
 
-        domPlayerList.forEach((playerRef: HTMLElement, index) => {
-          if (playersId && playersId[index]) {
-            this.draggingService.registerCoordinates({
-              itemId: playersId[index],
-              x: position.pxToPercent(playerRef.getBoundingClientRect().left, 'x'),
-              y: position.pxToPercent(playerRef.getBoundingClientRect().top, 'y'),
-              width: position.pxToPercent(playerRef.offsetWidth, 'x'),
-              height: position.pxToPercent(playerRef.offsetHeight, 'y'),
-              type: PLAYER_TYPE
-            });
+        this.playersCoordinates.forEach((coordinates) => {
+          if (coordinates) {
+            this.draggingService.registerCoordinates(coordinates);
           }
         });
-
-        this.playerSizes = domPlayerList.map((playerRef: HTMLElement) => ([playerRef.offsetWidth, playerRef.offsetHeight] as [number, number]));
       });
     }));
   }
@@ -93,9 +97,27 @@ export class PlayerListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.playerService.updateScore(-1, id);
   }
 
-  mouseDown(e: TouchEvent, playerId: string) {
+  checkOrderChange(coordinates: [number, number]) {
+    const movingCoordinates = {
+      ...this.playersCoordinates[this.draggingPlayerId.index],
+      x: coordinates[0],
+      y: coordinates[1]
+    };
+    const itemsCoordinates = this.playersCoordinates.map(itemCoordinates => {
+      const itemCoordinatesCloned = {...itemCoordinates};
+      itemCoordinatesCloned.height += position.pxToPercent(20, 'y');
+      return itemCoordinatesCloned;
+    });
+    const superposingId = position.getSuperposingId(movingCoordinates, itemsCoordinates, [this.draggingPlayerId.id]);
+    if (superposingId) {
+      this.playerService.changePlayerOrder(this.draggingPlayerId.id, superposingId.itemId);
+    }
+  }
+
+  mouseDown(e: TouchEvent, playerId: string, index: number) {
+    this.draggingPlayerId = {id: playerId, index};
+    this.draggingPlayer$ = this.playerService.bindFromId(playerId);
     this.draggable.mouseDown(e);
-    this.draggingPlayer = playerId;
   }
 
   ngOnDestroy() {

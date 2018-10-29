@@ -74,6 +74,11 @@
     &.isDragging {
       position: fixed;
       left: 25px;
+      z-index: 1;
+    }
+
+    &.isHidden {
+      opacity: 0;
     }
 
     &__button {
