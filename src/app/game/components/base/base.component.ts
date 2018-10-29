@@ -262,18 +262,9 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  mouseMove(e: TouchEvent) {
-    if (!this.detailsMode$.getValue()) {
-      this.draggable.mouseMove(e);
-    }
-  }
-
-  mouseUp() {
-    this.draggable.mouseUp();
-  }
-
   ngOnDestroy() {
     this.subscription.unsubscribe();
     this.draggingService.unregisterCoordinates(this.baseId);
+    this.draggable.destroy();
   }
 }

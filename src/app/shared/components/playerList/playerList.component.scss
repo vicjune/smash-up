@@ -48,7 +48,7 @@
     border: 5px solid white;
     position: relative;
     box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-    transition: all 0.5s;
+    transition: box-shadow 0.3s, border-color 0.3s, background-color 0.3s;
     @include color('player-color-', $playerColors, border-color);
     background-color: rgba(0, 0, 0, 0.4);
     display: flex;
@@ -65,11 +65,22 @@
       transition: none;
     }
 
+    &:not(.isDragging) {
+      top: 0 !important;
+    }
+
+    &.isDragging {
+      position: fixed;
+      left: 25px;
+    }
+
     &__button {
       flex: 1;
+      cursor: pointer;
     }
 
     &__name {
+      pointer-events: none;
       position: absolute;
       top: 50%;
       left: 50%;
@@ -80,7 +91,7 @@
       color: rgba(255, 255, 255, 0.534);
       max-width: 100px;
       text-align: center;
-      transition: color 0.5s;
+      transition: color 0.3s;
 
       .highlighted &,
       .isHovered & {
@@ -93,11 +104,12 @@
     }
 
     &__score {
+      pointer-events: none;
       position: absolute;
       top: 5px;
       left: 10px;
       font-size: 40px;
-      transition: color 0.5s;
+      transition: color 0.3s;
       line-height: 40px;
       @include color('player-color-', $playerColors, color);
 
@@ -129,7 +141,7 @@
             left: 0;
             right: 0;
             height: 2px;
-            transition: background-color 0.5s;
+            transition: background-color 0.3s;
 
             .highlighted.highlighted &,
             .isHovered.isHovered & {
@@ -161,7 +173,7 @@
 
     &__playing {
       opacity: 0;
-      transition: opacity 0.5s;
+      transition: opacity 0.3s;
       color: white;
       transform: rotate(90deg);
       position: absolute;

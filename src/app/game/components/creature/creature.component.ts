@@ -170,15 +170,8 @@ export class CreatureComponent implements OnInit, OnDestroy {
     this.draggingService.creatureMouseDown(this.creatureId);
   }
 
-  mouseMove(e) {
-    this.draggable.mouseMove(e);
-  }
-
-  mouseUp() {
-    this.draggable.mouseUp();
-  }
-
   ngOnDestroy() {
     this.subscription.unsubscribe();
+    this.draggable.destroy();
   }
 }

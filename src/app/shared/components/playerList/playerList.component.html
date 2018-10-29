@@ -1,9 +1,16 @@
-<div #playerList class="playerList" [ngClass]="{'creatureDragging': creatureDragging$ | async}">
+<div #playerList
+class="playerList"
+[ngClass]="{'creatureDragging': creatureDragging$ | async}">
   <div class="playerList__dragTooltip">
     {{'CHANGE_OWNER' | translate}}
   </div>
-  <div *ngFor="let player of (players$ | async)" [class]="'playerList__player playerList__element player-color-' + player.color" [ngClass]="{'highlighted': player.playing && !(creatureDragging$ | async), 'isHovered': isHovered(player.id) | async}">
-    <button class="playerList__player__button" (click)="selectPlayer(player.id)">
+  <div *ngFor="let player of (players$ | async)"
+  [class]="'playerList__player playerList__element player-color-' + player.color"
+  [ngClass]="{'highlighted': player.playing && !(creatureDragging$ | async), 'isHovered': isHovered(player.id) | async, 'isDragging': player.id === draggingPlayer}"
+  [ngStyle]="{'top.%': draggable?.coordinates[1]}">
+    <div class="playerList__player__button"
+    (mousedown)="mouseDown($event, player.id)"
+    (touchstart)="mouseDown($event, player.id)">
       <div class="playerList__player__name">{{player.name}}</div>
       <div class="playerList__player__score">
         <span class="playerList__player__score__score" [ngClass]="{'underscore': player.score === 6 || player.score === 9}">{{player.score}}</span>
@@ -17,7 +24,7 @@
           {{conqueringScore.score > 0 ? '+' : ''}}{{conqueringScore.score}}
         </span>
       </div>
-    </button>
+    </div>
     <div class="playerList__player__playing" [ngClass]="{'display': player.playing && !(creatureDragging$ | async)}">
       {{'PLAYING' | translate}}
     </div>

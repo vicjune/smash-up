@@ -1,6 +1,7 @@
-import { Subject, Observable } from 'rxjs';
+import { Subject, Observable, Subscription } from 'rxjs';
 
 import { position } from './position';
+import { windowEvents } from './windowEvents';
 
 export class Draggable {
   coordinates: [number, number] = [0, 0];
@@ -18,7 +19,12 @@ export class Draggable {
   private draggingEvent$ = new Subject<[number, number]>();
   private dropEvent$ = new Subject<[number, number]>();
 
-  constructor() {}
+  private subscription = new Subscription();
+
+  constructor() {
+    this.subscription.add(windowEvents.mouseMove.subscribe(e => this.mouseMove(e)));
+    this.subscription.add(windowEvents.mouseUp.subscribe(() => this.mouseUp()));
+  }
 
   get dragging(): boolean {
     return this._dragging;
@@ -101,6 +107,10 @@ export class Draggable {
       this.draggingStart = false;
       this.dragEvent$.next(false);
     }
+  }
+
+  destroy() {
+    this.subscription.unsubscribe();
   }
 
   private convertEvent(event) {
