@@ -1,5 +1,4 @@
 import { Component, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
-import { map } from 'rxjs/operators';
 
 import { PlayerService } from '../../services/player.service';
 import { BaseService } from '@shared/services/base.service';
