@@ -48,7 +48,7 @@ export class CreatureComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.draggable = this.otherDraggable || new Draggable();
-    this.creature$ = this.creatureService.bindFromId(this.creatureId) as Observable<Creature>;
+    this.creature$ = this.creatureService.bindFromId(this.creatureId);
 
     this.owner$ = this.creature$.pipe(
       switchMap((creature: Creature) => {
@@ -92,18 +92,6 @@ export class CreatureComponent implements OnInit, OnDestroy {
 
   seeMoreDetails() {
     this.toggleDetailMode.emit();
-  }
-
-  toggleDragMode(dragging: boolean) {
-    this.draggingService.toggleCreatureDragMode(dragging);
-  }
-
-  sendDraggingCoordinates(coordinates: [number, number]) {
-    this.draggingService.setCreatureDraggingCoordinates(coordinates);
-  }
-
-  triggerDrop() {
-    this.draggingService.triggerCreatureDrop(this.creatureId);
   }
 
   increaseBaseStrength() {
@@ -162,6 +150,18 @@ export class CreatureComponent implements OnInit, OnDestroy {
     return 'rotate(' + (Math.floor(
       creature.rotation * (MAX_CREATURE_CARD_ROTATION_DEG + MAX_CREATURE_CARD_ROTATION_DEG + 1)
     ) - MAX_CREATURE_CARD_ROTATION_DEG) + 'deg)';
+  }
+
+  toggleDragMode(dragging: boolean) {
+    this.draggingService.toggleCreatureDragMode(dragging);
+  }
+
+  sendDraggingCoordinates(coordinates: [number, number]) {
+    this.draggingService.setCreatureDraggingCoordinates(coordinates);
+  }
+
+  triggerDrop() {
+    this.draggingService.triggerCreatureDrop(this.creatureId);
   }
 
   mouseDown(e) {

@@ -1,0 +1,171 @@
+@import "styles";
+
+.player {
+  border: 5px solid white;
+  border-radius: 10px;
+  position: relative;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  transition: box-shadow 0.3s, border-color 0.3s, background-color 0.3s;
+  @include color('player-color-', $playerColors, border-color);
+  background-color: #00000066;
+  display: flex;
+  flex: 1;
+
+  &.highlighted,
+  &.isHovered {
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    border-color: white;
+    background-color: transparent;
+    @include color('player-color-', $playerColors, background-color, -10);
+  }
+
+  &.isHovered {
+    transition: none;
+  }
+
+  &.isDragging {
+    position: fixed;
+    left: 25px;
+    z-index: 1;
+  }
+
+  &.isHidden {
+    opacity: 0;
+  }
+
+  &__button {
+    flex: 1;
+    cursor: pointer;
+  }
+
+  &__name {
+    pointer-events: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 20px;
+    white-space: nowrap;
+    overflow: hidden;
+    color: rgba(255, 255, 255, 0.534);
+    max-width: 100px;
+    text-align: center;
+    transition: color 0.3s;
+
+    .highlighted &,
+    .isHovered & {
+      color: white;
+    }
+
+    .isHovered & {
+      transition: none;
+    }
+  }
+
+  &__score {
+    pointer-events: none;
+    position: absolute;
+    top: 5px;
+    left: 10px;
+    font-size: 40px;
+    transition: color 0.3s;
+    line-height: 40px;
+    @include color('player-color-', $playerColors, color);
+
+    &.upsideDown {
+      left: auto;
+      top: auto;
+      bottom: 5px;
+      right: 10px;
+      transform: rotate(180deg);
+    }
+
+    .highlighted &,
+    .isHovered & {
+      color: white;
+    }
+
+    .isHovered & {
+      transition: none;
+    }
+
+    &__score {
+      position: relative;
+
+      &.underscore {
+        &:after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 2px;
+          transition: background-color 0.3s;
+
+          .highlighted.highlighted &,
+          .isHovered.isHovered & {
+            background-color: white;
+          }
+
+          .isHovered.isHovered & {
+            transition: none;
+          }
+        }
+
+        @each $color in $playerColors {
+          $i: index($playerColors, $color);
+
+          .player-color-#{$i} &:after {
+            background-color: $color;
+          }
+        }
+      }
+    }
+
+    &__modifier {
+      display: inline-block;
+      animation-duration: 0.4s;
+      animation-fill-mode: forwards;
+      animation-name: appearFromRight;
+    }
+  }
+
+  &__playing {
+    opacity: 0;
+    transition: opacity 0.3s;
+    color: white;
+    transform: rotate(90deg);
+    position: absolute;
+    top: 45%;
+    left: -62px;
+    width: 100px;
+    height: 14px;
+    font-weight: 200;
+    font-size: 14px;
+    white-space: nowrap;
+    text-align: center;
+    letter-spacing: 1px;
+
+    &.display {
+      opacity: 1;
+    }
+  }
+
+  &__valueButtons {
+    position: absolute;
+    right: -50px;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+  }
+
+  &__valueButton {
+    font-size: 30px;
+    line-height: 20px;
+    padding: 0 5px;
+    @include button-active-hover('player-color-', $playerColors, null, 'simple');
+  }
+}
