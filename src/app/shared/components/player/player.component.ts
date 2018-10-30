@@ -18,6 +18,7 @@ import { position } from '@shared/utils/position';
 export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() playerId: string;
   @Input() otherDraggable: Draggable;
+  @Input() forcedSize: [number, number];
   @ViewChild('player') playerElementRef: ElementRef;
 
   player$: Observable<Player>;
@@ -39,9 +40,12 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.player$ = this.playerService.bindFromId(this.playerId);
     this.conqueringScores$ = this.playerService.bindConqueringScores(this.playerId);
-    this.isHovered$ = this.draggingService.bindIsHovered(this.playerId);
+    this.isHovered$ = this.draggingService.bindIsHoveredByCreature(this.playerId);
 
-    this.subscription.add(this.draggable.clickEvent.subscribe(() => this.selectPlayer()));
+    this.subscription.add(this.draggable.clickEvent.subscribe(() => {
+      this.selectPlayer();
+      this.triggerDrop();
+    }));
     this.subscription.add(this.draggable.draggingEvent.subscribe(coordinates => this.sendDraggingCoordinates(coordinates)));
     this.subscription.add(this.draggable.dropEvent.subscribe(() => this.triggerDrop()));
   }
@@ -75,17 +79,17 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   sendDraggingCoordinates(coordinates: [number, number]) {
-    // this.draggingService.setCreatureDraggingCoordinates(coordinates);
+    this.draggingService.setPlayerDraggingCoordinates(coordinates);
   }
 
   triggerDrop() {
-    // this.draggingService.triggerCreatureDrop(this.creatureId);
+    this.draggingService.triggerPlayerDrop();
   }
 
   mouseDown(e: TouchEvent) {
     this.draggable.mouseDown(e);
-    // this.draggingService.creatureDraggable = this.draggable;
-    // this.draggingService.creatureMouseDown(this.creatureId);
+    this.draggingService.playerDraggable = this.draggable;
+    this.draggingService.playerMouseDown(this.playerId);
   }
 
   ngOnDestroy() {

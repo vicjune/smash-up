@@ -1,7 +1,7 @@
 <div #player
 [class]="'player player-color-' + (player$ | async).color"
 [ngClass]="{'highlighted': (player$ | async).playing && !(creatureDragging$ | async), 'isHovered': isHovered$ | async, 'isHidden': draggable.dragging && !otherDraggable, 'isDragging': otherDraggable}"
-[ngStyle]="{'top.%': otherDraggable ? otherDraggable.coordinates[1] : null, 'width.%': otherDraggable ? 0 : null, 'height.%': otherDraggable ? 0 : null}">
+[ngStyle]="{'top.%': otherDraggable ? otherDraggable.coordinates[1] : null, 'width.%': forcedSize ? forcedSize[0] : null, 'height.%': forcedSize ? forcedSize[1] : null}">
   <div class="player__button" (mousedown)="mouseDown($event)" (touchstart)="mouseDown($event)">
     <div class="player__name">{{(player$ | async).name}}</div>
     <div class="player__score">

@@ -5,7 +5,7 @@ class="playerList"
     {{'CHANGE_OWNER' | translate}}
   </div>
 
-  <!-- <app-player class="playerList__element"></app-player> -->
+  <app-player *ngIf="playerDraggingId" [playerId]="playerDraggingId" [otherDraggable]="draggingService.playerDraggable" [forcedSize]="forcedSize"></app-player>
 
   <app-player class="playerList__element" *ngFor="let playerId of (playerList$ | async)" [playerId]="playerId"></app-player>
 

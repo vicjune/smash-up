@@ -10,6 +10,7 @@
     transform: translateX(-50%);
     font-size: 40px;
     @include color('timer-player-', $playerColors, color, 10);
+    transition: color 0.3s;
 
     &--blinking {
       animation: blinking 1s infinite;
@@ -51,6 +52,7 @@
       padding: 0 20px;
       box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
       @include button-active-hover('timer-player-', $playerColors, null, background);
+      transition: background-color 0.3s;
     }
   }
 }

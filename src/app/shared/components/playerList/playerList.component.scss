@@ -37,7 +37,6 @@
     min-height: 60px;
     width: 100%;
     margin-bottom: 20px;
-    border-radius: 10px;
     display: flex;
 
     &:last-child {
@@ -52,6 +51,7 @@
     line-height: 18px;
     opacity: 0.5;
     display: inline;
+    border-radius: 10px;
 
     @media (hover: hover) {
       &:hover {
@@ -68,29 +68,5 @@
       display: block;
       margin-top: 15px;
     }
-  }
-}
-
-@keyframes appearFromRight {
-  0% {
-    opacity: 0;
-    transform: translateX(10px);
-  }
-
-  100% {
-    opacity: 0.6;
-    transform: translateX(0);
-  }
-}
-
-@keyframes disappearToLeft {
-  0% {
-    opacity: 0.6;
-    transform: translateX(0);
-  }
-
-  100% {
-    opacity: 0;
-    transform: translateX(-20px);
   }
 }

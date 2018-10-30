@@ -85,7 +85,7 @@ export class CreatureComponent implements OnInit, OnDestroy {
     this.transform$ = this.creature$.pipe(map(this.getTransform));
 
     this.subscription.add(this.draggable.clickEvent.subscribe(() => this.seeMoreDetails()));
-    this.subscription.add(this.draggable.dragEvent.subscribe(dragging => this.toggleDragMode(dragging)));
+    this.subscription.add(this.draggable.delayedDragEvent.subscribe(dragging => this.toggleDragMode(dragging)));
     this.subscription.add(this.draggable.draggingEvent.subscribe(coordinates => this.sendDraggingCoordinates(coordinates)));
     this.subscription.add(this.draggable.dropEvent.subscribe(() => this.triggerDrop()));
   }
@@ -172,8 +172,5 @@ export class CreatureComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
-    if (!this.creatureDragging) {
-      this.draggable.destroy();
-    }
   }
 }

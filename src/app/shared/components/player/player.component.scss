@@ -45,6 +45,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 20px;
+    line-height: 25px;
     white-space: nowrap;
     overflow: hidden;
     color: rgba(255, 255, 255, 0.534);
@@ -167,5 +168,17 @@
     line-height: 20px;
     padding: 0 5px;
     @include button-active-hover('player-color-', $playerColors, null, 'simple');
+  }
+}
+
+@keyframes appearFromRight {
+  0% {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+
+  100% {
+    opacity: 0.6;
+    transform: translateX(0);
   }
 }

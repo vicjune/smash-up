@@ -20,7 +20,7 @@ export class BaseListComponent implements OnInit, AfterViewInit, OnDestroy {
   MAX_BASES: number = MAX_BASES;
   creatureDragging$ = this.draggingService.bindCreatureDragging();
 
-  deleteCreatureIsHovered$ = this.draggingService.bindIsHovered(DELETE_BUTTON_ID);
+  deleteCreatureIsHovered$ = this.draggingService.bindIsHoveredByCreature(DELETE_BUTTON_ID);
   subscription = new Subscription();
 
   @ViewChild('deleteCreature') deleteCreatureButton: ElementRef;

@@ -69,7 +69,7 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
       this.creatureDragging$
     ).pipe(map(this.getTransform));
 
-    this.isHovered$ = this.draggingService.bindIsHovered(this.baseId);
+    this.isHovered$ = this.draggingService.bindIsHoveredByCreature(this.baseId);
 
     if (this.newBase) {
       this.editMode$.next(true);
@@ -265,6 +265,5 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy() {
     this.subscription.unsubscribe();
     this.draggingService.unregisterCoordinates(this.baseId);
-    this.draggable.destroy();
   }
 }
