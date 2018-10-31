@@ -1,4 +1,5 @@
 <div #player
+*ngIf="player$ | async"
 [class]="'player player-color-' + (player$ | async).color"
 [ngClass]="{'highlighted': (player$ | async).playing && !(creatureDragging$ | async), 'isHovered': isHovered$ | async, 'isHidden': draggable.dragging && !otherDraggable, 'isDragging': otherDraggable}"
 [ngStyle]="{'top.%': otherDraggable ? otherDraggable.coordinates[1] : null, 'width.%': forcedSize ? forcedSize[0] : null, 'height.%': forcedSize ? forcedSize[1] : null}">

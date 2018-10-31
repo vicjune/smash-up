@@ -51,19 +51,25 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.subscription.add(combineLatest(
-      this.playerService.bindList(),
-      windowEvents.portrait
-    ).subscribe(() => {
-      this.draggingService.registerCoordinates({
-        itemId: this.playerId,
-        x: position.pxToPercent(this.playerElementRef.nativeElement.getBoundingClientRect().left, 'x'),
-        y: position.pxToPercent(this.playerElementRef.nativeElement.getBoundingClientRect().top, 'y'),
-        width: position.pxToPercent(this.playerElementRef.nativeElement.offsetWidth, 'x'),
-        height: position.pxToPercent(this.playerElementRef.nativeElement.offsetHeight, 'y'),
-        type: PLAYER_TYPE
-      });
-    }));
+    if (!this.otherDraggable) {
+      this.subscription.add(combineLatest(
+        this.playerService.bindList(),
+        windowEvents.portrait
+      ).subscribe(() => {
+        setTimeout(() => {
+          if (this.playerElementRef) {
+            this.draggingService.registerCoordinates({
+              itemId: this.playerId,
+              x: position.pxToPercent(this.playerElementRef.nativeElement.getBoundingClientRect().left, 'x'),
+              y: position.pxToPercent(this.playerElementRef.nativeElement.getBoundingClientRect().top, 'y'),
+              width: position.pxToPercent(this.playerElementRef.nativeElement.offsetWidth, 'x'),
+              height: position.pxToPercent(this.playerElementRef.nativeElement.offsetHeight, 'y'),
+              type: PLAYER_TYPE
+            });
+          }
+        });
+      }));
+    }
   }
 
   selectPlayer() {

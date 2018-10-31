@@ -100,8 +100,7 @@ export class PlayerService extends EntityService {
   }
 
   changePlayerOrder(playerMovingId: string, newIndex: number) {
-    console.log(newIndex);
-    const playerIdList = this.entityList$.getValue();
+    const playerIdList = [...this.entityList$.getValue()];
     const indexOfMoving = playerIdList.findIndex(id => playerMovingId === id);
     playerIdList.splice(indexOfMoving, 1);
     playerIdList.splice(newIndex, 0, playerMovingId);

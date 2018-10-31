@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, combineLatest, of, zip } from 'rxjs';
-import { map, switchMap, shareReplay, tap, filter } from 'rxjs/operators';
+import { map, switchMap, shareReplay, tap, filter, first } from 'rxjs/operators';
 
 import { Draggable } from '@shared/utils/draggable';
 import { Base } from '@shared/models/base';
@@ -26,6 +26,7 @@ export class DraggingService {
 
   private draggingPlayerId$ = new BehaviorSubject<string>(null);
   private draggingPlayerCoordinates$ = new BehaviorSubject<[number, number]>(null);
+  private lastPlayerSpotIndex: number = null;
 
   constructor(
     private baseService: BaseService,
@@ -37,7 +38,7 @@ export class DraggingService {
       shareReplay(1),
     );
 
-    this.bindPlayerMove().subscribe(({ playerDragging, newIndex }) => this.playerService.changePlayerOrder(playerDragging, newIndex));
+    this.bindPlayerMove().subscribe(({ draggingPlayerId, newIndex }) => this.playerService.changePlayerOrder(draggingPlayerId, newIndex));
   }
 
   registerCoordinates(coordinates: ItemCoordinates) {
@@ -233,19 +234,28 @@ export class DraggingService {
           this.itemCoordinates$,
           this.playerService.bindList()
         ).pipe(
+          first(),
           switchMap(([itemCoordinates, playersId]) => {
-            const playerItemCoordinates = itemCoordinates.find(coord => coord.itemId === draggingPlayerId);
-            if (!playerItemCoordinates) {
+            const playerDraggingCoordinates = itemCoordinates.find(coord => coord.itemId === draggingPlayerId);
+            if (!playerDraggingCoordinates) {
               return of(null);
             }
-            const orderedPlayersCoordinates = this.getCoordinatesFromOrderedList(itemCoordinates, playersId);
+            const itemCoordinatesClone = [...itemCoordinates];
+            const playerDraggingCoordinatesClone = {...playerDraggingCoordinates};
+            this.lastPlayerSpotIndex = playersId.findIndex(playerId => playerId === draggingPlayerId);
             return this.draggingPlayerCoordinates$.pipe(
-              map(draggingPlayerCoordinates => {
-                playerItemCoordinates.x = draggingPlayerCoordinates[0];
-                playerItemCoordinates.y = draggingPlayerCoordinates[1];
-
-                // do magic
-                return null;
+              map(([, y]) => {
+                playerDraggingCoordinatesClone.y = y;
+                const hoveredPlayerId = position.getSuperposingId(playerDraggingCoordinatesClone, itemCoordinatesClone);
+                if (!hoveredPlayerId) {
+                  return null;
+                }
+                const hoveredPlayerIndex = playersId.findIndex(playerId => playerId === hoveredPlayerId.itemId);
+                if (hoveredPlayerIndex === -1 || hoveredPlayerIndex === this.lastPlayerSpotIndex) {
+                  return null;
+                }
+                this.lastPlayerSpotIndex = hoveredPlayerIndex;
+                return { draggingPlayerId, newIndex: hoveredPlayerIndex };
               })
             );
           })
