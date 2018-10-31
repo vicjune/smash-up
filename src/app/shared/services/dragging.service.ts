@@ -37,7 +37,7 @@ export class DraggingService {
       shareReplay(1),
     );
 
-    this.bindPlayerMove().subscribe(({playerDragging, playerLeavingSpot}) => this.playerService.changePlayerOrder(playerDragging, playerLeavingSpot));
+    this.bindPlayerMove().subscribe(({ playerDragging, newIndex }) => this.playerService.changePlayerOrder(playerDragging, newIndex));
   }
 
   registerCoordinates(coordinates: ItemCoordinates) {
