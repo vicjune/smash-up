@@ -14,5 +14,5 @@ Run `npm run build` to build the project for production. The build artifacts wil
 
 ## Deploy
 
-If it's not installed, install Firebase with `npm i -g firebase-tools`
+If it's not installed, install Firebase with `npm i -g firebase-tools`.
 Run `firebase deploy` to deploy.
