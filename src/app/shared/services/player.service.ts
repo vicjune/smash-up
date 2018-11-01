@@ -105,6 +105,7 @@ export class PlayerService extends EntityService {
     playerIdList.splice(indexOfMoving, 1);
     playerIdList.splice(newIndex, 0, playerMovingId);
     this.entityList$.next(playerIdList);
+    this.updateLocalStorage();
   }
 
   updateScore(modifier: number, id: string, fromConquest = false): void {
