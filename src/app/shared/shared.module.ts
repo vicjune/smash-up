@@ -13,6 +13,7 @@ import { TimerService } from '@shared/services/timer.service';
 import { TimerComponent } from '@shared/components/timer/timer.component';
 import { CreatureService } from '@shared/services/creature.service';
 import { DraggingService } from './services/dragging.service';
+import { PlayerComponent } from './components/player/player.component';
 
 @NgModule({
   imports: [
@@ -26,6 +27,7 @@ import { DraggingService } from './services/dragging.service';
     PopinComponent,
     TimerComponent,
     TimerPipe,
+    PlayerComponent,
   ],
   exports: [
     PlayerListComponent,
@@ -36,6 +38,7 @@ import { DraggingService } from './services/dragging.service';
     CommonModule,
     FormsModule,
     TimerPipe,
+    PlayerComponent,
   ],
   providers: [
     PlayerService,

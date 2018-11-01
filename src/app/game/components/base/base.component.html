@@ -4,13 +4,7 @@
   [ngClass]="{'detailsMode': detailsMode$ | async, 'editMode': editMode$ | async, 'conquered': (base$ | async).resistance <= 0, 'dragging': draggable?.dragging, 'noCreature': (base$ | async).creatures.length === 0, 'creatureDragging': creatureDragging$ | async, 'isHovered': isHovered$ | async}"
   [ngStyle]="{'transform': transform, 'left.%': draggable?.coordinates[0], 'top.%': draggable?.coordinates[1]}"
   (mousedown)="mouseDown($event)"
-  (touchstart)="mouseDown($event)"
-  (window:mousemove)="mouseMove($event)"
-  (window:touchmove)="mouseMove($event)"
-  (window:mouseup)="mouseUp()"
-  (window:mouseleave)="mouseUp()"
-  (window:touchend)="mouseUp()"
-  (window:touchcancel)="mouseUp()">
+  (touchstart)="mouseDown($event)">
 
   <div class="base__topPart" *ngIf="(detailsMode$ | async) && !detailModeCreatureId && !(creatureDragging$ | async)">
     <div class="base__resistanceEdit" *ngIf="editMode$ | async">

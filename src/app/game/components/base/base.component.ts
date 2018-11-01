@@ -69,7 +69,7 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
       this.creatureDragging$
     ).pipe(map(this.getTransform));
 
-    this.isHovered$ = this.draggingService.bindIsHovered(this.baseId);
+    this.isHovered$ = this.draggingService.bindIsHoveredByCreature(this.baseId);
 
     if (this.newBase) {
       this.editMode$.next(true);
@@ -235,8 +235,8 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
       itemId: this.baseId,
       x,
       y,
-      width: position.pxToPercent(this.baseElementRef.nativeElement.clientWidth, 'x'),
-      height: position.pxToPercent(this.baseElementRef.nativeElement.clientHeight, 'y'),
+      width: position.pxToPercent(this.baseElementRef.nativeElement.offsetWidth, 'x'),
+      height: position.pxToPercent(this.baseElementRef.nativeElement.offsetHeight, 'y'),
       type: BASE_TYPE
     });
   }
@@ -260,16 +260,6 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!this.detailsMode$.getValue()) {
       this.draggable.mouseDown(e);
     }
-  }
-
-  mouseMove(e: TouchEvent) {
-    if (!this.detailsMode$.getValue()) {
-      this.draggable.mouseMove(e);
-    }
-  }
-
-  mouseUp() {
-    this.draggable.mouseUp();
   }
 
   ngOnDestroy() {

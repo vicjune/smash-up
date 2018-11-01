@@ -3,13 +3,7 @@
     <div class="creature__card"
     [ngStyle]="{'left.%': draggable?.coordinates[0], 'top.%': draggable?.coordinates[1], transform: transform$ | async}"
     (mousedown)="mouseDown($event)"
-    (touchstart)="mouseDown($event)"
-    (window:mousemove)="mouseMove($event)"
-    (window:touchmove)="mouseMove($event)"
-    (window:mouseleave)="mouseUp()"
-    (window:mouseup)="mouseUp()"
-    (window:touchend)="mouseUp()"
-    (window:touchcancel)="mouseUp()">
+    (touchstart)="mouseDown($event)">
       <div class="creature__strengthDetail" *ngIf="totalBonusStrengthSeparator$ | async">
         <span>
           {{(creature$ | async).basicStrength}}

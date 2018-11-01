@@ -1,6 +1,7 @@
-import { Subject, Observable } from 'rxjs';
+import { Subject, Observable, Subscription } from 'rxjs';
 
 import { position } from './position';
+import { windowEvents } from './windowEvents';
 
 export class Draggable {
   coordinates: [number, number] = [0, 0];
@@ -14,11 +15,13 @@ export class Draggable {
   private mouseOffset: [number, number] = [0, 0];
 
   private clickEvent$ = new Subject<void>();
-  private dragEvent$ = new Subject<boolean>();
+  private delayedDragEvent$ = new Subject<boolean>();
   private draggingEvent$ = new Subject<[number, number]>();
   private dropEvent$ = new Subject<[number, number]>();
 
-  constructor() {}
+  private subscription: Subscription;
+
+  constructor() { }
 
   get dragging(): boolean {
     return this._dragging;
@@ -28,8 +31,8 @@ export class Draggable {
     return this.clickEvent$.asObservable();
   }
 
-  get dragEvent(): Observable<boolean> {
-    return this.dragEvent$.asObservable();
+  get delayedDragEvent(): Observable<boolean> {
+    return this.delayedDragEvent$.asObservable();
   }
 
   get draggingEvent(): Observable<[number, number]> {
@@ -40,43 +43,47 @@ export class Draggable {
     return this.dropEvent$.asObservable();
   }
 
-  mouseDown(e: TouchEvent): void {
-    if (!this._dragging && (!e.touches || e.touches.length === 1)) {
-      e.preventDefault();
-      this.target = e.target as HTMLElement;
+  mouseDown(downEvent: TouchEvent): void {
+    if (!this._dragging && (!downEvent.touches || downEvent.touches.length === 1)) {
+      downEvent.preventDefault();
+      this.subscription = new Subscription();
+      this.subscription.add(windowEvents.mouseMove.subscribe(moveEvent => this.mouseMove(moveEvent)));
+      this.subscription.add(windowEvents.mouseUp.subscribe(() => this.mouseUp()));
+
+      this.target = downEvent.target as HTMLElement;
       this.previousCoordinates = this.coordinates;
       this.draggingStart = true;
       this._dragging = true;
-      this.mouseOffset = [this.convertEvent(e).offsetX, this.convertEvent(e).offsetY];
+      this.mouseOffset = [this.convertEvent(downEvent).offsetX, this.convertEvent(downEvent).offsetY];
 
       this.draggingStartTimeout = setTimeout(() => {
         this.draggingStart = false;
-        this.dragEvent$.next(true);
+        this.delayedDragEvent$.next(true);
       }, 200);
 
-      this.mouseMove(e);
+      this.mouseMove(downEvent);
     }
   }
 
-  mouseMove(e: TouchEvent): void {
-    if (this._dragging && (!e.touches || e.touches.length === 1)) {
-      const x = position.pxToPercent(this.convertEvent(e).pageX - this.mouseOffset[0], 'x');
-      const y = position.pxToPercent(this.convertEvent(e).pageY - this.mouseOffset[1], 'y');
+  private mouseMove(moveEvent: TouchEvent): void {
+    if ((!moveEvent.touches || moveEvent.touches.length === 1)) {
+      const x = position.pxToPercent(this.convertEvent(moveEvent).pageX - this.mouseOffset[0], 'x');
+      const y = position.pxToPercent(this.convertEvent(moveEvent).pageY - this.mouseOffset[1], 'y');
       let inRangeX = x;
       let inRangeY = y;
 
       if (x <= 0) {
         inRangeX = 0;
       }
-      if (x + position.pxToPercent(this.target.clientWidth, 'x') >= 100) {
-        inRangeX = 100 - position.pxToPercent(this.target.clientWidth, 'x');
+      if (x + position.pxToPercent(this.target.offsetWidth, 'x') >= 100) {
+        inRangeX = 100 - position.pxToPercent(this.target.offsetWidth, 'x');
       }
 
       if (y <= 0) {
         inRangeY = 0;
       }
-      if (y + position.pxToPercent(this.target.clientHeight, 'y') >= 100) {
-        inRangeY = 100 - position.pxToPercent(this.target.clientHeight, 'y');
+      if (y + position.pxToPercent(this.target.offsetHeight, 'y') >= 100) {
+        inRangeY = 100 - position.pxToPercent(this.target.offsetHeight, 'y');
       }
 
       this.coordinates = [inRangeX, inRangeY];
@@ -84,26 +91,26 @@ export class Draggable {
     }
   }
 
-  mouseUp() {
-    if (this._dragging) {
-      if (this.draggingStart) {
-        this.clickEvent$.next();
-        this.coordinates = this.previousCoordinates;
-      } else {
-        this.dropEvent$.next(this.coordinates);
-      }
+  private mouseUp(): void {
+    this.subscription.unsubscribe();
 
-      if (this.draggingStartTimeout) {
-        clearTimeout(this.draggingStartTimeout);
-      }
-
-      this._dragging = false;
-      this.draggingStart = false;
-      this.dragEvent$.next(false);
+    if (this.draggingStart) {
+      this.clickEvent$.next();
+      this.coordinates = this.previousCoordinates;
+    } else {
+      this.dropEvent$.next(this.coordinates);
     }
+
+    if (this.draggingStartTimeout) {
+      clearTimeout(this.draggingStartTimeout);
+    }
+
+    this._dragging = false;
+    this.draggingStart = false;
+    this.delayedDragEvent$.next(false);
   }
 
-  private convertEvent(event) {
+  private convertEvent(event): { pageX: number, pageY: number, offsetX: number, offsetY: number } {
     if ('targetTouches' in event) {
       const bouncingRect = this.target.getBoundingClientRect();
       return {
