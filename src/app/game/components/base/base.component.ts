@@ -165,7 +165,9 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
 
   exitMoreDetails(force = false) {
     if (!this.detailModeCreatureId || force) {
-      this.detailsMode$.next(false);
+      if (!this.editMode$.getValue() || force) {
+        this.detailsMode$.next(false);
+      }
       this.editMode$.next(false);
     }
     this.exitCreatureDetailMode();
