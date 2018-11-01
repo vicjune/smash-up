@@ -41,7 +41,7 @@
   &__wrapper {
     height: 100%;
     width: 100%;
-    background-color: hsla(0, 0, 0, 0.8);
+    background-color: hsla(0, 0, 0, 0.9);
     padding: 40px 0;
     box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
     overflow-y: auto;
@@ -66,21 +66,14 @@
     }
 
     &__button {
-      border-top: 1px solid white;
       height: 50px;
       width: 100%;
       color: white;
-      padding: 0 40px;
+      padding: 0 30px;
       text-align: left;
       font-size: 20px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      text-align: right;
-
-      &:last-child {
-        border-bottom: 1px solid white;
-      }
 
       @media (hover: hover) {
         &:hover {
@@ -93,7 +86,7 @@
       }
 
       i {
-        margin-right: auto;
+        margin-right: 20px;
         line-height: 30px;
       }
     }
@@ -105,7 +98,6 @@
         position: relative;
         height: 50px;
         color: white;
-        border-bottom: 1px solid white;
         display: flex;
         align-items: center;
         justify-content: center;
