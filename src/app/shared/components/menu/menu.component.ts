@@ -21,7 +21,7 @@ export class MenuComponent implements OnInit {
   MAX_PLAYERS: number = MAX_PLAYERS;
   TIMER_SECONDS_INTERVAL: number = TIMER_SECONDS_INTERVAL;
 
-  @Output('addPlayer') addPlayer = new EventEmitter<void>();
+  @Output() addPlayer = new EventEmitter<void>();
 
   constructor(
     public playerService: PlayerService,
