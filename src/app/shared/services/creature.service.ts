@@ -14,6 +14,7 @@ export class CreatureService extends EntityService {
   protected entity = 'creatures';
 
   private deleteCreatureEvent$ = new Subject<string>();
+  private deleteCreatureFromDragEvent$ = new Subject<void>();
 
   constructor(
     private playerService: PlayerService
@@ -27,6 +28,10 @@ export class CreatureService extends EntityService {
 
   get deleteCreatureEvent(): Observable<string> {
     return this.deleteCreatureEvent$.asObservable();
+  }
+
+  get deleteCreatureFromDragEvent(): Observable<void> {
+    return this.deleteCreatureFromDragEvent$.asObservable();
   }
 
   bindFromId(id): Observable<Creature> {
@@ -49,8 +54,11 @@ export class CreatureService extends EntityService {
     return super.bindAllEntities().pipe(map(creatures => creatures as Creature[]));
   }
 
-  delete(creatureId: string) {
+  delete(creatureId: string, exitDetailMode = false) {
     this.deleteCreatureEvent$.next(creatureId);
+    if (exitDetailMode) {
+      this.deleteCreatureFromDragEvent$.next();
+    }
     super.delete(creatureId);
   }
 

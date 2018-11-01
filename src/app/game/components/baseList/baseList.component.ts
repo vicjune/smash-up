@@ -4,7 +4,7 @@ import { Observable, Subscription } from 'rxjs';
 import { BaseService } from '@shared/services/base.service';
 import { PlayerService } from '@shared/services/player.service';
 import { Base } from '@shared/models/base';
-import { MAX_PLAYERS, DELETE_BUTTON_ID, DELETE_BUTTON_TYPE } from '@shared/constants';
+import { DELETE_BUTTON_ID, DELETE_BUTTON_TYPE, MAX_BASES } from '@shared/constants';
 import { DraggingService } from '@shared/services/dragging.service';
 import { windowEvents } from '@shared/utils/windowEvents';
 import { position } from '@shared/utils/position';
@@ -17,10 +17,10 @@ import { position } from '@shared/utils/position';
 export class BaseListComponent implements OnInit, AfterViewInit, OnDestroy {
   newBase = false;
   bases$: Observable<string[]>;
-  MAX_BASES: number = MAX_PLAYERS + 1;
+  MAX_BASES: number = MAX_BASES;
   creatureDragging$ = this.draggingService.bindCreatureDragging();
 
-  deleteCreatureIsHovered$ = this.draggingService.bindIsHovered(DELETE_BUTTON_ID);
+  deleteCreatureIsHovered$ = this.draggingService.bindIsHoveredByCreature(DELETE_BUTTON_ID);
   subscription = new Subscription();
 
   @ViewChild('deleteCreature') deleteCreatureButton: ElementRef;
@@ -41,8 +41,8 @@ export class BaseListComponent implements OnInit, AfterViewInit, OnDestroy {
         itemId: DELETE_BUTTON_ID,
         x: position.pxToPercent(this.deleteCreatureButton.nativeElement.getBoundingClientRect().left, 'x'),
         y: position.pxToPercent(this.deleteCreatureButton.nativeElement.getBoundingClientRect().top, 'y'),
-        width: position.pxToPercent(this.deleteCreatureButton.nativeElement.clientWidth, 'x'),
-        height: position.pxToPercent(this.deleteCreatureButton.nativeElement.clientHeight, 'y'),
+        width: position.pxToPercent(this.deleteCreatureButton.nativeElement.offsetWidth, 'x'),
+        height: position.pxToPercent(this.deleteCreatureButton.nativeElement.offsetHeight, 'y'),
         type: DELETE_BUTTON_TYPE
       });
     }));

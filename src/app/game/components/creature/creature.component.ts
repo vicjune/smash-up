@@ -48,7 +48,7 @@ export class CreatureComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.draggable = this.otherDraggable || new Draggable();
-    this.creature$ = this.creatureService.bindFromId(this.creatureId) as Observable<Creature>;
+    this.creature$ = this.creatureService.bindFromId(this.creatureId);
 
     this.owner$ = this.creature$.pipe(
       switchMap((creature: Creature) => {
@@ -85,25 +85,13 @@ export class CreatureComponent implements OnInit, OnDestroy {
     this.transform$ = this.creature$.pipe(map(this.getTransform));
 
     this.subscription.add(this.draggable.clickEvent.subscribe(() => this.seeMoreDetails()));
-    this.subscription.add(this.draggable.dragEvent.subscribe(dragging => this.toggleDragMode(dragging)));
+    this.subscription.add(this.draggable.delayedDragEvent.subscribe(dragging => this.toggleDragMode(dragging)));
     this.subscription.add(this.draggable.draggingEvent.subscribe(coordinates => this.sendDraggingCoordinates(coordinates)));
     this.subscription.add(this.draggable.dropEvent.subscribe(() => this.triggerDrop()));
   }
 
   seeMoreDetails() {
     this.toggleDetailMode.emit();
-  }
-
-  toggleDragMode(dragging: boolean) {
-    this.draggingService.toggleCreatureDragMode(dragging);
-  }
-
-  sendDraggingCoordinates(coordinates: [number, number]) {
-    this.draggingService.setCreatureDraggingCoordinates(coordinates);
-  }
-
-  triggerDrop() {
-    this.draggingService.triggerCreatureDrop(this.creatureId);
   }
 
   increaseBaseStrength() {
@@ -164,18 +152,22 @@ export class CreatureComponent implements OnInit, OnDestroy {
     ) - MAX_CREATURE_CARD_ROTATION_DEG) + 'deg)';
   }
 
+  toggleDragMode(dragging: boolean) {
+    this.draggingService.toggleCreatureDragMode(dragging);
+  }
+
+  sendDraggingCoordinates(coordinates: [number, number]) {
+    this.draggingService.setCreatureDraggingCoordinates(coordinates);
+  }
+
+  triggerDrop() {
+    this.draggingService.triggerCreatureDrop(this.creatureId);
+  }
+
   mouseDown(e) {
     this.draggable.mouseDown(e);
     this.draggingService.creatureDraggable = this.draggable;
     this.draggingService.creatureMouseDown(this.creatureId);
-  }
-
-  mouseMove(e) {
-    this.draggable.mouseMove(e);
-  }
-
-  mouseUp() {
-    this.draggable.mouseUp();
   }
 
   ngOnDestroy() {

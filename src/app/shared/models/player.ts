@@ -7,9 +7,10 @@ export class Player extends Entity {
   score: number;
   realScore: number;
 
-  constructor(name: string) {
+  constructor(name: string, color: number) {
     super();
     this.name = name;
+    this.color = color;
     this.realScore = 0;
     this.score = this.realScore;
   }

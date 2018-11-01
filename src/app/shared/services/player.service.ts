@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 
 import { Player } from '../models/player';
 import { MAX_PLAYERS, PLAYER_SCORE_MODIFIER_TIMEOUT } from './../constants';
@@ -12,8 +12,10 @@ import { arrayUtils } from '@shared/utils/arrayUtils';
 @Injectable()
 export class PlayerService extends EntityService {
   protected entity = 'players';
+
   private conqueringScores$ = new BehaviorSubject<ConqueringScore[]>([]);
   private playerPlaying$ = new BehaviorSubject<string>(null);
+  private availableColors$: Observable<number[]>;
 
   constructor() {
     super();
@@ -26,6 +28,8 @@ export class PlayerService extends EntityService {
     }));
 
     this.updateFromLocalStorage(players);
+
+    this.availableColors$ = this._bindAvailableColors().pipe(shareReplay(1));
   }
 
   bindFromId(id: string): Observable<Player> {
@@ -44,6 +48,10 @@ export class PlayerService extends EntityService {
     return this.conqueringScores$.pipe(map(conqueringScores => {
       return conqueringScores.filter(conqueringScore => conqueringScore.playerId === playerId);
     }));
+  }
+
+  bindAvailableColors(): Observable<number[]> {
+    return this.availableColors$;
   }
 
   setPlayerPlaying(id: string): void {
@@ -77,7 +85,6 @@ export class PlayerService extends EntityService {
     const players = this.entityList$.getValue();
     const playersLength = players.length;
     if (playersLength < MAX_PLAYERS) {
-      newPlayer.color = arrayUtils.getNewIndex(this.getAllEntities().map((player: Player) => player.color));
       super.add(newPlayer);
       if (playersLength === 0) {
         this.setPlayerPlaying(newPlayer.id);
@@ -90,6 +97,14 @@ export class PlayerService extends EntityService {
     if (this.playerPlaying$.getValue() === id) {
       this.nextPlayerPlaying();
     }
+  }
+
+  changePlayerOrder(playerMovingId: string, newIndex: number) {
+    const playerIdList = [...this.entityList$.getValue()];
+    const indexOfMoving = playerIdList.findIndex(id => playerMovingId === id);
+    playerIdList.splice(indexOfMoving, 1);
+    playerIdList.splice(newIndex, 0, playerMovingId);
+    this.entityList$.next(playerIdList);
   }
 
   updateScore(modifier: number, id: string, fromConquest = false): void {
@@ -118,6 +133,14 @@ export class PlayerService extends EntityService {
       });
     });
     this.updateLocalStorage();
+  }
+
+  private _bindAvailableColors(): Observable<number[]> {
+    return this.bindAllEntities().pipe(map(players => {
+      const takenColors = players.map(player => player.color);
+      const allColors = arrayUtils.arrayOfInts(MAX_PLAYERS);
+      return arrayUtils.diff(allColors, takenColors);
+    }));
   }
 
   private addConqueringScore(playerId: string, score: number) {

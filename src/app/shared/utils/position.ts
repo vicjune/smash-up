@@ -11,7 +11,7 @@ export const position = {
     }
   },
 
-  getSuperposingId(itemACoordinates: ItemCoordinates, itemBList: ItemCoordinates[], itemBBlackList: string[]): ItemCoordinates {
+  getSuperposingId(itemACoordinates: ItemCoordinates, itemBList: ItemCoordinates[], itemBBlackList: string[] = []): ItemCoordinates {
     let i = itemBList.length;
     while (i--) {
       if (this.isSuperposing(itemACoordinates, itemBList[i])) {

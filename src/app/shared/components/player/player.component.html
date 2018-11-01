@@ -1,0 +1,29 @@
+<div #player
+*ngIf="player$ | async"
+[class]="'player player-color-' + (player$ | async).color"
+[ngClass]="{'highlighted': (player$ | async).playing && !(creatureDragging$ | async), 'isHovered': isHovered$ | async, 'isHidden': draggable.dragging && !otherDraggable, 'isDragging': otherDraggable}"
+[ngStyle]="{'top.%': otherDraggable ? otherDraggable.coordinates[1] : null, 'width.%': forcedSize ? forcedSize[0] : null, 'height.%': forcedSize ? forcedSize[1] : null}">
+  <div class="player__button" (mousedown)="mouseDown($event)" (touchstart)="mouseDown($event)">
+    <div class="player__name">{{(player$ | async).name}}</div>
+    <div class="player__score">
+      <span class="player__score__score" [ngClass]="{'underscore': (player$ | async).score === 6 || (player$ | async).score === 9}">{{(player$ | async).score}}</span>
+      <span class="player__score__modifier" *ngFor="let conqueringScore of (conqueringScores$ | async)">
+        {{conqueringScore.score > 0 ? '+' : ''}}{{conqueringScore.score}}
+      </span>
+    </div>
+    <div class="player__score upsideDown">
+      <span class="player__score__score" [ngClass]="{'underscore': (player$ | async).score === 6 || (player$ | async).score === 9}">{{(player$ | async).score}}</span>
+      <span class="player__score__modifier" *ngFor="let conqueringScore of (conqueringScores$ | async)">
+        {{conqueringScore.score > 0 ? '+' : ''}}{{conqueringScore.score}}
+      </span>
+    </div>
+  </div>
+  <div class="player__playing" [ngClass]="{'display': (player$ | async).playing && !(creatureDragging$ | async)}">
+    {{'PLAYING' | translate}}
+  </div>
+  <div class="player__valueButtons" *ngIf="!(creatureDragging$ | async)">
+    <button class="player__valueButton" (click)="increaseScore()"><i class="icon-plus-square"></i></button>
+    <button class="player__valueButton" (click)="decreaseScore()" [disabled]="(player$ | async).realScore === 0"><i
+        class="icon-minus-square"></i></button>
+  </div>
+</div>

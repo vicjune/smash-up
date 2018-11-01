@@ -49,7 +49,6 @@ export class MenuComponent implements OnInit {
 
   resetClicked() {
     this.resetPopin = true;
-    this.menuOpen = false;
   }
 
   callbackReset(index: number) {

@@ -4,7 +4,7 @@ import { map, switchMap, shareReplay } from 'rxjs/operators';
 
 import { EntityService } from '@shared/services/entity.service';
 import { Base } from '@shared/models/base';
-import { MAX_PLAYERS, AVAILABLE_COLORS, MONSTER_OWNER_ID } from '@shared/constants';
+import { MAX_BASES, MONSTER_OWNER_ID } from '@shared/constants';
 import { PlayerService } from '@shared/services/player.service';
 import { CreatureService } from '@shared/services/creature.service';
 import { Creature } from '@shared/models/creature';
@@ -96,7 +96,7 @@ export class BaseService extends EntityService {
 
   add(newBase: Base): void {
     const bases = this.entityList$.getValue();
-    if (bases.length < MAX_PLAYERS + 1) {
+    if (bases.length < MAX_BASES) {
       newBase.color = arrayUtils.getNewIndex(this.getAllEntities().map((base: Base) => base.color));
       super.add(newBase);
     }
@@ -156,12 +156,9 @@ export class BaseService extends EntityService {
   }
 
   private _bindAvailableColors(): Observable<number[]> {
-    return this.bindAllEntities().pipe(map((bases: Base[]) => {
+    return this.bindAllEntities().pipe(map(bases => {
       const takenColors = bases.map(base => base.color);
-      const allColors = [];
-      for (let index = 1; index < AVAILABLE_COLORS + 1; index++) {
-        allColors[index] = index;
-      }
+      const allColors = arrayUtils.arrayOfInts(MAX_BASES);
       return arrayUtils.diff(allColors, takenColors);
     }));
   }

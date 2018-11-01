@@ -1,3 +1,5 @@
+@import 'styles';
+
 .game {
   padding-left: 280px;
   min-height: 100vh;
@@ -35,11 +37,32 @@
   }
 }
 
-.addPopin__input {
-  width: 300px;
-  font-size: 20px;
-  padding: 10px;
-  margin: 5px;
-  border: 1px solid rgb(202, 202, 202);
-  border-radius: 5px;
+.addPopin{
+  &__input {
+    width: 300px;
+    font-size: 20px;
+    padding: 10px;
+    margin: 5px;
+    border: 1px solid rgb(202, 202, 202);
+    border-radius: 5px;
+  }
+
+  &__availableColors {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+  }
+
+  &__color {
+    height: 40px;
+    width: 40px;
+    border-radius: 5px;
+    margin: 0 5px;
+    @include button-active-hover('add-player-color-', $playerColors, null, 'background');
+
+    &.addPopin__color--selected {
+      border: 5px solid black;
+    }
+  }
 }

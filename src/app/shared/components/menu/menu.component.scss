@@ -76,6 +76,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      text-align: right;
 
       &:last-child {
         border-bottom: 1px solid white;
@@ -114,7 +115,6 @@
       &__value {
         width: 70px;
         text-align: center;
-        user-select: none;
       }
 
       &__button {
@@ -132,7 +132,6 @@
     font-size: 13px;
     text-align: center;
     margin-top: auto;
-    user-select: none;
 
     &__label {
       color: rgb(136, 136, 136);
