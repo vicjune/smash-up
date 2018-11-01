@@ -24,7 +24,7 @@
 
   <div class="base__card" (click)="exitCreatureDetailMode()">
     <div class="base__card__actions" *ngIf="(detailsMode$ | async) && !detailModeCreatureId && !(creatureDragging$ | async)">
-      <button class="base__card__actions__button edit" (click)="toggleEditMode()"><i [class]="(editMode$ | async) ? 'icon-checkmark' : 'icon-pencil'"></i></button>
+      <button class="base__card__actions__button edit" (click)="toggleEditMode()" *ngIf="!(editMode$ | async)"><i class="icon-pencil"></i></button>
       <button class="base__card__actions__button delete" (click)="deleteBase()" *ngIf="editMode$ | async"><i class="icon-bin2"></i></button>
     </div>
 

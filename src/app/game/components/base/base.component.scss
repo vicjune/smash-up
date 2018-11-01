@@ -164,7 +164,6 @@
         }
 
         &.delete {
-          margin-top: 10px;
           @include button-active-hover('', null, $danger, 'background');
         }
       }
