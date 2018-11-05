@@ -14,6 +14,7 @@ import { TimerComponent } from '@shared/components/timer/timer.component';
 import { CreatureService } from '@shared/services/creature.service';
 import { DraggingService } from './services/dragging.service';
 import { PlayerComponent } from './components/player/player.component';
+import { AnalyticsService } from './services/analytics.service';
 
 @NgModule({
   imports: [
@@ -46,6 +47,7 @@ import { PlayerComponent } from './components/player/player.component';
     TimerService,
     CreatureService,
     DraggingService,
+    AnalyticsService
   ]
 })
 export class SharedModule { }

@@ -5,6 +5,7 @@ import { Timer } from '../models/timer';
 import { TIMER_SECONDS_INTERVAL, TIMER_DEFAULT } from '../constants';
 import { PlayerService } from './player.service';
 import { localStorage } from '@shared/utils/localStorage';
+import { AnalyticsService } from './analytics.service';
 
 @Injectable()
 export class TimerService {
@@ -12,7 +13,8 @@ export class TimerService {
   private interval;
 
   constructor(
-    private playerService: PlayerService
+    private playerService: PlayerService,
+    private analyticsService: AnalyticsService
   ) {
     const timer = localStorage.get<Timer>('timer', localTimer => {
       localTimer.running = false;
@@ -36,6 +38,7 @@ export class TimerService {
     this.reset();
     this.timerSubject.next(timer);
     this.storeInLocalStorage();
+    this.analyticsService.updateTimer(timer);
   }
 
   toggleRunning(): void {

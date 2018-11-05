@@ -8,6 +8,7 @@ import { Creature } from '@shared/models/creature';
 import { Player } from '@shared/models/player';
 import { localStorage } from '@shared/utils/localStorage';
 import { MONSTER_OWNER_ID } from '@shared/constants';
+import { AnalyticsService } from './analytics.service';
 
 @Injectable()
 export class CreatureService extends EntityService {
@@ -17,7 +18,8 @@ export class CreatureService extends EntityService {
   private deleteCreatureFromDragEvent$ = new Subject<void>();
 
   constructor(
-    private playerService: PlayerService
+    private playerService: PlayerService,
+    private analyticsService: AnalyticsService
   ) {
     super();
     const creatures = localStorage.get<Creature[]>(this.entity);

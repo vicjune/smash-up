@@ -8,6 +8,7 @@ import { EntityService } from '@shared/services/entity.service';
 import { localStorage } from '@shared/utils/localStorage';
 import { ConqueringScore } from '@shared/models/conqueringScore';
 import { arrayUtils } from '@shared/utils/arrayUtils';
+import { AnalyticsService } from './analytics.service';
 
 @Injectable()
 export class PlayerService extends EntityService {
@@ -17,7 +18,9 @@ export class PlayerService extends EntityService {
   private playerPlaying$ = new BehaviorSubject<string>(null);
   private availableColors$: Observable<number[]>;
 
-  constructor() {
+  constructor(
+    private analyticsService: AnalyticsService
+  ) {
     super();
     const players = localStorage.get<Player[]>(this.entity, localPlayers => localPlayers.filter(player => !!player).map(player => {
       if (player.playing) {
@@ -85,6 +88,7 @@ export class PlayerService extends EntityService {
     const players = this.entityList$.getValue();
     const playersLength = players.length;
     if (playersLength < MAX_PLAYERS) {
+      this.analyticsService.addPlayer(newPlayer);
       super.add(newPlayer);
       if (playersLength === 0) {
         this.setPlayerPlaying(newPlayer.id);
@@ -93,6 +97,7 @@ export class PlayerService extends EntityService {
   }
 
   delete(id: string): void {
+    this.analyticsService.deletePlayer();
     super.delete(id);
     if (this.playerPlaying$.getValue() === id) {
       this.nextPlayerPlaying();

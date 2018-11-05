@@ -4,10 +4,11 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { PlayerService } from '../../services/player.service';
 import { BaseService } from '@shared/services/base.service';
-import { MAX_PLAYERS, TIMER_SECONDS_INTERVAL } from '@shared/constants';
+import { MAX_PLAYERS, TIMER_SECONDS_INTERVAL, LOCAL_STORAGE_I18N } from '@shared/constants';
 import { localStorage } from '@shared/utils/localStorage';
 import { CreatureService } from '@shared/services/creature.service';
 import { DraggingService } from '@shared/services/dragging.service';
+import { AnalyticsService } from '@shared/services/analytics.service';
 
 @Component({
   selector: 'app-menu',
@@ -29,7 +30,8 @@ export class MenuComponent implements OnInit {
     public translate: TranslateService,
     public timerService: TimerService,
     public creatureService: CreatureService,
-    public draggingService: DraggingService
+    public draggingService: DraggingService,
+    public analyticsService: AnalyticsService
   ) { }
 
   ngOnInit() {
@@ -66,6 +68,7 @@ export class MenuComponent implements OnInit {
 
   setLanguage(lang: string) {
     this.translate.use(lang);
-    localStorage.set('i18n', lang);
+    localStorage.set(LOCAL_STORAGE_I18N, lang);
+    this.analyticsService.updateLang(lang);
   }
 }
