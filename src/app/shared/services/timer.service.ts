@@ -92,12 +92,8 @@ export class TimerService {
 
   reset(): void {
     const timer = this.timerSubject.getValue();
-    timer.running = false;
     timer.value = timer.startValue;
     this.timerSubject.next(timer);
-    if (this.interval) {
-      clearInterval(this.interval);
-    }
   }
 
   private storeInLocalStorage() {

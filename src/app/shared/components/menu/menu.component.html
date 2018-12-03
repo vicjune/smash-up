@@ -4,7 +4,7 @@
   </button>
 
   <div class="menu__wrapper">
-    <button class="menu__wrapper__fullscreen" (click)="toggleFullscreen()" *ngIf="!(creatureDragging$ | async)">
+    <button class="menu__wrapper__fullscreen" (click)="toggleFullscreen()">
         <i [class]="(fullscreen$ | async) ? 'icon-shrink2' : 'icon-enlarge2'"></i>
     </button>
 
