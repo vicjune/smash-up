@@ -14,7 +14,7 @@ import { DraggingService } from '@shared/services/dragging.service';
 })
 export class TimerComponent {
   timer$: Observable<Timer> = this.timerService.bind();
-  timerBlinking$: Observable<boolean> = this.timer$.pipe(map(timer => timer.running && timer.value < 10));
+  timerBlinking$: Observable<boolean> = this.timer$.pipe(map(timer => timer.running && timer.value < 0));
   playerColor$: Observable<number> = this.playerService.bindPlayerPlaying().pipe(
     switchMap(playerId => this.playerService.bindFromId(playerId)),
     filter(player => !!player),
