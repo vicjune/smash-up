@@ -12,6 +12,7 @@ import { Score } from '@shared/interfaces/score';
 import { localStorage } from '@shared/utils/localStorage';
 import { CreatureOrderedList } from '@shared/interfaces/creatureOrderedList';
 import { arrayUtils } from '@shared/utils/arrayUtils';
+import { AnalyticsService } from './analytics.service';
 
 @Injectable()
 export class BaseService extends EntityService {
@@ -23,7 +24,8 @@ export class BaseService extends EntityService {
 
   constructor(
     private playerService: PlayerService,
-    private creatureService: CreatureService
+    private creatureService: CreatureService,
+    private analyticsService: AnalyticsService,
   ) {
     super();
     const bases = localStorage.get<Base[]>(this.entity);
@@ -97,6 +99,7 @@ export class BaseService extends EntityService {
   add(newBase: Base): void {
     const bases = this.entityList$.getValue();
     if (bases.length < MAX_BASES) {
+      this.analyticsService.addBase();
       newBase.color = arrayUtils.getNewIndex(this.getAllEntities().map((base: Base) => base.color));
       super.add(newBase);
     }
@@ -131,14 +134,18 @@ export class BaseService extends EntityService {
       this.playerService.updateScore(score.reward, score.playerId, true);
     });
 
-    this.delete(base.id);
+    this.analyticsService.conquerBase();
+    this.delete(base.id, true);
   }
 
-  delete(baseId: string) {
+  delete(baseId: string, conquest = false) {
     const base = this.getEntity(baseId) as Base;
     let i = base.creatures.length;
     while (i--) {
       this.creatureService.delete(base.creatures[i]);
+    }
+    if (!conquest) {
+      this.analyticsService.deleteBase();
     }
     super.delete(baseId);
   }

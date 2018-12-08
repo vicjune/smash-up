@@ -4,6 +4,10 @@
   </button>
 
   <div class="menu__wrapper">
+    <button class="menu__wrapper__fullscreen" (click)="toggleFullscreen()">
+        <i [class]="(fullscreen$ | async) ? 'icon-shrink2' : 'icon-enlarge2'"></i>
+    </button>
+
     <div class="menu__wrapper__i18n">
       <button class="menu__wrapper__i18n__button" [disabled]="language === 'en' || !language" (click)="setLanguage('en')">EN</button>
       <button class="menu__wrapper__i18n__button" [disabled]="language === 'fr'" (click)="setLanguage('fr')">FR</button>

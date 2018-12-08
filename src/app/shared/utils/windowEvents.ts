@@ -12,6 +12,28 @@ const portrait$ = new Observable<boolean>(observer => {
   };
 }).pipe(shareReplay(1));
 
+const fullscreen$ = new Observable<boolean>(observer => {
+  const handler = () => observer.next(
+    !!(
+      (<any>document).fullscreenElement ||
+      (<any>document).webkitFullscreenElement ||
+      (<any>document).mozFullScreenElement ||
+      (<any>document).msFullscreenElement
+    )
+  );
+  handler();
+  document.addEventListener('fullscreenchange', handler);
+  document.addEventListener('webkitfullscreenchange', handler);
+  document.addEventListener('mozfullscreenchange', handler);
+  document.addEventListener('MSFullscreenChange', handler);
+  return () => {
+    document.removeEventListener('fullscreenchange', handler);
+    document.removeEventListener('webkitfullscreenchange', handler);
+    document.removeEventListener('mozfullscreenchange', handler);
+    document.removeEventListener('MSFullscreenChange', handler);
+  };
+}).pipe(shareReplay(1));
+
 const mouseMove$ = new Observable<TouchEvent>(observer => {
   const handler = e => observer.next(e);
   window.addEventListener('mousemove', handler);
@@ -41,11 +63,46 @@ export const windowEvents = {
     return portrait$;
   },
 
+  get fullscreen() {
+    return fullscreen$;
+  },
+
   get mouseMove() {
     return mouseMove$;
   },
 
   get mouseUp() {
     return mouseUp$;
+  },
+
+  toggleFullscreen() {
+    const doc = document as any;
+    if (
+      doc.fullscreenElement ||
+      doc.webkitFullscreenElement ||
+      doc.mozFullScreenElement ||
+      doc.msFullscreenElement
+    ) {
+      if (doc.exitFullscreen) {
+        doc.exitFullscreen();
+      } else if (doc.webkitExitFullscreen) {
+        doc.webkitExitFullscreen();
+      } else if (doc.mozCancelFullScreen) {
+        doc.mozCancelFullScreen();
+      } else if (doc.msExitFullscreen) {
+        doc.msExitFullscreen();
+      }
+    } else {
+      const docElem = document.documentElement as any;
+      if (docElem.requestFullscreen) {
+        docElem.requestFullscreen();
+      } else if (docElem.mozRequestFullScreen) {
+        docElem.mozRequestFullScreen();
+      } else if (docElem.webkitRequestFullscreen) {
+        docElem.webkitRequestFullscreen();
+      } else if (docElem.msRequestFullscreen) {
+        docElem.msRequestFullscreen();
+      }
+    }
   }
 };

@@ -15,9 +15,10 @@ export class GameComponent implements OnInit {
   alreadyAdded = false;
   newPlayerName = '';
   newPlayerColor = null;
+  availableColors: number[] = [];
+
   creatureDragging$ = this.draggingService.bindCreatureDragging();
   creatureDraggingId$ = this.draggingService.bindCreatureDraggingId();
-  availableColors: number[] = [];
 
   subscription = new Subscription();
 

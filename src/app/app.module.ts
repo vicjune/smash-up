@@ -9,6 +9,7 @@ import { SharedModule } from './shared/shared.module';
 import { GameModule } from './game/game.module';
 import { InitModule } from './init/init.module';
 import { localStorage } from '@shared/utils/localStorage';
+import { LOCAL_STORAGE_DEVICE_ID, LOCAL_STORAGE_VERSION } from '@shared/constants';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -38,9 +39,15 @@ export class AppModule {
   localStorageVersion = 6;
 
   constructor() {
-    if (localStorage.get<number>('version') !== this.localStorageVersion) {
+    const deviceId = localStorage.get<string>(LOCAL_STORAGE_DEVICE_ID);
+
+    if (localStorage.get<number>(LOCAL_STORAGE_VERSION) !== this.localStorageVersion) {
       localStorage.clear();
     }
-    localStorage.set('version', this.localStorageVersion);
+    localStorage.set(LOCAL_STORAGE_VERSION, this.localStorageVersion);
+
+    if (deviceId) {
+      localStorage.set(LOCAL_STORAGE_DEVICE_ID, deviceId);
+    }
   }
 }

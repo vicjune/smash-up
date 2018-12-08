@@ -13,3 +13,6 @@ export const DELETE_BUTTON_TYPE = 'deleteButton';
 export const BASE_TYPE = 'base';
 export const PLAYER_TYPE = 'player';
 export const MONSTER_OWNER_ID = 'monster';
+export const LOCAL_STORAGE_DEVICE_ID = 'deviceId';
+export const LOCAL_STORAGE_VERSION = 'version';
+export const LOCAL_STORAGE_I18N = 'i18n';

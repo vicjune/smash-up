@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { localStorage } from '@shared/utils/localStorage';
+import { LOCAL_STORAGE_I18N } from '@shared/constants';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +14,7 @@ export class AppComponent {
   ) {
     translate.setDefaultLang('en');
 
-    let lang = localStorage.get<string>('i18n');
+    let lang = localStorage.get<string>(LOCAL_STORAGE_I18N);
 
     if (!lang) {
       lang = window.navigator.language;
