@@ -97,10 +97,20 @@ export class TimerService {
     this.playerService.nextPlayerPlaying();
   }
 
-  reset(): void {
+  resetToDefaultValue() {
     const timer = this.timerSubject.getValue();
     timer.value = timer.startValue;
     this.timerSubject.next(timer);
+  }
+
+  reset(): void {
+    const timer = this.timerSubject.getValue();
+    timer.value = timer.startValue;
+    timer.running = false;
+    this.timerSubject.next(timer);
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
   }
 
   private checkSound(timer) {
