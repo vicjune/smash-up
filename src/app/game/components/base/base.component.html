@@ -84,6 +84,13 @@
       </div>
     </div>
   </div>
+
+  <div class="base__creaturesMiniature" *ngIf="!(detailsMode$ | async) || (creatureDragging$ | async)">
+    <div class="base__creaturesMiniature__creature" *ngFor="let monsterId of (creatureList$ | async).monsters"></div>
+    <ng-container *ngFor="let creatureOwner of (creatureList$ | async).players">
+      <div [class]="'base__creaturesMiniature__creature creaturesMiniature-color-' + creatureOwner.player.color" *ngFor="let creatureId of creatureOwner.creatures"></div>
+    </ng-container>
+  </div>
 </div>
 
 <div class="globalActions" *ngIf="(detailsMode$ | async) && !(editMode$ | async) && !detailModeCreatureId && !(creatureDragging$ | async)">
