@@ -100,12 +100,12 @@
       <i class="icon-evil2 icon"></i>
     </button>
   </div>
-  <div [class]="'globalActions__player add-creature-player-color-' + player.color" [ngClass]="{'globalActions__player--playing': player.playing}" *ngFor="let player of (players$ | async)">
-    <button class="globalActions__addCreature" (click)="createCreature(player.id)">
+  <div [class]="'globalActions__player add-creature-player-color-' + player.color" *ngFor="let player of (players$ | async)">
+    <button class="globalActions__addCreature" *ngIf="!(player.playing || previousOfPlayerPlaying(player.id, (players$ | async)))" (click)="createCreature(player.id)">
       <i class="icon-plus icon"></i>
       <i class="icon-hipster2 icon"></i>
     </button>
-    <ng-container *ngIf="player.playing">
+    <ng-container *ngIf="player.playing || previousOfPlayerPlaying(player.id, (players$ | async))">
       <button class="globalActions__addCreature globalActions__addCreature--quick" *ngFor="let strength of [1, 2, 3, 4, 5]"
         (click)="createCreature(player.id, strength)">
         <span class="strength">{{strength}}</span>

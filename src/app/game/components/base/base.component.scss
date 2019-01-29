@@ -405,31 +405,22 @@
 
   &__addCreature {
     @include button-active-hover('add-creature-player-color-', $playerColors, null, 'background');
-    border-radius: 5px;
+    border-radius: 0;
     height: 40px;
     padding: 0 10px;
     font-size: 18px;
     margin: 0 3px 20px 0;
     white-space: nowrap;
 
-    .globalActions__player--playing & {
-      border-radius: 0;
-    }
-
     &:first-child {
-      .globalActions__player--playing & {
-        border-top-left-radius: 5px;
-        border-bottom-left-radius: 5px;
-      }
+      border-top-left-radius: 5px;
+      border-bottom-left-radius: 5px;
     }
 
     &:last-child {
       margin-right: 0;
-
-      .globalActions__player--playing & {
-        border-top-right-radius: 5px;
-        border-bottom-right-radius: 5px;
-      }
+      border-top-right-radius: 5px;
+      border-bottom-right-radius: 5px;
     }
 
     &--quick {
