@@ -65,7 +65,7 @@ export class CreatureService extends EntityService {
   }
 
   private getStrength(creature: Creature, owner: Player): number {
-    let strength = creature.basicStrength + creature.bonusStrength;
+    let strength = creature.basicStrength;
     if (owner && owner.playing) {
       strength += creature.modifierDuringOwnerTurn;
     }

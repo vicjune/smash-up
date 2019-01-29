@@ -60,9 +60,7 @@ export class CreatureComponent implements OnInit, OnDestroy {
       switchMap((creature: Creature) => {
         return this.playerService.bindFromId(creature.ownerId).pipe(
           map(owner => {
-            return creature && Math.abs(
-              creature.bonusStrength + (owner.playing ? creature.modifierDuringOwnerTurn : 0)
-            );
+            return creature && Math.abs(owner.playing ? creature.modifierDuringOwnerTurn : 0);
           })
         );
       })
@@ -106,20 +104,6 @@ export class CreatureComponent implements OnInit, OnDestroy {
       if (creature.basicStrength > 0) {
         creature.basicStrength --;
       }
-      return creature;
-    });
-  }
-
-  increaseBonusStrength() {
-    this.creatureService.edit(this.creatureId, (creature: Creature) => {
-      creature.bonusStrength ++;
-      return creature;
-    });
-  }
-
-  decreaseBonusStrength() {
-    this.creatureService.edit(this.creatureId, (creature: Creature) => {
-      creature.bonusStrength --;
       return creature;
     });
   }

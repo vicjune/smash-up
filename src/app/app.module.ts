@@ -7,7 +7,6 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
 import { GameModule } from './game/game.module';
-import { InitModule } from './init/init.module';
 import { localStorage } from '@shared/utils/localStorage';
 import { LOCAL_STORAGE_DEVICE_ID, LOCAL_STORAGE_VERSION } from '@shared/constants';
 
@@ -23,7 +22,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     BrowserModule,
     SharedModule,
     GameModule,
-    InitModule,
     HttpClientModule,
     TranslateModule.forRoot({
       loader: {
