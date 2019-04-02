@@ -1,6 +1,7 @@
 import { TimerService } from '@shared/services/timer.service';
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
 
 import { PlayerService } from '../../services/player.service';
 import { BaseService } from '@shared/services/base.service';
@@ -10,18 +11,19 @@ import { CreatureService } from '@shared/services/creature.service';
 import { DraggingService } from '@shared/services/dragging.service';
 import { AnalyticsService } from '@shared/services/analytics.service';
 import { windowEvents } from '@shared/utils/windowEvents';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.scss']
 })
-export class MenuComponent implements OnInit {
+export class MenuComponent {
   @Output() addPlayer = new EventEmitter<void>();
 
   menuOpen = false;
   resetPopin = false;
-  language = 'en';
+  language$: Observable<string>;
   MAX_PLAYERS: number = MAX_PLAYERS;
   TIMER_SECONDS_INTERVAL: number = TIMER_SECONDS_INTERVAL;
 
@@ -35,12 +37,10 @@ export class MenuComponent implements OnInit {
     public creatureService: CreatureService,
     public draggingService: DraggingService,
     public analyticsService: AnalyticsService
-  ) { }
-
-  ngOnInit() {
-    this.translate.onLangChange.subscribe(event => {
-      this.language = event.lang;
-    });
+  ) {
+    this.language$ = this.translate.onLangChange.pipe(
+      map(event => event.lang)
+    );
   }
 
   addPlayerClicked() {
