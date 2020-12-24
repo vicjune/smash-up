@@ -33,7 +33,7 @@ export class TimerComponent {
   }
 
   resetTimer() {
-    this.timerService.reset();
+    this.timerService.resetToDefaultValue();
   }
 
   nextPlayer() {

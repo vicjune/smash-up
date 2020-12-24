@@ -13,6 +13,7 @@ import { CreatureOrderedList } from '@shared/interfaces/creatureOrderedList';
 import { CreatureService } from '@shared/services/creature.service';
 import { DraggingService } from '@shared/services/dragging.service';
 import { position } from '@shared/utils/position';
+import { Player } from '@shared/models/player';
 
 @Component({
   selector: 'app-base',
@@ -108,6 +109,15 @@ export class BaseComponent implements OnInit, AfterViewInit, OnDestroy {
 
   bindAvailableColors(): Observable<number[]> {
     return this.baseService.bindAvailableColors();
+  }
+
+  previousOfPlayerPlaying(playerId: string, players: Player[]) {
+    const playingPlayerIndex = players.findIndex(player => player.playing);
+    const currentPlayerIndex = players.findIndex(player => player.id === playerId);
+    if (playingPlayerIndex === 0) {
+      return currentPlayerIndex === players.length - 1;
+    }
+    return currentPlayerIndex === playingPlayerIndex - 1;
   }
 
   increaseReward(index: number) {

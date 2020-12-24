@@ -9,6 +9,11 @@
   user-select: none;
 }
 
+body {
+  overflow: hidden;
+  touch-action: none;
+}
+
 input {
   user-select: auto;
 }

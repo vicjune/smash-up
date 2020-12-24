@@ -4,7 +4,6 @@ export class Creature extends Entity {
   ownerId: string;
   strength: number;
   basicStrength: number;
-  bonusStrength: number;
   modifierDuringOwnerTurn: number;
   rotation: number;
 
@@ -12,7 +11,6 @@ export class Creature extends Entity {
     super();
     this.ownerId = ownerId;
     this.basicStrength = strength || 0;
-    this.bonusStrength = 0;
     this.modifierDuringOwnerTurn = 0;
     this.rotation = Math.random();
   }
