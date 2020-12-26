@@ -8,19 +8,21 @@
       }"
       *ngFor="let val of [0, 1]"
     >
-      {{
-        ((timer$ | async).type === TimerType.BY_TURN
-          ? (timer$ | async).value
-          : (playerPlaying$ | async)?.timer
-        ) | timer
-      }}
       <span
-        class="timer__buffer"
         *ngIf="
-          (timer$ | async).type === TimerType.BY_PLAYER &&
-          (timer$ | async).value > 0
+          (timer$ | async).type !== TimerType.BY_PLAYER ||
+            (timer$ | async).value === 0;
+          else bufferTimer
         "
-        >({{ (timer$ | async).value | timer }})</span
+        >{{
+          ((timer$ | async).type === TimerType.BY_TURN
+            ? (timer$ | async).value
+            : (playerPlaying$ | async)?.timer
+          ) | timer
+        }}</span
+      >
+      <ng-template #bufferTimer
+        ><span>({{ (timer$ | async).value | timer }})</span></ng-template
       >
     </div>
   </ng-container>
