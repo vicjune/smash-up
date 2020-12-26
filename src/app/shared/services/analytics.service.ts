@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 
-import { localStorage } from '@shared/utils/localStorage';
-import { uuid } from '@shared/utils/uuid';
-import { LOCAL_STORAGE_DEVICE_ID } from '@shared/constants';
-import { Player } from '@shared/models/player';
-import { Timer } from '@shared/models/timer';
+import { localStorage } from "@shared/utils/localStorage";
+import { uuid } from "@shared/utils/uuid";
+import { LOCAL_STORAGE_DEVICE_ID } from "@shared/constants";
+import { Player } from "@shared/models/player";
+import { Timer } from "@shared/models/timer";
 
 @Injectable()
 export class AnalyticsService {
@@ -19,30 +19,30 @@ export class AnalyticsService {
   }
 
   updateTimer(timer: Timer) {
-    (<any>window).ga('send', 'event', 'timer', 'toggle', timer.active ? 'on' : 'off');
+    (<any>window).ga("send", "event", "timer", "type", timer.type);
   }
 
   updateLang(i18n: string) {
-    (<any>window).ga('send', 'event', 'i18n', 'set', i18n);
+    (<any>window).ga("send", "event", "i18n", "set", i18n);
   }
 
   addPlayer(player: Player) {
-    (<any>window).ga('send', 'event', 'player', 'add', player.name);
+    (<any>window).ga("send", "event", "player", "add", player.name);
   }
 
   deletePlayer() {
-    (<any>window).ga('send', 'event', 'player', 'delete');
+    (<any>window).ga("send", "event", "player", "delete");
   }
 
   addBase() {
-    (<any>window).ga('send', 'event', 'base', 'add');
+    (<any>window).ga("send", "event", "base", "add");
   }
 
   deleteBase() {
-    (<any>window).ga('send', 'event', 'base', 'delete');
+    (<any>window).ga("send", "event", "base", "delete");
   }
 
   conquerBase() {
-    (<any>window).ga('send', 'event', 'base', 'conquer');
+    (<any>window).ga("send", "event", "base", "conquer");
   }
 }

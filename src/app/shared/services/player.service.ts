@@ -1,34 +1,36 @@
-import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { map, shareReplay } from 'rxjs/operators';
+import { Injectable } from "@angular/core";
+import { Observable, BehaviorSubject } from "rxjs";
+import { map, shareReplay } from "rxjs/operators";
 
-import { Player } from '../models/player';
-import { MAX_PLAYERS, PLAYER_SCORE_MODIFIER_TIMEOUT } from './../constants';
-import { EntityService } from '@shared/services/entity.service';
-import { localStorage } from '@shared/utils/localStorage';
-import { ConqueringScore } from '@shared/models/conqueringScore';
-import { arrayUtils } from '@shared/utils/arrayUtils';
-import { AnalyticsService } from './analytics.service';
+import { Player } from "../models/player";
+import { MAX_PLAYERS, PLAYER_SCORE_MODIFIER_TIMEOUT } from "./../constants";
+import { EntityService } from "@shared/services/entity.service";
+import { localStorage } from "@shared/utils/localStorage";
+import { ConqueringScore } from "@shared/models/conqueringScore";
+import { arrayUtils } from "@shared/utils/arrayUtils";
+import { AnalyticsService } from "./analytics.service";
 
 @Injectable()
 export class PlayerService extends EntityService {
-  protected entity = 'players';
+  protected entity = "players";
 
   private conqueringScores$ = new BehaviorSubject<ConqueringScore[]>([]);
   private playerPlaying$ = new BehaviorSubject<string>(null);
   private availableColors$: Observable<number[]>;
 
-  constructor(
-    private analyticsService: AnalyticsService
-  ) {
+  constructor(private analyticsService: AnalyticsService) {
     super();
-    const players = localStorage.get<Player[]>(this.entity, localPlayers => localPlayers.filter(player => !!player).map(player => {
-      if (player.playing) {
-        this.playerPlaying$.next(player.id);
-      }
-      player.score = player.realScore;
-      return player;
-    }));
+    const players = localStorage.get<Player[]>(this.entity, (localPlayers) =>
+      localPlayers
+        .filter((player) => !!player)
+        .map((player) => {
+          if (player.playing) {
+            this.playerPlaying$.next(player.id);
+          }
+          player.score = player.realScore;
+          return player;
+        })
+    );
 
     this.updateFromLocalStorage(players);
 
@@ -36,11 +38,13 @@ export class PlayerService extends EntityService {
   }
 
   bindFromId(id: string): Observable<Player> {
-    return super.bindFromId(id).pipe(map(entity => entity as Player));
+    return super.bindFromId(id).pipe(map((entity) => entity as Player));
   }
 
   bindAllEntities(): Observable<Player[]> {
-    return super.bindAllEntities().pipe(map(entities => entities as Player[]));
+    return super
+      .bindAllEntities()
+      .pipe(map((entities) => entities as Player[]));
   }
 
   bindPlayerPlaying(): Observable<string> {
@@ -48,9 +52,13 @@ export class PlayerService extends EntityService {
   }
 
   bindConqueringScores(playerId: string): Observable<ConqueringScore[]> {
-    return this.conqueringScores$.pipe(map(conqueringScores => {
-      return conqueringScores.filter(conqueringScore => conqueringScore.playerId === playerId);
-    }));
+    return this.conqueringScores$.pipe(
+      map((conqueringScores) => {
+        return conqueringScores.filter(
+          (conqueringScore) => conqueringScore.playerId === playerId
+        );
+      })
+    );
   }
 
   bindAvailableColors(): Observable<number[]> {
@@ -77,8 +85,12 @@ export class PlayerService extends EntityService {
     const playersId = this.entityList$.getValue();
     const playerPlaying = this.playerPlaying$.getValue();
     if (playersId.length > 0) {
-      const indexPlaying = playersId.findIndex(playerId => playerId === playerPlaying);
-      this.setPlayerPlaying(playersId[indexPlaying + 1 < playersId.length ? indexPlaying + 1 : 0]);
+      const indexPlaying = playersId.findIndex(
+        (playerId) => playerId === playerPlaying
+      );
+      this.setPlayerPlaying(
+        playersId[indexPlaying + 1 < playersId.length ? indexPlaying + 1 : 0]
+      );
     } else {
       this.playerPlaying$.next(null);
     }
@@ -106,18 +118,19 @@ export class PlayerService extends EntityService {
 
   changePlayerOrder(playerMovingId: string, newIndex: number) {
     const playerIdList = [...this.entityList$.getValue()];
-    const indexOfMoving = playerIdList.findIndex(id => playerMovingId === id);
+    const indexOfMoving = playerIdList.findIndex((id) => playerMovingId === id);
     playerIdList.splice(indexOfMoving, 1);
     playerIdList.splice(newIndex, 0, playerMovingId);
     this.entityList$.next(playerIdList);
     this.updateLocalStorage();
   }
 
-  updateScore(modifier: number, id: string, fromConquest = false): void {
+  updateScore(modifier: number, id: string, showAnimation = false): void {
     if (modifier) {
       this.edit(id, (player: Player) => {
-        player.realScore = player.realScore + modifier >= 0 ? player.realScore + modifier : 0;
-        if (!fromConquest) {
+        player.realScore =
+          player.realScore + modifier >= 0 ? player.realScore + modifier : 0;
+        if (!showAnimation) {
           player.score = player.realScore;
           this.deleteConqueringScores(id);
         } else {
@@ -130,7 +143,7 @@ export class PlayerService extends EntityService {
 
   reset(): void {
     const playersId = this.entityList$.getValue();
-    playersId.forEach(playerId => {
+    playersId.forEach((playerId) => {
       this.deleteConqueringScores(playerId);
       this.edit(playerId, (player: Player) => {
         player.realScore = 0;
@@ -142,11 +155,13 @@ export class PlayerService extends EntityService {
   }
 
   private _bindAvailableColors(): Observable<number[]> {
-    return this.bindAllEntities().pipe(map(players => {
-      const takenColors = players.map(player => player.color);
-      const allColors = arrayUtils.arrayOfInts(MAX_PLAYERS);
-      return arrayUtils.diff(allColors, takenColors);
-    }));
+    return this.bindAllEntities().pipe(
+      map((players) => {
+        const takenColors = players.map((player) => player.color);
+        const allColors = arrayUtils.arrayOfInts(MAX_PLAYERS);
+        return arrayUtils.diff(allColors, takenColors);
+      })
+    );
   }
 
   private addConqueringScore(playerId: string, score: number) {
@@ -173,14 +188,17 @@ export class PlayerService extends EntityService {
     const conqueringScores = this.conqueringScores$.getValue();
     if (updateScore) {
       this.edit(score.playerId, (player: Player) => {
-        player.score = player.score + score.score >= 0 ? player.score + score.score : 0;
+        player.score =
+          player.score + score.score >= 0 ? player.score + score.score : 0;
         return player;
       });
     }
     if (score.timeout) {
       clearTimeout(score.timeout);
     }
-    const index = conqueringScores.findIndex(scoreFromList => scoreFromList.id === score.id);
+    const index = conqueringScores.findIndex(
+      (scoreFromList) => scoreFromList.id === score.id
+    );
     conqueringScores.splice(index, 1);
     this.conqueringScores$.next(conqueringScores);
   }

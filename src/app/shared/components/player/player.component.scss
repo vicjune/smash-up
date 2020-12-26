@@ -4,19 +4,19 @@
   border: 5px solid white;
   border-radius: 10px;
   position: relative;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
   transition: box-shadow 0.3s, border-color 0.3s, background-color 0.3s;
-  @include color('player-color-', $playerColors, border-color);
+  @include color("player-color-", $playerColors, border-color);
   background-color: #00000066;
   display: flex;
   flex: 1;
 
   &.highlighted,
   &.isHovered {
-    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
     border-color: white;
     background-color: transparent;
-    @include color('player-color-', $playerColors, background-color, -10);
+    @include color("player-color-", $playerColors, background-color, -10);
   }
 
   &.isHovered {
@@ -36,14 +36,14 @@
   &__button {
     flex: 1;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
   }
 
   &__name {
     pointer-events: none;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     font-size: 20px;
     line-height: 25px;
     white-space: nowrap;
@@ -63,6 +63,20 @@
     }
   }
 
+  &__timer {
+    font-size: 20px;
+    text-align: center;
+    opacity: 0.3;
+    margin-top: 5px;
+    color: white;
+    transition: opacity 0.3s;
+
+    .highlighted &,
+    .isHovered & {
+      opacity: 0.8;
+    }
+  }
+
   &__score {
     pointer-events: none;
     position: absolute;
@@ -71,7 +85,7 @@
     font-size: 40px;
     transition: color 0.3s;
     line-height: 40px;
-    @include color('player-color-', $playerColors, color);
+    @include color("player-color-", $playerColors, color);
 
     &.upsideDown {
       left: auto;
@@ -95,7 +109,7 @@
 
       &.underscore {
         &:after {
-          content: '';
+          content: "";
           position: absolute;
           bottom: 0;
           left: 0;
@@ -167,7 +181,12 @@
     font-size: 30px;
     line-height: 20px;
     padding: 0 5px;
-    @include button-active-hover('player-color-', $playerColors, null, 'simple');
+    @include button-active-hover(
+      "player-color-",
+      $playerColors,
+      null,
+      "simple"
+    );
   }
 }
 

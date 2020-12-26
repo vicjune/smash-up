@@ -1,23 +1,56 @@
-<div [class]="'timer timer-player-' + (playerColor$ | async)">
-  <ng-container *ngIf="(timer$ | async).active">
-    <div class="timer__value" [ngClass]="{'timer__value--blinking': (timerBlinking$ | async)}">
-      {{(timer$ | async).value | timer}}
-    </div>
-    <div class="timer__value timer__value--upsideDown" [ngClass]="{'timer__value--blinking': (timerBlinking$ | async)}">
-      {{(timer$ | async).value | timer}}
+<div [class]="'timer timer-player-' + (playerPlaying$ | async)?.color">
+  <ng-container *ngIf="(timer$ | async).type !== TimerType.OFF">
+    <div
+      class="timer__value"
+      [ngClass]="{
+        'timer__value--blinking': (timerBlinking$ | async),
+        'timer__value--upsideDown': val
+      }"
+      *ngFor="let val of [0, 1]"
+    >
+      {{
+        ((timer$ | async).type === TimerType.BY_TURN
+          ? (timer$ | async).value
+          : (playerPlaying$ | async)?.timer
+        ) | timer
+      }}
+      <span
+        class="timer__buffer"
+        *ngIf="
+          (timer$ | async).type === TimerType.BY_PLAYER &&
+          (timer$ | async).value > 0
+        "
+        >({{ (timer$ | async).value | timer }})</span
+      >
     </div>
   </ng-container>
   <div class="timer__buttons" *ngIf="!(creatureDragging$ | async)">
-    <ng-container *ngIf="(timer$ | async).active">
-      <button class="timer__button timer__button--playPause" (click)="playToggle()">
-        <i [class]="(timer$ | async).running ? 'icon-pause2' : 'icon-play3'"></i>
+    <ng-container *ngIf="(timer$ | async).type !== TimerType.OFF">
+      <button class="timer__buttonWrapper" (click)="playToggle()">
+        <div class="timer__button timer__button--playPause">
+          <i
+            [class]="(timer$ | async).running ? 'icon-pause2' : 'icon-play3'"
+          ></i>
+        </div>
       </button>
-      <button class="timer__button timer__button--reset" (click)="resetTimer()">
-        <i class="icon-reload"></i>
+      <button
+        class="timer__buttonWrapper"
+        (click)="resetTimer()"
+        *ngIf="(timer$ | async).type === TimerType.BY_TURN"
+      >
+        <div class="timer__button timer__button--reset">
+          <i class="icon-reload"></i>
+        </div>
       </button>
     </ng-container>
-    <button class="timer__button timer__button--next" (click)="nextPlayer()" *ngIf="(playerService.bindList() | async).length > 1">
-      {{'NEXT_PLAYER' | translate}}
+    <button
+      class="timer__buttonWrapper"
+      (click)="nextPlayer()"
+      *ngIf="(playerService.bindList() | async).length > 1"
+    >
+      <div class="timer__button timer__button--next">
+        {{ "NEXT_PLAYER" | translate }}
+      </div>
     </button>
   </div>
 </div>

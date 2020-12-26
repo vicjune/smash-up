@@ -14,8 +14,6 @@
   "BASE_RESISTANCE": "Breakpoint",
   "SIGNATURE": "Created with love by",
   "PLAYING": "playing",
-  "ENABLE_TIMER": "Enable timer",
-  "DISABLE_TIMER": "Disable timer",
   "NEXT_PLAYER": "Next player",
   "CREATURES": "Minions",
   "MONSTERS": "Monsters",
@@ -23,5 +21,18 @@
   "BASE_STRENGTH_MONSTER": "Monster's power",
   "BONUS_STRENGTH_DURING_TURN": "Power difference during {{playerName}}'s turn",
   "CHANGE_OWNER": "Give control",
-  "REMOVE_CREATURE": "Remove minion"
+  "REMOVE_CREATURE": "Remove minion",
+  "SETTINGS": "Settings",
+  "CLOSE": "Close",
+  "TIMER": "Timer",
+  "TIMER_OFF": "off",
+  "TIMER_BY_TURN": "by turn",
+  "TIMER_BY_PLAYER": "by player",
+  "TIMER_BY_TURN_START": "Time by turn",
+  "TIMER_BY_PLAYER_START": "Total time by player",
+  "TIMER_BY_PLAYER_ADDITIONAL": "Additional time",
+  "TIMER_BY_PLAYER_BUFFER": "Buffer time",
+  "TIMER_BY_PLAYER_RESET": "Reset timers",
+  "TIMER_BY_PLAYER_TOOLTIP": "Each player has their own time that they manage during the game.\nIf a player reaches the end of his total time, he loses 1 victory point and the additional time is added to his total time.",
+  "TIMER_BY_PLAYER_BUFFER_TOOLTIP": "Buffer time is used at the start of each turn before consuming the player's total time."
 }

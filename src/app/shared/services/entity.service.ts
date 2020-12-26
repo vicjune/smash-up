@@ -7,9 +7,9 @@ import { localStorage } from '@shared/utils/localStorage';
 
 @Injectable()
 export class EntityService {
+  entityList$: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
   protected entity: string;
   protected entities$ = {};
-  protected entityList$: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
 
   private allEntities$: Observable<Entity[]>;
 

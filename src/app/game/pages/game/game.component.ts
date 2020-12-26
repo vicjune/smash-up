@@ -1,19 +1,20 @@
-import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, OnInit } from "@angular/core";
 
-import { Player } from '@shared/models/player';
-import { PlayerService } from '@shared/services/player.service';
-import { DraggingService } from '@shared/services/dragging.service';
-import { Subscription } from 'rxjs';
+import { Player } from "@shared/models/player";
+import { PlayerService } from "@shared/services/player.service";
+import { DraggingService } from "@shared/services/dragging.service";
+import { Subscription } from "rxjs";
+import { TimerService } from "@shared/services/timer.service";
 
 @Component({
-  selector: 'app-game',
-  templateUrl: './game.component.html',
-  styleUrls: ['./game.component.scss']
+  selector: "app-game",
+  templateUrl: "./game.component.html",
+  styleUrls: ["./game.component.scss"],
 })
 export class GameComponent implements OnInit {
   addPopin = false;
   alreadyAdded = false;
-  newPlayerName = '';
+  newPlayerName = "";
   newPlayerColor = null;
   availableColors: number[] = [];
 
@@ -22,19 +23,26 @@ export class GameComponent implements OnInit {
 
   subscription = new Subscription();
 
-  @ViewChild('input') addInput: ElementRef;
+  @ViewChild("input") addInput: ElementRef;
 
   constructor(
     public playerService: PlayerService,
-    public draggingService: DraggingService
-  ) { }
+    public draggingService: DraggingService,
+    public timerService: TimerService
+  ) {}
 
   ngOnInit() {
-    this.subscription.add(this.playerService.bindAvailableColors().subscribe(availableColors => this.availableColors = availableColors));
+    this.subscription.add(
+      this.playerService
+        .bindAvailableColors()
+        .subscribe(
+          (availableColors) => (this.availableColors = availableColors)
+        )
+    );
   }
 
   addPlayerClicked() {
-    this.newPlayerName = '';
+    this.newPlayerName = "";
     this.newPlayerColor = this.availableColors[0];
     this.addPopin = true;
     this.alreadyAdded = false;
@@ -47,7 +55,13 @@ export class GameComponent implements OnInit {
     this.addPopin = false;
     if (index === 1 && !this.alreadyAdded) {
       this.alreadyAdded = true;
-      this.playerService.add(new Player(this.newPlayerName, this.newPlayerColor));
+      this.playerService.add(
+        new Player(
+          this.newPlayerName,
+          this.newPlayerColor,
+          this.timerService.timer.startValue
+        )
+      );
     }
   }
 }

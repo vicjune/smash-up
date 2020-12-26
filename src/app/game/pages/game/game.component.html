@@ -1,14 +1,41 @@
 <div class="game">
-  <app-menu (addPlayer)="addPlayerClicked()" *ngIf="!(creatureDragging$ | async)"></app-menu>
+  <app-menu
+    (addPlayer)="addPlayerClicked()"
+    *ngIf="!(creatureDragging$ | async)"
+  ></app-menu>
   <app-player-list (addPlayer)="addPlayerClicked()"></app-player-list>
   <app-timer></app-timer>
   <app-base-list></app-base-list>
-  <app-creature *ngIf="(creatureDraggingId$ | async)" [creatureId]="creatureDraggingId$ | async" [creatureDragging]="true" [otherDraggable]="draggingService.creatureDraggable"></app-creature>
+  <app-creature
+    *ngIf="creatureDraggingId$ | async"
+    [creatureId]="creatureDraggingId$ | async"
+    [creatureDragging]="true"
+    [otherDraggable]="draggingService.creatureDraggable"
+  ></app-creature>
 </div>
 
-<app-popin [(modal)]="addPopin" [buttons]="[{text: 'CANCEL' | translate, secondary: true}, {text: 'ADD' | translate, disabled: newPlayerName.length === 0}]" (buttonPressed)="addPlayer($event)">
-  <input class="addPopin__input" type="text" [placeholder]="'PLAYER_NAME' | translate" [(ngModel)]="newPlayerName" #input (keydown.enter)="addPlayer(1)">
+<app-popin
+  [(modal)]="addPopin"
+  [buttons]="[
+    { text: 'CANCEL' | translate, secondary: true },
+    { text: 'ADD' | translate, disabled: newPlayerName.length === 0 }
+  ]"
+  (buttonPressed)="addPlayer($event)"
+>
+  <input
+    class="addPopin__input"
+    type="text"
+    [placeholder]="'PLAYER_NAME' | translate"
+    [(ngModel)]="newPlayerName"
+    #input
+    (keydown.enter)="addPlayer(1)"
+  />
   <div class="addPopin__availableColors" *ngIf="availableColors.length > 1">
-    <button [class]="'addPopin__color add-player-color-' + color" [ngClass]="{'addPopin__color--selected': newPlayerColor === color}" *ngFor="let color of availableColors" (click)="newPlayerColor = color"></button>
+    <button
+      [class]="'addPopin__color add-player-color-' + color"
+      [ngClass]="{ 'addPopin__color--selected': newPlayerColor === color }"
+      *ngFor="let color of availableColors"
+      (click)="newPlayerColor = color"
+    ></button>
   </div>
 </app-popin>

@@ -14,8 +14,6 @@
   "BASE_RESISTANCE": "Résistance",
   "SIGNATURE": "Confectionné avec soin par",
   "PLAYING": "en train de jouer",
-  "ENABLE_TIMER": "Activer le chrono",
-  "DISABLE_TIMER": "Désactiver le chrono",
   "NEXT_PLAYER": "Joueur suivant",
   "CREATURES": "Créatures",
   "MONSTERS": "Monstres",
@@ -23,5 +21,18 @@
   "BASE_STRENGTH_MONSTER": "Force du monstre",
   "BONUS_STRENGTH_DURING_TURN": "Effets durant le tour de {{playerName}}",
   "CHANGE_OWNER": "Donner le contrôle",
-  "REMOVE_CREATURE": "Retirer la créature"
+  "REMOVE_CREATURE": "Retirer la créature",
+  "SETTINGS": "Réglages",
+  "CLOSE": "Fermer",
+  "TIMER": "Chrono",
+  "TIMER_OFF": "off",
+  "TIMER_BY_TURN": "par tour",
+  "TIMER_BY_PLAYER": "par joueur",
+  "TIMER_BY_TURN_START": "Temps par tour",
+  "TIMER_BY_PLAYER_START": "Temps total par joueur",
+  "TIMER_BY_PLAYER_ADDITIONAL": "Temps additionnel",
+  "TIMER_BY_PLAYER_BUFFER": "Temps tampon",
+  "TIMER_BY_PLAYER_RESET": "Réinitialiser chronos",
+  "TIMER_BY_PLAYER_TOOLTIP": "Chaque joueur a son propre temps qu'il gère pendant la partie.\nSi un joueur arrive à la fin de son temps total, il perd 1 point de victoire et le temps additionnel est ajouté à son temps total.",
+  "TIMER_BY_PLAYER_BUFFER_TOOLTIP": "Le temps tampon est utilisé au début de chaque tour avant de consommer le temps total du joueur."
 }
